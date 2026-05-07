@@ -1,0 +1,37 @@
+import { notFound } from "next/navigation";
+import { getApplicationById, getApplicationDocuments } from "@/actions/applications/queries";
+import { ApplicationForm } from "@/components/applications/application-form";
+
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
+
+export default async function EditApplicationPage({ params }: PageProps) {
+  const { id } = await params;
+  const [application, documents] = await Promise.all([
+    getApplicationById(id),
+    getApplicationDocuments(id),
+  ]);
+
+  if (!application) {
+    notFound();
+  }
+
+  const existingDocuments = documents.map((doc) => ({
+    name: doc.fileName,
+    url: doc.fileUrl,
+    key: doc.fileKey,
+    size: Number(doc.fileSize),
+    type: doc.fileType,
+  }));
+
+  return (
+    <div className="mx-auto max-w-2xl">
+      <ApplicationForm
+        mode="edit"
+        application={application}
+        existingDocuments={existingDocuments}
+      />
+    </div>
+  );
+}
