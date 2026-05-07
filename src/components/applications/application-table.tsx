@@ -103,13 +103,13 @@ export function ApplicationTable({ applications }: ApplicationTableProps) {
                   />
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem
-                      render={<Link href={`/applications/${app.id}`} />}
+                      render={<Link href={`/dashboard/applications/${app.id}`} />}
                     >
                       <Eye className="mr-2 h-4 w-4" />
                       Lihat Detail
                     </DropdownMenuItem>
                     <DropdownMenuItem
-                      render={<Link href={`/applications/${app.id}/edit`} />}
+                      render={<Link href={`/dashboard/applications/${app.id}/edit`} />}
                     >
                       <Pencil className="mr-2 h-4 w-4" />
                       Edit

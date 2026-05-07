@@ -1,5 +1,3 @@
-import { notFound } from "next/navigation";
-import Link from "next/link";
 import { getApplicationById, getApplicationDocuments } from "@/actions/applications/queries";
 import { StatusBadge } from "@/components/applications/status-badge";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -10,8 +8,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Pencil, ArrowLeft, ExternalLink, FileText, Image } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ArrowLeft, ExternalLink, FileText, Image, Pencil } from "lucide-react";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -32,14 +32,14 @@ export default async function ApplicationDetailPage({ params }: PageProps) {
     <div className="mx-auto max-w-2xl space-y-6">
       <div className="flex items-center justify-between">
         <Link
-          href="/applications"
+          href="/dashboard/applications"
           className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Kembali
         </Link>
         <Link
-          href={`/applications/${id}/edit`}
+          href={`/dashboard/applications/${id}/edit`}
           className={cn(buttonVariants())}
         >
           <Pencil className="mr-2 h-4 w-4" />

@@ -1,20 +1,15 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import { signOut, useSession } from "@/lib/auth-client";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, LogOut, Settings } from "lucide-react";
-import { MobileSidebar } from "./mobile-sidebar";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { LogOut, Settings } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ThemeToggle } from "../theme-toggle";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "../ui/breadcrumb";
+import { Button } from "../ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { Separator } from "../ui/separator";
 
 export function Header() {
   const router = useRouter();
@@ -37,23 +32,36 @@ export function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-10 flex h-14 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-sm lg:px-6">
-      <div className="flex items-center gap-3">
-        <Sheet>
-          <SheetTrigger
-            render={
-              <Button variant="ghost" size="icon" className="lg:hidden">
-                <Menu className="h-5 w-5" />
-              </Button>
-            }
-          />
-          <SheetContent side="left" className="w-60 p-0">
-            <MobileSidebar />
-          </SheetContent>
-        </Sheet>
+    // <header className="sticky top-0 z-10 flex h-14 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-sm lg:px-6">
+    //   <div className="flex items-center gap-3">
+    //     <SidebarTrigger className="-ml-1" />
+    //   </div>
+
+
+    // </header>
+    <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 justify-between border-b px-4 lg:px-6">
+      <div className="flex items-center gap-2 ">
+        <SidebarTrigger className="-ml-1" />
+        <Separator
+          orientation="vertical"
+          className="mr-2 data-[orientation=vertical]:h-4"
+        />
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem className="hidden md:block">
+              <BreadcrumbLink href="#">
+                Build Your Application
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator className="hidden md:block" />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
       </div>
 
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-2">
         <ThemeToggle />
 
         <DropdownMenu>
@@ -78,7 +86,7 @@ export function Header() {
               </div>
             </div>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => router.push("/settings")}>
+            <DropdownMenuItem onClick={() => router.push("/dashboard/settings")}>
               <Settings className="mr-2 h-4 w-4" />
               Pengaturan
             </DropdownMenuItem>

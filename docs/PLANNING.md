@@ -262,7 +262,7 @@ export async function createApplication(formData: FormData) {
   })
 
   logger.info("Application created", { userId: session.user.id })
-  revalidatePath("/applications")
+  revalidatePath("/dashboard/applications")
 }
 ```
 

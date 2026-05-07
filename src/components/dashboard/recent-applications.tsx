@@ -42,7 +42,7 @@ export function RecentApplications({ applications }: RecentApplicationsProps) {
           {applications.map((app) => (
             <Link
               key={app.id}
-              href={`/applications/${app.id}`}
+              href={`/dashboard/applications/${app.id}`}
               className="flex items-center justify-between rounded-md border p-3 transition-colors hover:bg-muted/50"
             >
               <div className="space-y-0.5">

@@ -1,15 +1,15 @@
 "use server";
 
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import { db } from "@/db";
 import { followUpEmails, followUpSchedules } from "@/db/schema";
-import { revalidatePath } from "next/cache";
+import { auth } from "@/lib/auth";
+import { sendEmail } from "@/lib/email";
 import { logger } from "@/lib/logger";
 import { followUpEmailSchema, scheduleSchema } from "@/lib/validations";
-import { sendEmail } from "@/lib/email";
-import { eq, and } from "drizzle-orm";
 import type { ActionState, FollowUpEmail, FollowUpSchedule } from "@/types";
+import { and, eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 
 export async function createFollowUpDraft(
   prevState: ActionState<FollowUpEmail>,
@@ -51,7 +51,7 @@ export async function createFollowUpDraft(
       applicationId: result.data.applicationId,
     });
 
-    revalidatePath("/follow-ups");
+    revalidatePath("/dashboard/follow-ups");
     return {
       success: true,
       message: "Draft email berhasil disimpan",
@@ -106,7 +106,7 @@ export async function sendFollowUpEmail(
       to: emailRecord.recipientEmail,
     });
 
-    revalidatePath("/follow-ups");
+    revalidatePath("/dashboard/follow-ups");
     return { success: true, message: "Email berhasil dikirim" };
   } catch (error) {
     await db
@@ -149,7 +149,7 @@ export async function updateFollowUpDraft(
       return { success: false, message: "Email tidak ditemukan" };
     }
 
-    revalidatePath("/follow-ups");
+    revalidatePath("/dashboard/follow-ups");
     return { success: true, message: "Draft berhasil diperbarui", data: updated };
   } catch (error) {
     logger.error("Failed to update follow-up draft", {
@@ -183,7 +183,7 @@ export async function deleteFollowUpEmail(
       emailId,
     });
 
-    revalidatePath("/follow-ups");
+    revalidatePath("/dashboard/follow-ups");
     return { success: true, message: "Email berhasil dihapus" };
   } catch (error) {
     logger.error("Failed to delete follow-up email", {
@@ -230,7 +230,7 @@ export async function createSchedule(
       scheduledDate: result.data.scheduledDate,
     });
 
-    revalidatePath("/follow-ups");
+    revalidatePath("/dashboard/follow-ups");
     return {
       success: true,
       message: "Jadwal follow-up berhasil dibuat",
@@ -274,7 +274,7 @@ export async function cancelSchedule(
       scheduleId,
     });
 
-    revalidatePath("/follow-ups");
+    revalidatePath("/dashboard/follow-ups");
     return { success: true, message: "Jadwal berhasil dibatalkan" };
   } catch (error) {
     logger.error("Failed to cancel schedule", {

@@ -1,15 +1,15 @@
 "use server";
 
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import { db } from "@/db";
-import { jobApplications, applicationDocuments } from "@/db/schema";
-import { revalidatePath } from "next/cache";
+import { applicationDocuments, jobApplications } from "@/db/schema";
+import { auth } from "@/lib/auth";
 import { logger } from "@/lib/logger";
 import { applicationSchema, documentFileSchema } from "@/lib/validations";
-import { eq, and } from "drizzle-orm";
-import { z } from "zod";
 import type { ActionState, JobApplication } from "@/types";
+import { and, eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
+import { z } from "zod";
 
 interface DocumentFile {
   name: string;
@@ -113,7 +113,7 @@ export async function createApplication(
       documentsCount: documents.length,
     });
 
-    revalidatePath("/applications");
+    revalidatePath("/dashboard/applications");
     return {
       success: true,
       message: "Lamaran berhasil ditambahkan",
@@ -191,7 +191,7 @@ export async function updateApplication(
       documentsCount: documents.length,
     });
 
-    revalidatePath("/applications");
+    revalidatePath("/dashboard/applications");
     revalidatePath(`/applications/${id}`);
     return {
       success: true,
@@ -233,7 +233,7 @@ export async function deleteApplication(id: string): Promise<ActionState> {
       applicationId: id,
     });
 
-    revalidatePath("/applications");
+    revalidatePath("/dashboard/applications");
     return { success: true, message: "Lamaran berhasil dihapus" };
   } catch (error) {
     logger.error("Failed to delete application", {
@@ -283,7 +283,7 @@ export async function updateApplicationStatus(
       newStatus: status,
     });
 
-    revalidatePath("/applications");
+    revalidatePath("/dashboard/applications");
     revalidatePath(`/applications/${id}`);
     return {
       success: true,

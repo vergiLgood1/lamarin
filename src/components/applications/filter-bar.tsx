@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -9,8 +9,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
 import { Search, X } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const STATUS_OPTIONS = [
   { value: "all", label: "Semua Status" },
@@ -39,11 +39,11 @@ export function FilterBar() {
       params.delete(key);
     }
     params.delete("page"); // Reset page on filter change
-    router.push(`/applications?${params.toString()}`);
+    router.push(`/dashboard/applications?${params.toString()}`);
   }
 
   function clearFilters() {
-    router.push("/applications");
+    router.push("/dashboard/applications");
   }
 
   return (

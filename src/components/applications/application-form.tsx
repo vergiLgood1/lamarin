@@ -1,11 +1,19 @@
 "use client";
 
-import { useActionState, useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { createApplication, updateApplication } from "@/actions/applications/mutations";
+import { FileUpload } from "@/components/applications/file-upload";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "@/components/ui/combobox";
+import { FormMessage } from "@/components/ui/form-message";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -13,26 +21,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Combobox,
-  ComboboxInput,
-  ComboboxContent,
-  ComboboxList,
-  ComboboxItem,
-} from "@/components/ui/combobox";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SubmitButton } from "@/components/ui/submit-button";
-import { FormMessage } from "@/components/ui/form-message";
-import { FileUpload } from "@/components/applications/file-upload";
-import { createApplication, updateApplication } from "@/actions/applications/mutations";
-import { toast } from "sonner";
+import { Textarea } from "@/components/ui/textarea";
 import {
-  LOCATION_SUGGESTIONS,
   JOB_SOURCE_SUGGESTIONS,
+  LOCATION_SUGGESTIONS,
   POSITION_SUGGESTIONS,
   SALARY_SUGGESTIONS,
 } from "@/lib/constants";
-import type { JobApplication, ActionState } from "@/types";
+import type { ActionState, JobApplication } from "@/types";
+import { useRouter } from "next/navigation";
+import { useActionState, useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
 const STATUS_OPTIONS = [
   { value: "applied", label: "Melamar" },
@@ -87,7 +87,7 @@ export function ApplicationForm({
   useEffect(() => {
     if (state.success) {
       toast.success(state.message);
-      router.push("/applications");
+      router.push("/dashboard/applications");
     } else if (state.message && state.message !== "Validasi gagal") {
       toast.error(state.message);
     }
