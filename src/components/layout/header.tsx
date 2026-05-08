@@ -32,12 +32,6 @@ export function Header() {
   }
 
   return (
-    // <header className="sticky top-0 z-10 flex h-14 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-sm lg:px-6">
-    //   <div className="flex items-center gap-3">
-    //     <SidebarTrigger className="-ml-1" />
-    //   </div>
-
-
     // </header>
     <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 justify-between border-b px-4 lg:px-6">
       <div className="flex items-center gap-2 ">
@@ -49,9 +43,7 @@ export function Header() {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem className="hidden md:block">
-              <BreadcrumbLink href="#">
-                Build Your Application
-              </BreadcrumbLink>
+              <BreadcrumbLink href="#">Build Your Application</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator className="hidden md:block" />
             <BreadcrumbItem>
@@ -73,7 +65,9 @@ export function Header() {
                     src={user?.image || undefined}
                     alt={user?.name || ""}
                   />
-                  <AvatarFallback className="text-xs">{initials}</AvatarFallback>
+                  <AvatarFallback className="text-xs">
+                    {initials}
+                  </AvatarFallback>
                 </Avatar>
               </Button>
             }
@@ -86,7 +80,9 @@ export function Header() {
               </div>
             </div>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => router.push("/dashboard/settings")}>
+            <DropdownMenuItem
+              onClick={() => router.push("/dashboard/settings")}
+            >
               <Settings className="mr-2 h-4 w-4" />
               Pengaturan
             </DropdownMenuItem>

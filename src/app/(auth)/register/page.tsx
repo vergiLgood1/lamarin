@@ -1,14 +1,14 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useActionState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { signUp } from "@/lib/auth-client";
-import { registerSchema } from "@/lib/validations";
+import { registerSchema, type RegisterFormData } from "@/lib/validations";
+import { registerAction, type AuthActionState } from "@/actions/auth/mutation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FormMessage } from "@/components/ui/form-message";
 import {
   Card,
   CardContent,
@@ -18,60 +18,22 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
-import { toast } from "sonner";
 
-interface FormErrors {
-  name?: string[];
-  email?: string[];
-  password?: string[];
-  confirmPassword?: string[];
-}
+const initialState: AuthActionState = { success: false };
 
 export default function RegisterPage() {
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
-  const [errors, setErrors] = useState<FormErrors>({});
-  const [generalError, setGeneralError] = useState("");
+  const {
+    register,
+    formState: { errors },
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
+    mode: "onBlur",
+  });
 
-  function handleSubmit(formData: FormData) {
-    setErrors({});
-    setGeneralError("");
-
-    const rawData = Object.fromEntries(formData);
-    const result = registerSchema.safeParse(rawData);
-
-    if (!result.success) {
-      setErrors(result.error.flatten().fieldErrors as FormErrors);
-      return;
-    }
-
-    startTransition(async () => {
-      try {
-        const response = await signUp.email({
-          name: result.data.name,
-          email: result.data.email,
-          password: result.data.password,
-        });
-
-        if (response.error) {
-          const errorMsg = response.error.message || "Registrasi gagal";
-          setGeneralError(errorMsg);
-          toast.error(errorMsg);
-        } else {
-          toast.success("Registrasi berhasil! Selamat datang.");
-          router.push("/");
-          router.refresh();
-        }
-      } catch (error) {
-        const errorMsg =
-          error instanceof Error
-            ? error.message
-            : "Terjadi kesalahan. Silakan coba lagi.";
-        setGeneralError(errorMsg);
-        toast.error(errorMsg);
-      }
-    });
-  }
+  const [state, formAction, isPending] = useActionState(
+    registerAction,
+    initialState
+  );
 
   return (
     <Card>
@@ -80,55 +42,74 @@ export default function RegisterPage() {
         <CardDescription>Buat akun baru</CardDescription>
       </CardHeader>
       <CardContent>
-        <form action={handleSubmit} className="space-y-4">
-          {generalError && (
+        <form action={formAction} className="space-y-4">
+          {state.message && !state.success && (
             <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-              {generalError}
+              {state.message}
             </div>
           )}
           <div className="space-y-2">
             <Label htmlFor="name">Nama Lengkap</Label>
             <Input
               id="name"
-              name="name"
               type="text"
               placeholder="John Doe"
-              aria-invalid={!!errors.name}
+              aria-invalid={!!errors.name || !!state.errors?.name}
+              {...register("name")}
             />
-            <FormMessage errors={errors.name} />
+            {(errors.name || state.errors?.name) && (
+              <p className="text-xs text-destructive mt-1" role="alert">
+                {errors.name?.message || state.errors?.name?.[0]}
+              </p>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
-              name="email"
               type="email"
               placeholder="nama@email.com"
-              aria-invalid={!!errors.email}
+              aria-invalid={!!errors.email || !!state.errors?.email}
+              {...register("email")}
             />
-            <FormMessage errors={errors.email} />
+            {(errors.email || state.errors?.email) && (
+              <p className="text-xs text-destructive mt-1" role="alert">
+                {errors.email?.message || state.errors?.email?.[0]}
+              </p>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
             <Input
               id="password"
-              name="password"
               type="password"
               placeholder="Minimal 8 karakter"
-              aria-invalid={!!errors.password}
+              aria-invalid={!!errors.password || !!state.errors?.password}
+              {...register("password")}
             />
-            <FormMessage errors={errors.password} />
+            {(errors.password || state.errors?.password) && (
+              <p className="text-xs text-destructive mt-1" role="alert">
+                {errors.password?.message || state.errors?.password?.[0]}
+              </p>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="confirmPassword">Konfirmasi Password</Label>
             <Input
               id="confirmPassword"
-              name="confirmPassword"
               type="password"
               placeholder="Ulangi password"
-              aria-invalid={!!errors.confirmPassword}
+              aria-invalid={
+                !!errors.confirmPassword || !!state.errors?.confirmPassword
+              }
+              {...register("confirmPassword")}
             />
-            <FormMessage errors={errors.confirmPassword} />
+            {(errors.confirmPassword || state.errors?.confirmPassword) && (
+              <p className="text-xs text-destructive mt-1" role="alert">
+                {errors.confirmPassword?.message ||
+                  state.errors?.confirmPassword?.[0]}
+              </p>
+            )}
           </div>
           <Button type="submit" className="w-full" disabled={isPending}>
             {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

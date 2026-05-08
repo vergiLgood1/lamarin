@@ -1,4 +1,3 @@
-import { Toaster } from "@/components/ui/sonner";
 
 export default function AuthLayout({
   children,
@@ -10,7 +9,6 @@ export default function AuthLayout({
       <div className="w-full max-w-md px-4">
         {children}
       </div>
-      <Toaster position="bottom-right" />
     </div>
   );
 }

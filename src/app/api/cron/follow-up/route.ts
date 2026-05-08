@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
-import { followUpSchedules, followUpEmails, jobApplications } from "@/db/schema";
-import { eq, and, lte } from "drizzle-orm";
-import { streamText } from "ai";
+import { followUpEmails, followUpSchedules, jobApplications } from "@/db/schema";
 import { aiModel, FOLLOW_UP_SYSTEM_PROMPT } from "@/lib/ai";
 import { sendEmail } from "@/lib/email";
 import { logger } from "@/lib/logger";
+import { streamText } from "ai";
+import { and, eq, lte } from "drizzle-orm";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   // Verify cron secret

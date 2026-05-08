@@ -1,14 +1,15 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useActionState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { signIn } from "@/lib/auth-client";
-import { loginSchema } from "@/lib/validations";
+import { loginSchema, type LoginFormData } from "@/lib/validations";
+import { loginAction, type AuthActionState } from "@/actions/auth/mutation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FormMessage } from "@/components/ui/form-message";
 import {
   Card,
   CardContent,
@@ -19,66 +20,36 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Loader2 } from "lucide-react";
-import { toast } from "sonner";
+import { useTransition } from "react";
 
-interface FormErrors {
-  email?: string[];
-  password?: string[];
-}
+const initialState: AuthActionState = { success: false };
 
 export default function LoginPage() {
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
-  const [errors, setErrors] = useState<FormErrors>({});
-  const [generalError, setGeneralError] = useState("");
+  const [isPendingGoogle, startGoogleTransition] = useTransition();
 
-  function handleSubmit(formData: FormData) {
-    setErrors({});
-    setGeneralError("");
+  const {
+    register,
+    formState: { errors },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    mode: "onBlur",
+  });
 
-    const rawData = Object.fromEntries(formData);
-    const result = loginSchema.safeParse(rawData);
-
-    if (!result.success) {
-      setErrors(result.error.flatten().fieldErrors as FormErrors);
-      return;
-    }
-
-    startTransition(async () => {
-      try {
-        const response = await signIn.email({
-          email: result.data.email,
-          password: result.data.password,
-        });
-
-        if (response.error) {
-          setGeneralError(response.error.message || "Login gagal");
-          toast.error(response.error.message || "Login gagal");
-        } else {
-          toast.success("Login berhasil");
-          router.push("/");
-          router.refresh();
-        }
-      } catch {
-        setGeneralError("Terjadi kesalahan. Silakan coba lagi.");
-        toast.error("Terjadi kesalahan. Silakan coba lagi.");
-      }
-    });
-  }
+  const [state, formAction, isPending] = useActionState(
+    loginAction,
+    initialState
+  );
 
   function handleGoogleLogin() {
-    startTransition(async () => {
-      try {
-        await signIn.social({
-          provider: "google",
-          callbackURL: "/",
-        });
-      } catch {
-        setGeneralError("Gagal login dengan Google");
-        toast.error("Gagal login dengan Google");
-      }
+    startGoogleTransition(async () => {
+      await signIn.social({
+        provider: "google",
+        callbackURL: "/",
+      });
     });
   }
+
+  const isDisabled = isPending || isPendingGoogle;
 
   return (
     <Card>
@@ -87,35 +58,43 @@ export default function LoginPage() {
         <CardDescription>Masuk ke akun Anda</CardDescription>
       </CardHeader>
       <CardContent>
-        <form action={handleSubmit} className="space-y-4">
-          {generalError && (
+        <form action={formAction} className="space-y-4">
+          {state.message && !state.success && (
             <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-              {generalError}
+              {state.message}
             </div>
           )}
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
-              name="email"
               type="email"
               placeholder="nama@email.com"
-              aria-invalid={!!errors.email}
+              aria-invalid={!!errors.email || !!state.errors?.email}
+              {...register("email")}
             />
-            <FormMessage errors={errors.email} />
+            {(errors.email || state.errors?.email) && (
+              <p className="text-xs text-destructive mt-1" role="alert">
+                {errors.email?.message || state.errors?.email?.[0]}
+              </p>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
             <Input
               id="password"
-              name="password"
               type="password"
               placeholder="••••••••"
-              aria-invalid={!!errors.password}
+              aria-invalid={!!errors.password || !!state.errors?.password}
+              {...register("password")}
             />
-            <FormMessage errors={errors.password} />
+            {(errors.password || state.errors?.password) && (
+              <p className="text-xs text-destructive mt-1" role="alert">
+                {errors.password?.message || state.errors?.password?.[0]}
+              </p>
+            )}
           </div>
-          <Button type="submit" className="w-full" disabled={isPending}>
+          <Button type="submit" className="w-full" disabled={isDisabled}>
             {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {isPending ? "Memproses..." : "Masuk"}
           </Button>
@@ -131,7 +110,7 @@ export default function LoginPage() {
           variant="outline"
           className="w-full"
           onClick={handleGoogleLogin}
-          disabled={isPending}
+          disabled={isDisabled}
         >
           <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
             <path

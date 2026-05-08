@@ -1,7 +1,6 @@
 import { Header } from "@/components/layout/header";
-import { AppSidebar } from "@/components/sidebar/app-sidebar";
+import { AppSidebar } from "@/components/layout/sidebar/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { Toaster } from "@/components/ui/sonner";
 
 export default function DashboardLayout({
   children,
@@ -19,7 +18,6 @@ export default function DashboardLayout({
           </div>
         </div>
       </SidebarInset>
-      <Toaster position="bottom-right" />
     </SidebarProvider>
   );
 }
