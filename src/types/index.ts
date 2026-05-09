@@ -1,11 +1,11 @@
-import type { InferSelectModel } from "drizzle-orm";
 import type {
-  jobApplications,
+  applicationDocuments,
   followUpEmails,
   followUpSchedules,
-  applicationDocuments,
+  jobApplications,
   user,
 } from "@/db/schema";
+import type { InferSelectModel } from "drizzle-orm";
 
 export type User = InferSelectModel<typeof user>;
 export type JobApplication = InferSelectModel<typeof jobApplications>;
@@ -61,4 +61,10 @@ export interface ApplicationFilters {
   sortOrder?: "asc" | "desc";
   page?: number;
   limit?: number;
+}
+
+export interface ColorScheme {
+  id: string;
+  label: string;
+  color: string; // Preview dot color (hex/oklch for display)
 }

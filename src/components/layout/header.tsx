@@ -56,7 +56,7 @@ export function Header() {
       <div className="flex items-center gap-2">
         <ThemeToggle />
 
-        <DropdownMenu>
+        {/* <DropdownMenu>
           <DropdownMenuTrigger
             render={
               <Button variant="ghost" size="icon" className="rounded-full">
@@ -92,7 +92,7 @@ export function Header() {
               Keluar
             </DropdownMenuItem>
           </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenu> */}
       </div>
     </header>
   );

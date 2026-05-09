@@ -1,5 +1,7 @@
 // Suggestion values untuk combobox di application form
 
+import { ColorScheme } from "@/types";
+
 export const LOCATION_SUGGESTIONS = [
   "Jakarta",
   "Bandung",
@@ -90,4 +92,19 @@ export const DOCUMENT_TYPE_OPTIONS = [
   "SKCK",
   "Pas Foto",
   "Surat Referensi",
+];
+
+// ============================================
+// Color Schemes
+// ============================================
+
+export const COLOR_SCHEMES: ColorScheme[] = [
+  { id: "default", label: "Default", color: "#171717" },
+  { id: "rose", label: "Rose", color: "#e11d48" },
+  { id: "ocean", label: "Ocean", color: "#0284c7" },
+  { id: "forest", label: "Forest", color: "#16a34a" },
+  { id: "sunset", label: "Sunset", color: "#ea580c" },
+  { id: "midnight", label: "Midnight", color: "#7c3aed" },
+  { id: "lavender", label: "Lavender", color: "#a855f7" },
+  { id: "emerald", label: "Emerald", color: "#0d9488" },
 ];

@@ -7,11 +7,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Combobox,
   ComboboxContent,
+  ComboboxEmpty,
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
 } from "@/components/ui/combobox";
-import { FormMessage } from "@/components/ui/form-message";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -29,9 +29,12 @@ import {
   POSITION_SUGGESTIONS,
   SALARY_SUGGESTIONS,
 } from "@/lib/constants";
+import { applicationSchema, type ApplicationFormData } from "@/lib/validations";
 import type { ActionState, JobApplication } from "@/types";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useActionState, useEffect, useRef, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 const STATUS_OPTIONS = [
@@ -67,14 +70,31 @@ export function ApplicationForm({
   mode,
 }: ApplicationFormProps) {
   const router = useRouter();
-  const formRef = useRef<HTMLFormElement>(null);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>(existingDocuments);
 
-  // Hidden input values for combobox fields
-  const [position, setPosition] = useState(application?.position || "");
-  const [location, setLocation] = useState(application?.location || "");
-  const [jobSource, setJobSource] = useState(application?.jobSource || "");
-  const [salary, setSalary] = useState(application?.salary || "");
+  const {
+    register,
+    control,
+    formState: { errors },
+  } = useForm<ApplicationFormData>({
+    resolver: zodResolver(applicationSchema),
+    mode: "onBlur",
+    defaultValues: {
+      applicationDate:
+        application?.applicationDate ||
+        new Date().toISOString().split("T")[0],
+      companyName: application?.companyName || "",
+      position: application?.position || "",
+      location: application?.location || "",
+      jobSource: application?.jobSource || "",
+      salary: application?.salary || "",
+      status: application?.status || "applied",
+      followUpDate: application?.followUpDate || "",
+      hrContact: application?.hrContact || "",
+      meetingLink: application?.meetingLink || "",
+      notes: application?.notes || "",
+    },
+  });
 
   const boundUpdateAction = application
     ? updateApplication.bind(null, application.id)
@@ -101,12 +121,7 @@ export function ApplicationForm({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <form ref={formRef} action={formAction} className="space-y-6">
-          {/* Hidden inputs for combobox values */}
-          <input type="hidden" name="position" value={position} />
-          <input type="hidden" name="location" value={location} />
-          <input type="hidden" name="jobSource" value={jobSource} />
-          <input type="hidden" name="salary" value={salary} />
+        <form action={formAction} className="space-y-6">
           {/* Hidden input for uploaded files metadata */}
           <input
             type="hidden"
@@ -119,107 +134,153 @@ export function ApplicationForm({
               <Label htmlFor="applicationDate">Tanggal Lamar *</Label>
               <Input
                 id="applicationDate"
-                name="applicationDate"
                 type="date"
-                defaultValue={
-                  application?.applicationDate ||
-                  new Date().toISOString().split("T")[0]
-                }
-                aria-invalid={!!state.errors?.applicationDate}
+                aria-invalid={!!errors.applicationDate || !!state.errors?.applicationDate}
+                {...register("applicationDate")}
               />
-              <FormMessage errors={state.errors?.applicationDate} />
+              {(errors.applicationDate || state.errors?.applicationDate) && (
+                <p className="text-xs text-destructive mt-1" role="alert">
+                  {errors.applicationDate?.message || state.errors?.applicationDate?.[0]}
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="companyName">Nama Perusahaan *</Label>
               <Input
                 id="companyName"
-                name="companyName"
                 placeholder="PT. Contoh Indonesia"
-                defaultValue={application?.companyName || ""}
-                aria-invalid={!!state.errors?.companyName}
+                aria-invalid={!!errors.companyName || !!state.errors?.companyName}
+                {...register("companyName")}
               />
-              <FormMessage errors={state.errors?.companyName} />
+              {(errors.companyName || state.errors?.companyName) && (
+                <p className="text-xs text-destructive mt-1" role="alert">
+                  {errors.companyName?.message || state.errors?.companyName?.[0]}
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
               <Label>Posisi *</Label>
-              <Combobox value={position} onValueChange={(v) => setPosition(v || "")}>
-                <ComboboxInput
-                  placeholder="Cari atau ketik posisi..."
-                  aria-invalid={!!state.errors?.position}
-                />
-                <ComboboxContent>
-                  <ComboboxList>
-                    {POSITION_SUGGESTIONS.map((item) => (
-                      <ComboboxItem key={item} value={item}>
-                        {item}
-                      </ComboboxItem>
-                    ))}
-                  </ComboboxList>
-                </ComboboxContent>
-              </Combobox>
-              <FormMessage errors={state.errors?.position} />
+              <Controller
+                name="position"
+                control={control}
+                render={({ field }) => (
+                  <Combobox
+                    name="position"
+                    value={field.value}
+                    onValueChange={(v) => field.onChange(v || "")}
+                  >
+                    <ComboboxInput
+                      placeholder="Cari atau ketik posisi..."
+                      aria-invalid={!!errors.position || !!state.errors?.position}
+                    />
+                    <ComboboxContent>
+                      <ComboboxList>
+                        {POSITION_SUGGESTIONS.map((item) => (
+                          <ComboboxItem key={item} value={item}>
+                            {item}
+                          </ComboboxItem>
+                        ))}
+                      </ComboboxList>
+                      <ComboboxEmpty>Tidak ditemukan</ComboboxEmpty>
+                    </ComboboxContent>
+                  </Combobox>
+                )}
+              />
+              {(errors.position || state.errors?.position) && (
+                <p className="text-xs text-destructive mt-1" role="alert">
+                  {errors.position?.message || state.errors?.position?.[0]}
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
               <Label>Lokasi</Label>
-              <Combobox value={location} onValueChange={(v) => setLocation(v || "")}>
-                <ComboboxInput placeholder="Cari atau ketik lokasi..." />
-                <ComboboxContent>
-                  <ComboboxList>
-                    {LOCATION_SUGGESTIONS.map((item) => (
-                      <ComboboxItem key={item} value={item}>
-                        {item}
-                      </ComboboxItem>
-                    ))}
-                  </ComboboxList>
-                </ComboboxContent>
-              </Combobox>
+              <Controller
+                name="location"
+                control={control}
+                render={({ field }) => (
+                  <Combobox
+                    name="location"
+                    value={field.value}
+                    onValueChange={(v) => field.onChange(v || "")}
+                  >
+                    <ComboboxInput placeholder="Cari atau ketik lokasi..." />
+                    <ComboboxContent>
+                      <ComboboxList>
+                        {LOCATION_SUGGESTIONS.map((item) => (
+                          <ComboboxItem key={item} value={item}>
+                            {item}
+                          </ComboboxItem>
+                        ))}
+                      </ComboboxList>
+                      <ComboboxEmpty>Tidak ditemukan</ComboboxEmpty>
+                    </ComboboxContent>
+                  </Combobox>
+                )}
+              />
             </div>
 
             <div className="space-y-2">
               <Label>Sumber Lowongan</Label>
-              <Combobox value={jobSource} onValueChange={(v) => setJobSource(v || "")}>
-                <ComboboxInput placeholder="Cari atau ketik sumber..." />
-                <ComboboxContent>
-                  <ComboboxList>
-                    {JOB_SOURCE_SUGGESTIONS.map((item) => (
-                      <ComboboxItem key={item} value={item}>
-                        {item}
-                      </ComboboxItem>
-                    ))}
-                  </ComboboxList>
-                </ComboboxContent>
-              </Combobox>
+              <Controller
+                name="jobSource"
+                control={control}
+                render={({ field }) => (
+                  <Combobox
+                    name="jobSource"
+                    value={field.value}
+                    onValueChange={(v) => field.onChange(v || "")}
+                  >
+                    <ComboboxInput placeholder="Cari atau ketik sumber..." />
+                    <ComboboxContent>
+                      <ComboboxList>
+                        {JOB_SOURCE_SUGGESTIONS.map((item) => (
+                          <ComboboxItem key={item} value={item}>
+                            {item}
+                          </ComboboxItem>
+                        ))}
+                      </ComboboxList>
+                      <ComboboxEmpty>Tidak ditemukan</ComboboxEmpty>
+                    </ComboboxContent>
+                  </Combobox>
+                )}
+              />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="status">Status</Label>
-              <Select
+              <Controller
                 name="status"
-                defaultValue={application?.status || "applied"}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Pilih status" />
-                </SelectTrigger>
-                <SelectContent>
-                  {STATUS_OPTIONS.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    name="status"
+                    value={field.value}
+                    onValueChange={field.onChange}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Pilih status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {STATUS_OPTIONS.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="followUpDate">Tanggal Follow Up</Label>
               <Input
                 id="followUpDate"
-                name="followUpDate"
                 type="date"
-                defaultValue={application?.followUpDate || ""}
+                {...register("followUpDate")}
               />
             </div>
 
@@ -227,35 +288,44 @@ export function ApplicationForm({
               <Label htmlFor="hrContact">Kontak/Email HR</Label>
               <Input
                 id="hrContact"
-                name="hrContact"
                 placeholder="hr@perusahaan.com"
-                defaultValue={application?.hrContact || ""}
+                {...register("hrContact")}
               />
             </div>
 
             <div className="space-y-2">
               <Label>Gaji</Label>
-              <Combobox value={salary} onValueChange={(v) => setSalary(v || "")}>
-                <ComboboxInput placeholder="Cari atau ketik gaji..." />
-                <ComboboxContent>
-                  <ComboboxList>
-                    {SALARY_SUGGESTIONS.map((item) => (
-                      <ComboboxItem key={item} value={item}>
-                        {item}
-                      </ComboboxItem>
-                    ))}
-                  </ComboboxList>
-                </ComboboxContent>
-              </Combobox>
+              <Controller
+                name="salary"
+                control={control}
+                render={({ field }) => (
+                  <Combobox
+                    name="salary"
+                    value={field.value}
+                    onValueChange={(v) => field.onChange(v || "")}
+                  >
+                    <ComboboxInput placeholder="Cari atau ketik gaji..." />
+                    <ComboboxContent>
+                      <ComboboxList>
+                        {SALARY_SUGGESTIONS.map((item) => (
+                          <ComboboxItem key={item} value={item}>
+                            {item}
+                          </ComboboxItem>
+                        ))}
+                      </ComboboxList>
+                      <ComboboxEmpty>Tidak ditemukan</ComboboxEmpty>
+                    </ComboboxContent>
+                  </Combobox>
+                )}
+              />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="meetingLink">Link Zoom/Meet</Label>
               <Input
                 id="meetingLink"
-                name="meetingLink"
                 placeholder="https://zoom.us/j/..."
-                defaultValue={application?.meetingLink || ""}
+                {...register("meetingLink")}
               />
             </div>
           </div>
@@ -273,10 +343,9 @@ export function ApplicationForm({
             <Label htmlFor="notes">Catatan</Label>
             <Textarea
               id="notes"
-              name="notes"
               placeholder="Catatan tambahan..."
               rows={3}
-              defaultValue={application?.notes || ""}
+              {...register("notes")}
             />
           </div>
 

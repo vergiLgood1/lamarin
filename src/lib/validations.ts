@@ -86,7 +86,7 @@ export const registerSchema = z
 // Inferred Types
 // ============================================
 
-export type ApplicationFormData = z.infer<typeof applicationSchema>;
+export type ApplicationFormData = z.input<typeof applicationSchema>;
 export type FollowUpEmailFormData = z.infer<typeof followUpEmailSchema>;
 export type ScheduleFormData = z.infer<typeof scheduleSchema>;
 export type LoginFormData = z.infer<typeof loginSchema>;

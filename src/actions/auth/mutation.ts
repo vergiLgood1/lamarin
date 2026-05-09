@@ -2,9 +2,9 @@
 
 import { auth } from "@/lib/auth";
 import { loginSchema, registerSchema } from "@/lib/validations";
+import { APIError } from "better-auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { APIError } from "better-auth/api";
 
 export type AuthActionState = {
   success: boolean;

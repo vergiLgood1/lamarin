@@ -7,37 +7,50 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Monitor, Moon, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
+import { ThemeToggleButton } from "@/components/ui/skiper-ui/skiper26";
+import { useColorScheme } from "@/hooks/use-color-scheme";
+import { COLOR_SCHEMES } from "@/lib/constants";
+import { Check, ChevronDown } from "lucide-react";
 
 export function ThemeToggle() {
-  const { setTheme, theme } = useTheme();
+  const { scheme, setScheme } = useColorScheme();
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        render={
-          <Button variant="ghost" size="icon">
-            <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-            <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-            <span className="sr-only">Toggle theme</span>
-          </Button>
-        }
-      />
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>
-          <Sun className="mr-2 h-4 w-4" />
-          Light
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>
-          <Moon className="mr-2 h-4 w-4" />
-          Dark
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>
-          <Monitor className="mr-2 h-4 w-4" />
-          System
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <div className="flex items-center gap-2">
+      {/* Mode toggle (light/dark) with animated SVG button */}
+      <ThemeToggleButton variant="circle" start="top-right" />
+
+      {/* Color scheme picker */}
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={
+            <Button
+              variant="outline"
+              size="lg"
+              className="w-56 justify-between"
+            >
+              <span className="truncate text-left">
+                Select a schema: <span className="ml-2">{scheme}</span>
+              </span>
+              <ChevronDown className="ml-1 h-3 w-3" />
+            </Button>
+          }
+        />
+        <DropdownMenuContent align="end" className="w-56">
+          {COLOR_SCHEMES.map((cs) => (
+            <DropdownMenuItem key={cs.id} onClick={() => setScheme(cs.id)}>
+              <span
+                className="mr-2 inline-block size-3 rounded-full shrink-0"
+                style={{ backgroundColor: cs.color }}
+              />
+              <span className="flex-1">{cs.label}</span>
+              {scheme === cs.id && (
+                <Check className="ml-2 h-3.5 w-3.5 text-primary" />
+              )}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   );
 }
