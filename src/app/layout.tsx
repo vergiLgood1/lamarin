@@ -1,9 +1,22 @@
-import { ThemeProvider } from "@/components/theme-provider";
+import Providers from "@/components/layout/providers";
+import { fontVariables } from "@/components/themes/font.config";
+import ThemeProvider from "@/components/themes/theme-provider";
+import { DEFAULT_THEME, THEMES } from "@/components/themes/theme.config";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import type { Metadata } from "next";
-import { Toaster } from "sonner";
-import { lora, plusJakartaSans, robotoMono } from "./font";
-import "./globals.css";
+import { cn } from "@/lib/utils";
+import type { Metadata, Viewport } from "next";
+import { cookies } from "next/headers";
+import "../styles/globals.css";
+import { Toaster } from "@/components/ui/sonner";
+
+const META_THEME_COLORS = {
+  light: "#ffffff",
+  dark: "#09090b",
+};
+
+export const viewport: Viewport = {
+  themeColor: META_THEME_COLORS.light,
+};
 
 export const metadata: Metadata = {
   title: "Applyorbit - Job Application Tracker",
@@ -23,28 +36,52 @@ const colorSchemeScript = `
 })();
 `;
 
-export default function RootLayout({
+const metaTheme = `
+(function() {
+try {
+// Set meta theme color
+if (localStorage.theme === 'dark' || ((!('theme' in localStorage) || localStorage.theme === 'system') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '${META_THEME_COLORS.dark}')}} catch (_) {}
+})();
+`;
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const activeThemeValue = cookieStore.get("active_theme")?.value;
+  const isValidTheme = THEMES.some((t) => t.value === activeThemeValue);
+  const themeToApply = isValidTheme ? activeThemeValue! : DEFAULT_THEME;
+
   return (
     <html
       lang="id"
-      className={`${plusJakartaSans.variable} ${lora.variable} ${robotoMono.variable} h-full antialiased`}
+      // className={`${plusJakartaSans.variable} ${lora.variable} ${robotoMono.variable} h-full antialiased`}
       suppressHydrationWarning
+      data-theme={themeToApply}
     >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: colorSchemeScript }} />
+        <script dangerouslySetInnerHTML={{ __html: metaTheme }} />
       </head>
-      <body className="min-h-full flex flex-col">
+      <body
+        className={cn(
+          "bg-background overflow-x-hidden overscroll-none font-sans antialiased",
+          fontVariables,
+        )}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
+          disableTransitionOnChange
+          enableColorScheme
         >
-          <Toaster position="top-right" />
-          <TooltipProvider>{children}</TooltipProvider>
+          <Providers activeThemeValue={themeToApply}>
+            <Toaster position="top-right" />
+            <TooltipProvider>{children}</TooltipProvider>
+          </Providers>
         </ThemeProvider>
       </body>
     </html>

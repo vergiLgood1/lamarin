@@ -7,6 +7,13 @@ import type {
 } from "@/db/schema";
 import type { InferSelectModel } from "drizzle-orm";
 
+import * as TablerIcons from "@tabler/icons-react";
+import * as LucideIcons from "lucide-react";
+
+type LucideIconName = keyof typeof LucideIcons;
+type TablerIconName = keyof typeof TablerIcons;
+ 
+
 export type User = InferSelectModel<typeof user>;
 export type JobApplication = InferSelectModel<typeof jobApplications>;
 export type FollowUpEmail = InferSelectModel<typeof followUpEmails>;
@@ -68,3 +75,51 @@ export interface ColorScheme {
   label: string;
   color: string; // Preview dot color (hex/oklch for display)
 }
+
+export interface PermissionCheck {
+  permission?: string;
+  plan?: string;
+  feature?: string;
+  role?: string;
+  requireOrg?: boolean;
+}
+
+export interface NavItem {
+  title: string;
+  url: string;
+  disabled?: boolean;
+  external?: boolean;
+  shortcut?: [string, string];
+  icon?: LucideIconName | TablerIconName;
+  label?: string;
+  description?: string;
+  isActive?: boolean;
+  items?: NavItem[];
+  access?: PermissionCheck;
+}
+
+export interface NavGroup {
+  label: string;
+  items: NavItem[];
+}
+
+export interface NavItemWithChildren extends NavItem {
+  items: NavItemWithChildren[];
+}
+
+export interface NavItemWithOptionalChildren extends NavItem {
+  items?: NavItemWithChildren[];
+}
+
+export interface FooterItem {
+  title: string;
+  items: {
+    title: string;
+    href: string;
+    external?: boolean;
+  }[];
+}
+
+export type MainNavItem = NavItemWithOptionalChildren;
+
+export type SidebarNavItem = NavItemWithChildren;

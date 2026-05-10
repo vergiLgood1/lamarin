@@ -1,9 +1,12 @@
-import { getFollowUpEmails, getFollowUpSchedules } from "@/actions/follow-up/queries";
 import { getApplications } from "@/actions/applications/queries";
-import { EmailComposer } from "@/components/follow-up/email-composer";
-import { EmailPreview } from "@/components/follow-up/email-preview";
-import { ScheduleForm } from "@/components/follow-up/schedule-form";
+import {
+  getFollowUpEmails,
+  getFollowUpSchedules,
+} from "@/actions/follow-up/queries";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { EmailComposer } from "@/features/follow-up/email-composer";
+import { EmailPreview } from "@/features/follow-up/email-preview";
+import { ScheduleForm } from "@/features/follow-up/schedule-form";
 
 export default async function FollowUpsPage() {
   const [emails, schedules, { data: applications }] = await Promise.all([

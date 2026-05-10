@@ -1,5 +1,6 @@
+import KBar from "@/components/kbar";
+import { AppSidebar } from "@/components/layout/app-sidebar";
 import { Header } from "@/components/layout/header";
-import { AppSidebar } from "@/components/layout/sidebar/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 export default function DashboardLayout({
@@ -8,16 +9,16 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <Header />
-        <div className="flex-1">
-          <div className="mx-auto px-4 py-6 lg:px-6">
-            {children}
+    <KBar>
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarInset>
+          <Header />
+          <div className="flex-1">
+            <div className="mx-auto px-4 py-6 lg:px-6">{children}</div>
           </div>
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
+        </SidebarInset>
+      </SidebarProvider>
+    </KBar>
   );
 }

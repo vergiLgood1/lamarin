@@ -1,7 +1,10 @@
 "use client";
 
-import { createApplication, updateApplication } from "@/actions/applications/mutations";
-import { FileUpload } from "@/components/applications/file-upload";
+import {
+  createApplication,
+  updateApplication,
+} from "@/actions/applications/mutations";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -36,6 +39,7 @@ import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { FileUpload } from "./file-upload";
 
 const STATUS_OPTIONS = [
   { value: "applied", label: "Melamar" },
@@ -70,7 +74,8 @@ export function ApplicationForm({
   mode,
 }: ApplicationFormProps) {
   const router = useRouter();
-  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>(existingDocuments);
+  const [uploadedFiles, setUploadedFiles] =
+    useState<UploadedFile[]>(existingDocuments);
 
   const {
     register,
@@ -81,8 +86,7 @@ export function ApplicationForm({
     mode: "onBlur",
     defaultValues: {
       applicationDate:
-        application?.applicationDate ||
-        new Date().toISOString().split("T")[0],
+        application?.applicationDate || new Date().toISOString().split("T")[0],
       companyName: application?.companyName || "",
       position: application?.position || "",
       location: application?.location || "",
@@ -135,12 +139,15 @@ export function ApplicationForm({
               <Input
                 id="applicationDate"
                 type="date"
-                aria-invalid={!!errors.applicationDate || !!state.errors?.applicationDate}
+                aria-invalid={
+                  !!errors.applicationDate || !!state.errors?.applicationDate
+                }
                 {...register("applicationDate")}
               />
               {(errors.applicationDate || state.errors?.applicationDate) && (
                 <p className="text-xs text-destructive mt-1" role="alert">
-                  {errors.applicationDate?.message || state.errors?.applicationDate?.[0]}
+                  {errors.applicationDate?.message ||
+                    state.errors?.applicationDate?.[0]}
                 </p>
               )}
             </div>
@@ -150,12 +157,15 @@ export function ApplicationForm({
               <Input
                 id="companyName"
                 placeholder="PT. Contoh Indonesia"
-                aria-invalid={!!errors.companyName || !!state.errors?.companyName}
+                aria-invalid={
+                  !!errors.companyName || !!state.errors?.companyName
+                }
                 {...register("companyName")}
               />
               {(errors.companyName || state.errors?.companyName) && (
                 <p className="text-xs text-destructive mt-1" role="alert">
-                  {errors.companyName?.message || state.errors?.companyName?.[0]}
+                  {errors.companyName?.message ||
+                    state.errors?.companyName?.[0]}
                 </p>
               )}
             </div>
@@ -173,7 +183,9 @@ export function ApplicationForm({
                   >
                     <ComboboxInput
                       placeholder="Cari atau ketik posisi..."
-                      aria-invalid={!!errors.position || !!state.errors?.position}
+                      aria-invalid={
+                        !!errors.position || !!state.errors?.position
+                      }
                     />
                     <ComboboxContent>
                       <ComboboxList>

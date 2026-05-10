@@ -1,4 +1,4 @@
-import { ApplicationForm } from "@/components/applications/application-form";
+import { ApplicationForm } from "@/features/applications/application-form";
 
 export default function NewApplicationPage() {
   return (

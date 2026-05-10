@@ -1,6 +1,9 @@
+import {
+  getApplicationById,
+  getApplicationDocuments,
+} from "@/actions/applications/queries";
+import { ApplicationForm } from "@/features/applications/application-form";
 import { notFound } from "next/navigation";
-import { getApplicationById, getApplicationDocuments } from "@/actions/applications/queries";
-import { ApplicationForm } from "@/components/applications/application-form";
 
 interface PageProps {
   params: Promise<{ id: string }>;

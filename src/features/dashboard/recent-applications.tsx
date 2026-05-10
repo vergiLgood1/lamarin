@@ -8,7 +8,8 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { JobApplication } from "@/types";
-import { StatusBadge } from "@/components/applications/status-badge";
+import { StatusBadge } from "../applications/status-badge";
+ 
 
 interface RecentApplicationsProps {
   applications: JobApplication[];

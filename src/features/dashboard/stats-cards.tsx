@@ -1,10 +1,5 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { FileText, TrendingUp, CalendarClock, Briefcase } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Briefcase, CalendarClock, FileText, TrendingUp } from "lucide-react";
 
 interface StatsCardsProps {
   totalApplications: number;
@@ -20,10 +15,14 @@ export function StatsCards({
   upcomingFollowUps,
 }: StatsCardsProps) {
   const monthChange =
-    lastMonth > 0 ? ((thisMonth - lastMonth) / lastMonth) * 100 : thisMonth > 0 ? 100 : 0;
+    lastMonth > 0
+      ? ((thisMonth - lastMonth) / lastMonth) * 100
+      : thisMonth > 0
+        ? 100
+        : 0;
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 *:data-[slot=card]:bg-linear-to-t *:data-[slot=card]:shadow-xs md:grid-cols-2 lg:grid-cols-4">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -61,8 +60,7 @@ export function StatsCards({
                 {monthChange.toFixed(0)}%
               </span>
             )}
-            {monthChange === 0 && <span>Sama</span>}
-            {" "}dari bulan lalu
+            {monthChange === 0 && <span>Sama</span>} dari bulan lalu
           </p>
         </CardContent>
       </Card>

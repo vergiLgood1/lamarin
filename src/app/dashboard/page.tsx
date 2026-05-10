@@ -1,8 +1,8 @@
 import { getDashboardStats, getMonthlyTrend } from "@/actions/dashboard/queries";
-import { StatsCards } from "@/components/dashboard/stats-cards";
-import { StatusChart } from "@/components/dashboard/status-chart";
-import { TrendChart } from "@/components/dashboard/trend-chart";
-import { RecentApplications } from "@/components/dashboard/recent-applications";
+import { RecentApplications } from "@/features/dashboard/recent-applications";
+import { StatsCards } from "@/features/dashboard/stats-cards";
+import { StatusChart } from "@/features/dashboard/status-chart";
+import { TrendChart } from "@/features/dashboard/trend-chart";
 
 export default async function DashboardPage() {
   const [stats, trend] = await Promise.all([

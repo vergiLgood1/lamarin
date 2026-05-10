@@ -1,7 +1,7 @@
 import { getApplications } from "@/actions/applications/queries";
-import { ApplicationTable } from "@/components/applications/application-table";
-import { FilterBar } from "@/components/applications/filter-bar";
 import { buttonVariants } from "@/components/ui/button";
+import { ApplicationTable } from "@/features/applications/application-table";
+import { FilterBar } from "@/features/applications/filter-bar";
 import { cn } from "@/lib/utils";
 import type { ApplicationStatus } from "@/types";
 import { Plus } from "lucide-react";
@@ -34,7 +34,10 @@ export default async function ApplicationsPage({ searchParams }: PageProps) {
             Kelola semua data lamaran kerja Anda
           </p>
         </div>
-        <Link href="/dashboard/applications/new" className={cn(buttonVariants())}>
+        <Link
+          href="/dashboard/applications/new"
+          className={cn(buttonVariants())}
+        >
           <Plus className="mr-2 h-4 w-4" />
           Tambah Lamaran
         </Link>
@@ -53,7 +56,9 @@ export default async function ApplicationsPage({ searchParams }: PageProps) {
             {pagination.page > 1 && (
               <Link
                 href={`/dashboard/applications?page=${pagination.page - 1}${params.search ? `&search=${params.search}` : ""}${params.status ? `&status=${params.status}` : ""}`}
-                className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "sm" }),
+                )}
               >
                 Sebelumnya
               </Link>
@@ -61,7 +66,9 @@ export default async function ApplicationsPage({ searchParams }: PageProps) {
             {pagination.page < pagination.totalPages && (
               <Link
                 href={`/dashboard/applications?page=${pagination.page + 1}${params.search ? `&search=${params.search}` : ""}${params.status ? `&status=${params.status}` : ""}`}
-                className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "sm" }),
+                )}
               >
                 Selanjutnya
               </Link>

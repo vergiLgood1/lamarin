@@ -1,13 +1,11 @@
-import { getApplicationById, getApplicationDocuments } from "@/actions/applications/queries";
-import { StatusBadge } from "@/components/applications/status-badge";
-import { Button, buttonVariants } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  getApplicationById,
+  getApplicationDocuments,
+} from "@/actions/applications/queries";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { StatusBadge } from "@/features/applications/status-badge";
 import { cn } from "@/lib/utils";
 import { ArrowLeft, ExternalLink, FileText, Image, Pencil } from "lucide-react";
 import Link from "next/link";
@@ -51,7 +49,9 @@ export default async function ApplicationDetailPage({ params }: PageProps) {
         <CardHeader>
           <div className="flex items-start justify-between">
             <div>
-              <CardTitle className="text-xl">{application.companyName}</CardTitle>
+              <CardTitle className="text-xl">
+                {application.companyName}
+              </CardTitle>
               <p className="text-muted-foreground">{application.position}</p>
             </div>
             <StatusBadge status={application.status} />
@@ -59,10 +59,16 @@ export default async function ApplicationDetailPage({ params }: PageProps) {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
-            <DetailItem label="Tanggal Lamar" value={application.applicationDate} />
+            <DetailItem
+              label="Tanggal Lamar"
+              value={application.applicationDate}
+            />
             <DetailItem label="Lokasi" value={application.location} />
             <DetailItem label="Sumber Lowongan" value={application.jobSource} />
-            <DetailItem label="Tanggal Follow Up" value={application.followUpDate} />
+            <DetailItem
+              label="Tanggal Follow Up"
+              value={application.followUpDate}
+            />
             <DetailItem label="Kontak/Email HR" value={application.hrContact} />
             <DetailItem label="Gaji" value={application.salary} />
           </div>
@@ -138,8 +144,12 @@ export default async function ApplicationDetailPage({ params }: PageProps) {
             <>
               <Separator />
               <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">Catatan</p>
-                <p className="whitespace-pre-wrap text-sm">{application.notes}</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Catatan
+                </p>
+                <p className="whitespace-pre-wrap text-sm">
+                  {application.notes}
+                </p>
               </div>
             </>
           )}
@@ -148,7 +158,8 @@ export default async function ApplicationDetailPage({ params }: PageProps) {
 
           <div className="flex gap-4 text-xs text-muted-foreground">
             <span>
-              Dibuat: {new Date(application.createdAt).toLocaleDateString("id-ID")}
+              Dibuat:{" "}
+              {new Date(application.createdAt).toLocaleDateString("id-ID")}
             </span>
             <span>
               Diperbarui:{" "}
