@@ -1,17 +1,15 @@
 "use client";
 
-import { useTransition } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { sendFollowUpEmail, deleteFollowUpEmail } from "@/actions/follow-up/mutations";
+  deleteFollowUpEmail,
+  sendFollowUpEmail,
+} from "@/features/follow-up/actions/mutations";
+import { Loader2, Send, Trash2 } from "lucide-react";
+import { useTransition } from "react";
 import { toast } from "sonner";
-import { Send, Trash2, Loader2 } from "lucide-react";
 
 interface EmailPreviewProps {
   emails: {

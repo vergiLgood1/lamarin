@@ -87,6 +87,16 @@ export const emailStatusEnum = pgEnum("email_status", [
 
 export const emailModeEnum = pgEnum("email_mode", ["manual", "automatic"]);
 
+export const jobTypeEnum = pgEnum("job_type", [
+  "fulltime",
+  "parttime",
+  "internship",
+  "freelance",
+  "contract",
+  "temporary",
+  "other",
+]);
+
 // ============================================
 // Application Tables
 // ============================================
@@ -101,6 +111,7 @@ export const jobApplications = pgTable("job_applications", {
   location: varchar("location", { length: 255 }),
   position: varchar("position", { length: 255 }).notNull(),
   jobSource: varchar("job_source", { length: 255 }),
+  jobType: jobTypeEnum("job_type").notNull().default("other"),
   followUpDate: date("follow_up_date"),
   status: applicationStatusEnum("status").notNull().default("applied"),
   hrContact: varchar("hr_contact", { length: 255 }),

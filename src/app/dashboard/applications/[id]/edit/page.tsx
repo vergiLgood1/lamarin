@@ -1,8 +1,8 @@
 import {
   getApplicationById,
   getApplicationDocuments,
-} from "@/actions/applications/queries";
-import { ApplicationForm } from "@/features/applications/application-form";
+} from "@/features/applications/actions/queries";
+import { ApplicationForm } from "@/features/applications/components/application-form";
 import { notFound } from "next/navigation";
 
 interface PageProps {

@@ -1,7 +1,8 @@
-import { getApplications } from "@/actions/applications/queries";
 import { buttonVariants } from "@/components/ui/button";
-import { ApplicationTable } from "@/features/applications/application-table";
-import { FilterBar } from "@/features/applications/filter-bar";
+import { getApplications } from "@/features/applications/actions/queries";
+import { ApplicationTable } from "@/features/applications/components/application-table";
+import { FilterBar } from "@/features/applications/components/filter-bar";
+ 
 import { cn } from "@/lib/utils";
 import type { ApplicationStatus } from "@/types";
 import { Plus } from "lucide-react";

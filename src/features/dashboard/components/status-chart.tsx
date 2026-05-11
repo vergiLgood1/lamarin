@@ -1,6 +1,5 @@
 "use client";
 
-import { Pie, PieChart, Cell } from "recharts";
 import {
   Card,
   CardContent,
@@ -13,6 +12,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { Cell, Label, Pie, PieChart, Sector } from "recharts";
 
 const STATUS_COLORS: Record<string, string> = {
   applied: "#3b82f6",
@@ -40,6 +40,40 @@ interface StatusChartProps {
   data: { status: string; count: number }[];
 }
 
+interface ActiveShapeProps {
+  cx?: number;
+  cy?: number;
+  innerRadius?: number;
+  outerRadius?: number;
+  startAngle?: number;
+  endAngle?: number;
+  fill?: string;
+}
+
+function ActiveSliceShape(props: ActiveShapeProps) {
+  const {
+    cx = 0,
+    cy = 0,
+    innerRadius = 0,
+    outerRadius = 0,
+    startAngle = 0,
+    endAngle = 0,
+    fill = "#6b7280",
+  } = props;
+
+  return (
+    <Sector
+      cx={cx}
+      cy={cy}
+      innerRadius={innerRadius}
+      outerRadius={outerRadius + 12}
+      startAngle={startAngle}
+      endAngle={endAngle}
+      fill={fill}
+    />
+  );
+}
+
 export function StatusChart({ data }: StatusChartProps) {
   const chartData = data.map((item) => ({
     name: STATUS_LABELS[item.status] || item.status,
@@ -54,7 +88,14 @@ export function StatusChart({ data }: StatusChartProps) {
         label: STATUS_LABELS[item.status] || item.status,
         color: STATUS_COLORS[item.status] || "#6b7280",
       },
-    ])
+    ]),
+  );
+
+  const total = chartData.reduce((sum, item) => sum + item.value, 0);
+  const activeIndex = chartData.reduce(
+    (maxIndex, item, index, items) =>
+      item.value > items[maxIndex].value ? index : maxIndex,
+    0,
   );
 
   if (data.length === 0) {
@@ -78,7 +119,7 @@ export function StatusChart({ data }: StatusChartProps) {
         <CardDescription>Breakdown berdasarkan status</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="mx-auto h-[200px]">
+        <ChartContainer config={chartConfig} className="mx-auto h-[220px]">
           <PieChart>
             <ChartTooltip content={<ChartTooltipContent />} />
             <Pie
@@ -87,11 +128,43 @@ export function StatusChart({ data }: StatusChartProps) {
               nameKey="name"
               cx="50%"
               cy="50%"
-              outerRadius={80}
+              innerRadius={58}
+              outerRadius={86}
+              paddingAngle={0}
+              activeShape={ActiveSliceShape}
             >
               {chartData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.fill} />
               ))}
+              <Label
+                content={({ viewBox }) => {
+                  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                    return (
+                      <text
+                        x={viewBox.cx}
+                        y={viewBox.cy}
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                      >
+                        <tspan
+                          x={viewBox.cx}
+                          y={viewBox.cy}
+                          className="fill-foreground text-3xl font-bold"
+                        >
+                          {total}
+                        </tspan>
+                        <tspan
+                          x={viewBox.cx}
+                          y={(viewBox.cy || 0) + 24}
+                          className="fill-muted-foreground"
+                        >
+                          Applications
+                        </tspan>
+                      </text>
+                    );
+                  }
+                }}
+              />
             </Pie>
           </PieChart>
         </ChartContainer>

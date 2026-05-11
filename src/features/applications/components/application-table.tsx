@@ -1,7 +1,13 @@
 "use client";
 
-import { useTransition } from "react";
-import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -10,19 +16,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { MoreHorizontal, Eye, Pencil, Trash2, FileText } from "lucide-react";
-import { StatusBadge } from "./status-badge";
-import { deleteApplication } from "@/actions/applications/mutations";
-import { toast } from "sonner";
+import { deleteApplication } from "@/features/applications/actions/mutations";
 import type { JobApplication } from "@/types";
+import { Eye, FileText, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { useTransition } from "react";
+import { toast } from "sonner";
+import { StatusBadge } from "./status-badge";
 
 interface ApplicationTableProps {
   applications: JobApplication[];
@@ -74,7 +74,10 @@ export function ApplicationTable({ applications }: ApplicationTableProps) {
         </TableHeader>
         <TableBody>
           {applications.map((app) => (
-            <TableRow key={app.id} className="transition-colors hover:bg-muted/50">
+            <TableRow
+              key={app.id}
+              className="transition-colors hover:bg-muted/50"
+            >
               <TableCell className="text-sm">{app.applicationDate}</TableCell>
               <TableCell className="font-medium">{app.companyName}</TableCell>
               <TableCell className="text-sm">{app.position}</TableCell>
@@ -103,13 +106,17 @@ export function ApplicationTable({ applications }: ApplicationTableProps) {
                   />
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem
-                      render={<Link href={`/dashboard/applications/${app.id}`} />}
+                      render={
+                        <Link href={`/dashboard/applications/${app.id}`} />
+                      }
                     >
                       <Eye className="mr-2 h-4 w-4" />
                       Lihat Detail
                     </DropdownMenuItem>
                     <DropdownMenuItem
-                      render={<Link href={`/dashboard/applications/${app.id}/edit`} />}
+                      render={
+                        <Link href={`/dashboard/applications/${app.id}/edit`} />
+                      }
                     >
                       <Pencil className="mr-2 h-4 w-4" />
                       Edit

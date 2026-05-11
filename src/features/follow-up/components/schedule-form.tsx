@@ -1,14 +1,11 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { FormMessage } from "@/components/ui/form-message";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -16,14 +13,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { SubmitButton } from "@/components/ui/submit-button";
-import { FormMessage } from "@/components/ui/form-message";
-import { createSchedule, cancelSchedule } from "@/actions/follow-up/mutations";
-import { toast } from "sonner";
+import {
+  cancelSchedule,
+  createSchedule,
+} from "@/features/follow-up/actions/mutations";
+import type { ActionState, FollowUpSchedule, JobApplication } from "@/types";
 import { Clock, X } from "lucide-react";
-import type { JobApplication, ActionState, FollowUpSchedule } from "@/types";
+import { useActionState, useEffect } from "react";
+import { toast } from "sonner";
 
 interface ScheduleFormProps {
   applications: JobApplication[];

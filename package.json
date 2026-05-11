@@ -12,6 +12,7 @@
     "lint": "bun --bun eslint",
     "db:generate": "bun --bun drizzle-kit generate",
     "db:migrate": "bun --bun drizzle-kit migrate",
+    "db:seed:dashboard": "bun scripts/seed-dashboard.ts",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio"
   },

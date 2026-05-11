@@ -1,14 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
-import { registerSchema, type RegisterFormData } from "@/lib/validations";
-import { registerAction, type AuthActionState } from "@/actions/auth/mutation";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -17,7 +9,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  registerAction,
+  type AuthActionState,
+} from "@/features/auth/actions/mutation";
+import { registerSchema, type RegisterFormData } from "@/lib/validations";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
+import Link from "next/link";
+import { useActionState } from "react";
+import { useForm } from "react-hook-form";
 
 const initialState: AuthActionState = { success: false };
 

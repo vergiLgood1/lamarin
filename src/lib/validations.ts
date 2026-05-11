@@ -18,6 +18,17 @@ export const applicationSchema = z.object({
   location: z.string().optional(),
   position: z.string().min(1, "Posisi wajib diisi"),
   jobSource: z.string().optional(),
+  jobType: z
+    .enum([
+      "fulltime",
+      "parttime",
+      "internship",
+      "freelance",
+      "contract",
+      "temporary",
+      "other",
+    ])
+    .default("other"),
   followUpDate: z.string().optional(),
   status: z
     .enum([

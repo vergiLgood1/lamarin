@@ -3,7 +3,7 @@
 import {
   createApplication,
   updateApplication,
-} from "@/actions/applications/mutations";
+} from "@/features/applications/actions/mutations";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -52,6 +52,16 @@ const STATUS_OPTIONS = [
   { value: "withdrawn", label: "Dibatalkan" },
 ];
 
+const JOB_TYPE_OPTIONS = [
+  { value: "fulltime", label: "Full-time" },
+  { value: "parttime", label: "Part-time" },
+  { value: "internship", label: "Internship" },
+  { value: "freelance", label: "Freelance" },
+  { value: "contract", label: "Contract" },
+  { value: "temporary", label: "Temporary" },
+  { value: "other", label: "Other" },
+];
+
 interface UploadedFile {
   name: string;
   url: string;
@@ -91,6 +101,7 @@ export function ApplicationForm({
       position: application?.position || "",
       location: application?.location || "",
       jobSource: application?.jobSource || "",
+      jobType: application?.jobType || "other",
       salary: application?.salary || "",
       status: application?.status || "applied",
       followUpDate: application?.followUpDate || "",
@@ -257,6 +268,32 @@ export function ApplicationForm({
                       <ComboboxEmpty>Tidak ditemukan</ComboboxEmpty>
                     </ComboboxContent>
                   </Combobox>
+                )}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="jobType">Jenis Pekerjaan</Label>
+              <Controller
+                name="jobType"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    name="jobType"
+                    value={field.value}
+                    onValueChange={field.onChange}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Pilih jenis pekerjaan" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {JOB_TYPE_OPTIONS.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 )}
               />
             </div>

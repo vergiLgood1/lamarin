@@ -1,11 +1,11 @@
-import {
-  getApplicationById,
-  getApplicationDocuments,
-} from "@/actions/applications/queries";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { StatusBadge } from "@/features/applications/status-badge";
+import {
+  getApplicationById,
+  getApplicationDocuments,
+} from "@/features/applications/actions/queries";
+import { StatusBadge } from "@/features/applications/components/status-badge";
 import { cn } from "@/lib/utils";
 import { ArrowLeft, ExternalLink, FileText, Image, Pencil } from "lucide-react";
 import Link from "next/link";

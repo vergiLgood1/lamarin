@@ -1,6 +1,5 @@
 "use client";
 
-import { loginAction, type AuthActionState } from "@/actions/auth/mutation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,6 +12,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import {
+  loginAction,
+  type AuthActionState,
+} from "@/features/auth/actions/mutation";
 import { signIn } from "@/lib/auth-client";
 import { loginSchema, type LoginFormData } from "@/lib/validations";
 import { zodResolver } from "@hookform/resolvers/zod";

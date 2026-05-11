@@ -1,0 +1,72 @@
+"use client";
+
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+
+interface TopSourcesCardProps {
+  data: { source: string; count: number }[];
+}
+
+const chartConfig = {
+  count: {
+    label: "Lamaran",
+    color: "#8fd3f4",
+  },
+};
+
+export function TopSourcesCard({ data }: TopSourcesCardProps) {
+  const chartData = data.slice(0, 5).map((item) => ({
+    source: item.source.length > 10 ? `${item.source.slice(0, 10)}...` : item.source,
+    count: item.count,
+  }));
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Top Sumber Lowongan</CardTitle>
+        <CardDescription>
+          5 sumber lowongan dengan jumlah apply tertinggi.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        {chartData.length === 0 ? (
+          <div className="flex h-28 items-center justify-center rounded-md border border-dashed text-sm text-muted-foreground">
+            Belum ada data sumber lowongan.
+          </div>
+        ) : (
+          <ChartContainer config={chartConfig} className="h-[200px] w-full">
+            <BarChart data={chartData} margin={{ left: 8, right: 8, top: 8 }}>
+              <CartesianGrid vertical={false} />
+              <YAxis
+                hide
+                type="number"
+                tickLine={false}
+                axisLine={false}
+              />
+              <XAxis
+                dataKey="source"
+                type="category"
+                tickLine={false}
+                axisLine={false}
+                interval={0}
+              />
+              <ChartTooltip content={<ChartTooltipContent />} />
+              <Bar dataKey="count" fill="var(--color-count)" radius={[8, 8, 0, 0]} />
+            </BarChart>
+          </ChartContainer>
+        )}
+      </CardContent>
+    </Card>
+  );
+}

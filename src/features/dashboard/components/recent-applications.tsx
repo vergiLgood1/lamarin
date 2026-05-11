@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -6,10 +5,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import type { JobApplication } from "@/types";
-import { StatusBadge } from "../applications/status-badge";
- 
+import Link from "next/link";
+import { StatusBadge } from "../../applications/components/status-badge";
 
 interface RecentApplicationsProps {
   applications: JobApplication[];

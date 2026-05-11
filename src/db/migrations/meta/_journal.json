@@ -15,6 +15,13 @@
       "when": 1777983305894,
       "tag": "0001_massive_radioactive_man",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1777983305895,
+      "tag": "0002_solid_vento",
+      "breakpoints": true
     }
   ]
 }

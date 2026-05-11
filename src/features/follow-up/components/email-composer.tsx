@@ -1,16 +1,9 @@
 "use client";
 
-import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -18,10 +11,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { createFollowUpDraft, sendFollowUpEmail } from "@/actions/follow-up/mutations";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  createFollowUpDraft,
+  sendFollowUpEmail,
+} from "@/features/follow-up/actions/mutations";
+import type { ActionState, FollowUpEmail, JobApplication } from "@/types";
+import { Loader2, Save, Send, Sparkles } from "lucide-react";
+import { useState, useTransition } from "react";
 import { toast } from "sonner";
-import { Sparkles, Send, Save, Loader2 } from "lucide-react";
-import type { JobApplication, ActionState, FollowUpEmail } from "@/types";
 
 interface EmailComposerProps {
   applications: JobApplication[];
@@ -80,7 +78,7 @@ export function EmailComposer({ applications }: EmailComposerProps) {
           lines
             .slice(lines.indexOf(subjectLine) + 2)
             .join("\n")
-            .trim()
+            .trim(),
         );
       } else {
         setBody(fullText);
