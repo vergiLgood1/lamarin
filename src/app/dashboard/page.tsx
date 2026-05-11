@@ -1,11 +1,5 @@
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { getApplications } from "@/features/applications/actions/queries";
 import {
   getDashboardStats,
@@ -19,7 +13,6 @@ import { ApplicationsTableCard } from "@/features/dashboard/components/applicati
 import { DashboardPageHeader } from "@/features/dashboard/components/dashboard-page-header";
 import { JobTypeOverviewCard } from "@/features/dashboard/components/job-type-overview-card";
 import { StatusChart } from "@/features/dashboard/components/status-chart";
-import { StatusConversionCard } from "@/features/dashboard/components/status-conversion-card";
 import { TopPositionsRadialChart } from "@/features/dashboard/components/top-positions-radial-chart";
 import { TopSourcesCard } from "@/features/dashboard/components/top-sources-card";
 import { UpcomingScheduleCard } from "@/features/dashboard/components/upcoming-schedule-card";
@@ -63,12 +56,12 @@ export default async function DashboardPage() {
 
         <div className="space-y-4 xl:col-span-5">
           <Card className="h-full">
-            <CardHeader>
-              <CardTitle>Kalender Follow-up</CardTitle>
-              <CardDescription>
-                Atur jadwal tindak lanjut dan pantau deadline penting.
+            {/* <CardHeader>
+              <CardTitle className="sr-only">Kalender</CardTitle>
+              <CardDescription className="sr-only">
+                Jadwal follow-up dan interview mendatang
               </CardDescription>
-            </CardHeader>
+            </CardHeader> */}
             <CardContent className="flex justify-center">
               <Calendar mode="single" selected={new Date()} className="p-0" />
             </CardContent>
@@ -81,11 +74,11 @@ export default async function DashboardPage() {
       </div>
 
       <div className="grid items-stretch gap-4 lg:grid-cols-12">
-        <div className="grid gap-4 md:grid-cols-2 lg:col-span-7">
-          <StatusConversionCard data={stats.statusBreakdown} />
+        <div className="grid gap-4 md:grid-cols-1 lg:col-span-3">
+          {/* <StatusConversionCard data={stats.statusBreakdown} /> */}
           <StatusChart data={stats.statusBreakdown} />
         </div>
-        <div className="lg:col-span-5">
+        <div className="lg:col-span-9">
           <WeeklyPriorityCard upcoming={stats.upcomingFollowUps} />
         </div>
       </div>

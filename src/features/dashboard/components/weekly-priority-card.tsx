@@ -41,7 +41,7 @@ export function WeeklyPriorityCard({ upcoming }: WeeklyPriorityCardProps) {
   const next7Percent = total > 0 ? Math.round((next7DaysCount / total) * 100) : 0;
 
   return (
-    <Card className="lg:col-span-3">
+    <Card className="lg:col-span-3 h-full">
       <CardHeader>
         <CardTitle>Follow-up Health</CardTitle>
         <CardDescription>
@@ -61,7 +61,10 @@ export function WeeklyPriorityCard({ upcoming }: WeeklyPriorityCardProps) {
                 <p className="font-semibold tabular-nums">{todayCount}</p>
               </div>
               <div className="h-2 rounded-full bg-muted">
-                <div className="h-2 rounded-full bg-chart-1" style={{ width: `${todayPercent}%` }} />
+                <div
+                  className="h-2 rounded-full bg-chart-1"
+                  style={{ width: `${todayPercent}%` }}
+                />
               </div>
             </div>
 
@@ -71,7 +74,10 @@ export function WeeklyPriorityCard({ upcoming }: WeeklyPriorityCardProps) {
                 <p className="font-semibold tabular-nums">{next3DaysCount}</p>
               </div>
               <div className="h-2 rounded-full bg-muted">
-                <div className="h-2 rounded-full bg-chart-2" style={{ width: `${next3Percent}%` }} />
+                <div
+                  className="h-2 rounded-full bg-chart-2"
+                  style={{ width: `${next3Percent}%` }}
+                />
               </div>
             </div>
 
@@ -81,7 +87,10 @@ export function WeeklyPriorityCard({ upcoming }: WeeklyPriorityCardProps) {
                 <p className="font-semibold tabular-nums">{next7DaysCount}</p>
               </div>
               <div className="h-2 rounded-full bg-muted">
-                <div className="h-2 rounded-full bg-chart-3" style={{ width: `${next7Percent}%` }} />
+                <div
+                  className="h-2 rounded-full bg-chart-3"
+                  style={{ width: `${next7Percent}%` }}
+                />
               </div>
             </div>
           </div>
