@@ -1,6 +1,5 @@
 "use client";
 
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import {
   Card,
   CardContent,
@@ -13,6 +12,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 interface TopSourcesCardProps {
   data: { source: string; count: number }[];
@@ -32,28 +32,23 @@ export function TopSourcesCard({ data }: TopSourcesCardProps) {
   }));
 
   return (
-    <Card>
+    <Card className="h-full">
       <CardHeader>
         <CardTitle>Top Sumber Lowongan</CardTitle>
         <CardDescription>
           5 sumber lowongan dengan jumlah apply tertinggi.
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="h-full">
         {chartData.length === 0 ? (
           <div className="flex h-28 items-center justify-center rounded-md border border-dashed text-sm text-muted-foreground">
             Belum ada data sumber lowongan.
           </div>
         ) : (
-          <ChartContainer config={chartConfig} className="h-[200px] w-full">
+          <ChartContainer config={chartConfig} className="h-[190px] w-full">
             <BarChart data={chartData} margin={{ left: 8, right: 8, top: 8 }}>
               <CartesianGrid vertical={false} />
-              <YAxis
-                hide
-                type="number"
-                tickLine={false}
-                axisLine={false}
-              />
+              <YAxis hide type="number" tickLine={false} axisLine={false} />
               <XAxis
                 dataKey="source"
                 type="category"
@@ -62,7 +57,11 @@ export function TopSourcesCard({ data }: TopSourcesCardProps) {
                 interval={0}
               />
               <ChartTooltip content={<ChartTooltipContent />} />
-              <Bar dataKey="count" fill="var(--color-count)" radius={[8, 8, 0, 0]} />
+              <Bar
+                dataKey="count"
+                fill="var(--color-count)"
+                radius={[8, 8, 0, 0]}
+              />
             </BarChart>
           </ChartContainer>
         )}

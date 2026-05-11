@@ -45,7 +45,7 @@ export default async function DashboardPage() {
     <div className="space-y-6">
       <DashboardPageHeader />
 
-      <div className="grid gap-4 xl:grid-cols-12">
+      <div className="grid items-start gap-4 xl:grid-cols-12">
         <div className="space-y-4 xl:col-span-7">
           <ApplicationSummaryCard
             appliedCount={statusMetrics.appliedCount}
@@ -62,7 +62,7 @@ export default async function DashboardPage() {
         </div>
 
         <div className="space-y-4 xl:col-span-5">
-          <Card>
+          <Card className="h-full">
             <CardHeader>
               <CardTitle>Kalender Follow-up</CardTitle>
               <CardDescription>
@@ -80,7 +80,7 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-12">
+      <div className="grid items-stretch gap-4 lg:grid-cols-12">
         <div className="grid gap-4 md:grid-cols-2 lg:col-span-7">
           <StatusConversionCard data={stats.statusBreakdown} />
           <StatusChart data={stats.statusBreakdown} />
@@ -90,7 +90,7 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-7">
+      <div className="grid items-stretch gap-4 lg:grid-cols-7">
         <div className="lg:col-span-2">
           <ActivityTimelineCard applications={applications.data} />
         </div>
