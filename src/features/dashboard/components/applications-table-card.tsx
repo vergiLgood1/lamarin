@@ -5,6 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Table,
   TableBody,
@@ -23,20 +24,20 @@ interface ApplicationsTableCardProps {
 
 export function ApplicationsTableCard({ applications }: ApplicationsTableCardProps) {
   return (
-    <Card className="h-full">
+    <Card className="flex h-full flex-col">
       <CardHeader>
         <CardTitle>Applications</CardTitle>
         <CardDescription>
           Daftar lamaran terbaru Anda berdasarkan tanggal melamar.
         </CardDescription>
       </CardHeader>
-      <CardContent className="h-full">
+      <CardContent className="min-h-0 flex-1">
         {applications.length === 0 ? (
           <div className="flex h-28 items-center justify-center rounded-md border border-dashed text-sm text-muted-foreground">
             Belum ada data lamaran.
           </div>
         ) : (
-          <div className="rounded-md border">
+          <ScrollArea className="h-[52vh] min-h-[260px] max-h-[420px] rounded-md border lg:h-full lg:max-h-none">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -49,7 +50,9 @@ export function ApplicationsTableCard({ applications }: ApplicationsTableCardPro
               <TableBody>
                 {applications.map((application) => (
                   <TableRow key={application.id}>
-                    <TableCell className="text-sm">{application.applicationDate}</TableCell>
+                    <TableCell className="text-sm">
+                      {application.applicationDate}
+                    </TableCell>
                     <TableCell className="font-medium">
                       <Link
                         href={`/dashboard/applications/${application.id}`}
@@ -58,7 +61,9 @@ export function ApplicationsTableCard({ applications }: ApplicationsTableCardPro
                         {application.companyName}
                       </Link>
                     </TableCell>
-                    <TableCell className="text-sm">{application.position}</TableCell>
+                    <TableCell className="text-sm">
+                      {application.position}
+                    </TableCell>
                     <TableCell>
                       <StatusBadge status={application.status} />
                     </TableCell>
@@ -66,7 +71,7 @@ export function ApplicationsTableCard({ applications }: ApplicationsTableCardPro
                 ))}
               </TableBody>
             </Table>
-          </div>
+          </ScrollArea>
         )}
       </CardContent>
     </Card>

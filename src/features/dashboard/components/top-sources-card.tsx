@@ -39,13 +39,13 @@ export function TopSourcesCard({ data }: TopSourcesCardProps) {
           5 sumber lowongan dengan jumlah apply tertinggi.
         </CardDescription>
       </CardHeader>
-      <CardContent className="h-full">
+      <CardContent>
         {chartData.length === 0 ? (
           <div className="flex h-28 items-center justify-center rounded-md border border-dashed text-sm text-muted-foreground">
             Belum ada data sumber lowongan.
           </div>
         ) : (
-          <ChartContainer config={chartConfig} className="h-[190px] w-full">
+          <ChartContainer config={chartConfig} className="h-47.5 w-full">
             <BarChart data={chartData} margin={{ left: 8, right: 8, top: 8 }}>
               <CartesianGrid vertical={false} />
               <YAxis hide type="number" tickLine={false} axisLine={false} />

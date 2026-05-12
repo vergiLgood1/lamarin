@@ -1,5 +1,3 @@
-import { Calendar } from "@/components/ui/calendar";
-import { Card, CardContent } from "@/components/ui/card";
 import { getApplications } from "@/features/applications/actions/queries";
 import {
   getDashboardStats,
@@ -10,6 +8,7 @@ import { ActivityChart } from "@/features/dashboard/components/activity-chart";
 import { ActivityTimelineCard } from "@/features/dashboard/components/activity-timeline-card";
 import { ApplicationSummaryCard } from "@/features/dashboard/components/application-summary-card";
 import { ApplicationsTableCard } from "@/features/dashboard/components/applications-table-card";
+import DashboardCalendar from "@/features/dashboard/components/dashboard-calendar";
 import { DashboardPageHeader } from "@/features/dashboard/components/dashboard-page-header";
 import { JobTypeOverviewCard } from "@/features/dashboard/components/job-type-overview-card";
 import { StatusChart } from "@/features/dashboard/components/status-chart";
@@ -26,7 +25,7 @@ export default async function DashboardPage() {
       getJobTypeActivity(),
       getTopAppliedPositions(),
       getApplications({
-        limit: 8,
+        limit: 10,
         sortBy: "applicationDate",
         sortOrder: "desc",
       }),
@@ -38,8 +37,8 @@ export default async function DashboardPage() {
     <div className="space-y-6">
       <DashboardPageHeader />
 
-      <div className="grid items-start gap-4 xl:grid-cols-12">
-        <div className="space-y-4 xl:col-span-7">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+        <div className="space-y-4 lg:col-span-7">
           <ApplicationSummaryCard
             appliedCount={statusMetrics.appliedCount}
             interviewCount={statusMetrics.interviewCount}
@@ -55,18 +54,8 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        <div className="space-y-4 xl:col-span-5">
-          <Card className="h-full">
-            {/* <CardHeader>
-              <CardTitle className="sr-only">Kalender</CardTitle>
-              <CardDescription className="sr-only">
-                Jadwal follow-up dan interview mendatang
-              </CardDescription>
-            </CardHeader> */}
-            <CardContent className="flex justify-center">
-              <Calendar mode="single" selected={new Date()} className="p-0" />
-            </CardContent>
-          </Card>
+        <div className="space-y-4 lg:col-span-5">
+          <DashboardCalendar />
 
           <UpcomingScheduleCard applications={stats.upcomingFollowUps} />
 
@@ -74,22 +63,22 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      <div className="grid items-start gap-4 xl:grid-cols-12">
-        <div className="space-y-4 xl:col-span-7">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+        <div className="space-y-4 lg:col-span-7">
           {/* <StatusConversionCard data={stats.statusBreakdown} /> */}
           <TopSourcesCard data={stats.topSources} />
         </div>
-        <div className="space-y-4 xl:col-span-5">
+        <div className="space-y-4 lg:col-span-5">
           <WeeklyPriorityCard upcoming={stats.upcomingFollowUps} />
         </div>
       </div>
 
-      <div className="grid items-stretch gap-4 lg:grid-cols-7">
-        <div className="lg:col-span-5">
-          <ApplicationsTableCard applications={applications.data} />
-        </div>
-        <div className="lg:col-span-2">
+      <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-7">
+        <div className="h-full lg:col-span-2">
           <ActivityTimelineCard applications={applications.data} />
+        </div>
+        <div className="h-full lg:col-span-5">
+          <ApplicationsTableCard applications={applications.data} />
         </div>
       </div>
     </div>
