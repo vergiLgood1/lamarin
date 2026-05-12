@@ -1,7 +1,5 @@
 "use client";
 
-import { Pie, PieChart, Cell } from "recharts";
-import { CalendarClock } from "lucide-react";
 import {
   Card,
   CardAction,
@@ -15,6 +13,8 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { CalendarClock } from "lucide-react";
+import { Cell, Pie, PieChart } from "recharts";
 
 interface TopPositionsRadialChartProps {
   data: { position: string; count: number }[];
@@ -71,9 +71,9 @@ export function TopPositionsRadialChart({ data }: TopPositionsRadialChartProps) 
             Belum ada data posisi pada status applied.
           </div>
         ) : (
-          <div className="grid gap-4 md:grid-cols-[220px_1fr] md:items-center">
-            <div className="relative mx-auto h-[190px] w-[220px]">
-              <ChartContainer config={chartConfig} className="h-[190px] w-[220px]">
+          <div className="grid gap-4 md:grid-cols-[220px_1fr] md:items-center h-full">
+            <div className="relative mx-auto h-47.5 w-55">
+              <ChartContainer config={chartConfig} className="h-47.5 w-55">
                 <PieChart>
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <Pie
@@ -100,7 +100,8 @@ export function TopPositionsRadialChart({ data }: TopPositionsRadialChartProps) 
 
             <div className="space-y-3">
               {chartData.map((item) => {
-                const percentage = total > 0 ? Math.round((item.count / total) * 100) : 0;
+                const percentage =
+                  total > 0 ? Math.round((item.count / total) * 100) : 0;
 
                 return (
                   <div

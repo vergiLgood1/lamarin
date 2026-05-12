@@ -49,7 +49,8 @@ export default async function DashboardPage() {
           <ActivityChart data={activity} />
 
           <div className="grid gap-4 md:grid-cols-2">
-            <TopSourcesCard data={stats.topSources} />
+            <StatusChart data={stats.statusBreakdown} />
+
             <JobTypeOverviewCard data={activity} />
           </div>
         </div>
@@ -73,22 +74,22 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      <div className="grid items-stretch gap-4 lg:grid-cols-12">
-        <div className="grid gap-4 md:grid-cols-1 lg:col-span-3">
+      <div className="grid items-start gap-4 xl:grid-cols-12">
+        <div className="space-y-4 xl:col-span-7">
           {/* <StatusConversionCard data={stats.statusBreakdown} /> */}
-          <StatusChart data={stats.statusBreakdown} />
+          <TopSourcesCard data={stats.topSources} />
         </div>
-        <div className="lg:col-span-9">
+        <div className="space-y-4 xl:col-span-5">
           <WeeklyPriorityCard upcoming={stats.upcomingFollowUps} />
         </div>
       </div>
 
       <div className="grid items-stretch gap-4 lg:grid-cols-7">
-        <div className="lg:col-span-2">
-          <ActivityTimelineCard applications={applications.data} />
-        </div>
         <div className="lg:col-span-5">
           <ApplicationsTableCard applications={applications.data} />
+        </div>
+        <div className="lg:col-span-2">
+          <ActivityTimelineCard applications={applications.data} />
         </div>
       </div>
     </div>

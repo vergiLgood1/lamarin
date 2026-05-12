@@ -23,14 +23,14 @@ interface ApplicationsTableCardProps {
 
 export function ApplicationsTableCard({ applications }: ApplicationsTableCardProps) {
   return (
-    <Card>
+    <Card className="h-full">
       <CardHeader>
         <CardTitle>Applications</CardTitle>
         <CardDescription>
           Daftar lamaran terbaru Anda berdasarkan tanggal melamar.
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="h-full">
         {applications.length === 0 ? (
           <div className="flex h-28 items-center justify-center rounded-md border border-dashed text-sm text-muted-foreground">
             Belum ada data lamaran.
