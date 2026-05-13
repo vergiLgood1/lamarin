@@ -2,7 +2,7 @@ import { ApplicationForm } from "@/features/applications/components/application-
 
 export default function NewApplicationPage() {
   return (
-    <div className="mx-auto max-w-2xl">
+    <div className="mx-auto">
       <ApplicationForm mode="create" />
     </div>
   );

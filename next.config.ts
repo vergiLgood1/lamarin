@@ -5,6 +5,14 @@ const nextConfig: NextConfig = {
   // experimental: {
   //   cpus: 1
   // }
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "*.ufs.sh",
+      },
+    ],
+  },
 };
 
 export default nextConfig;

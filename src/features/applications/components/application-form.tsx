@@ -32,14 +32,15 @@ import {
   POSITION_SUGGESTIONS,
   SALARY_SUGGESTIONS,
 } from "@/lib/constants";
+import { useUploadThing } from "@/lib/uploadthing-client";
 import { applicationSchema, type ApplicationFormData } from "@/lib/validations";
 import type { ActionState, JobApplication } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useActionState, useEffect, useState } from "react";
+import { startTransition, useActionState, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { FileUpload } from "./file-upload";
+import { FileUpload, type UploadedFile } from "./file-upload";
 
 const STATUS_OPTIONS = [
   { value: "applied", label: "Melamar" },
@@ -68,14 +69,6 @@ const WORK_MODE_OPTIONS = [
   { value: "remote", label: "Remote" },
 ];
 
-interface UploadedFile {
-  name: string;
-  url: string;
-  key: string;
-  size: number;
-  type: string;
-}
-
 interface ApplicationFormProps {
   application?: JobApplication;
   existingDocuments?: UploadedFile[];
@@ -92,6 +85,20 @@ export function ApplicationForm({
   const router = useRouter();
   const [uploadedFiles, setUploadedFiles] =
     useState<UploadedFile[]>(existingDocuments);
+  const [pendingFiles, setPendingFiles] = useState<File[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const { startUpload } = useUploadThing("documentUploader", {
+    onUploadBegin: () => setIsUploading(true),
+    onUploadError: () => setIsUploading(false),
+    onClientUploadComplete: () => setIsUploading(false),
+  });
+
+  const defaultFollowUpDate = (() => {
+    const date = new Date();
+    date.setDate(date.getDate() + 7);
+    return date.toISOString().split("T")[0];
+  })();   
 
   const {
     register,
@@ -111,7 +118,7 @@ export function ApplicationForm({
       jobType: application?.jobType || "other",
       salary: application?.salary || "",
       status: application?.status || "applied",
-      followUpDate: application?.followUpDate || "",
+      followUpDate: application?.followUpDate || defaultFollowUpDate,
       hrContact: application?.hrContact || "",
       meetingLink: application?.meetingLink || "",
       notes: application?.notes || "",
@@ -135,6 +142,34 @@ export function ApplicationForm({
     }
   }, [state, router]);
 
+  async function handleSubmit(formData: FormData) {
+    if (pendingFiles.length > 0) {
+      const uploadResult = await startUpload(pendingFiles);
+      if (!uploadResult) {
+        toast.error("Gagal upload dokumen");
+        return;
+      }
+
+      const uploaded = uploadResult.map((file) => ({
+        name: file.name,
+        url: file.ufsUrl,
+        key: file.key,
+        size: file.size,
+        type: file.type,
+      }));
+
+      const mergedDocuments = [...uploadedFiles, ...uploaded];
+      setUploadedFiles(mergedDocuments);
+      formData.set("documents", JSON.stringify(mergedDocuments));
+    } else {
+      formData.set("documents", JSON.stringify(uploadedFiles));
+    }
+
+    startTransition(() => {
+      formAction(formData);
+    });
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -143,7 +178,7 @@ export function ApplicationForm({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <form action={formAction} className="space-y-6">
+        <form action={handleSubmit} className="space-y-6">
           {/* Hidden input for uploaded files metadata */}
           <input
             type="hidden"
@@ -415,8 +450,11 @@ export function ApplicationForm({
           <div className="space-y-2">
             <Label>Dokumen</Label>
             <FileUpload
-              onFilesUploaded={setUploadedFiles}
-              existingFiles={existingDocuments}
+              selectedFiles={pendingFiles}
+              onSelectedFilesChange={setPendingFiles}
+              existingFiles={uploadedFiles}
+              onExistingFilesChange={setUploadedFiles}
+              isUploading={isUploading}
               maxFiles={10}
             />
           </div>
@@ -432,7 +470,10 @@ export function ApplicationForm({
           </div>
 
           <div className="flex gap-3">
-            <SubmitButton pendingText="Menyimpan...">
+            <SubmitButton
+              pendingText={isUploading ? "Mengupload..." : "Menyimpan..."}
+              disabled={isUploading}
+            >
               {mode === "create" ? "Simpan" : "Perbarui"}
             </SubmitButton>
             <Button

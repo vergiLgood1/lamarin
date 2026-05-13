@@ -29,7 +29,7 @@ export default async function EditApplicationPage({ params }: PageProps) {
   }));
 
   return (
-    <div className="mx-auto max-w-2xl">
+    <div className="mx-auto">
       <ApplicationForm
         mode="edit"
         application={application}
