@@ -12,6 +12,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { DashboardEmptyState } from "@/features/dashboard/components/dashboard-empty-state";
 import { BriefcaseBusiness, GraduationCap, Handshake } from "lucide-react";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
@@ -56,10 +57,11 @@ export function ActivityChart({ data }: ActivityChartProps) {
             Aktivitas lamaran berdasarkan jenis pekerjaan (6 bulan terakhir)
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex h-[220px] items-center justify-center rounded-md border border-dashed text-sm text-muted-foreground">
-            Belum ada data aktivitas job type
-          </div>
+        <CardContent className="flex-1 space-y-4">
+          <DashboardEmptyState
+            className="min-h-[336px]"
+            message="Belum ada data aktivitas job type."
+          />
         </CardContent>
       </Card>
     );
@@ -73,7 +75,7 @@ export function ActivityChart({ data }: ActivityChartProps) {
           Aktivitas lamaran berdasarkan jenis pekerjaan (6 bulan terakhir)
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="flex-1 space-y-4">
         <ChartContainer config={chartConfig} className="h-[220px] w-full">
           <AreaChart data={chartData} margin={{ left: 0, right: 0, top: 8 }}>
             <defs>

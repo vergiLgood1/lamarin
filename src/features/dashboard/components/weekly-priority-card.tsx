@@ -5,6 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { DashboardEmptyState } from "@/features/dashboard/components/dashboard-empty-state";
 import type { JobApplication } from "@/types";
 
 interface WeeklyPriorityCardProps {
@@ -48,13 +49,11 @@ export function WeeklyPriorityCard({ upcoming }: WeeklyPriorityCardProps) {
           Distribusi jadwal follow-up untuk 7 hari ke depan.
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex-1">
         {upcoming.length === 0 ? (
-          <div className="flex h-56 items-center justify-center rounded-md border border-dashed text-sm text-muted-foreground">
-            Belum ada follow-up terjadwal.
-          </div>
+          <DashboardEmptyState message="Belum ada follow-up terjadwal." />
         ) : (
-          <div className="space-y-3">
+          <div className="47.5 space-y-3">
             <div className="rounded-md border p-3">
               <div className="mb-1 flex items-center justify-between text-sm">
                 <p className="text-muted-foreground">Hari ini</p>

@@ -13,6 +13,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { DashboardEmptyState } from "@/features/dashboard/components/dashboard-empty-state";
 import { CalendarClock } from "lucide-react";
 import { Cell, Pie, PieChart } from "recharts";
 
@@ -65,15 +66,16 @@ export function TopPositionsRadialChart({ data }: TopPositionsRadialChartProps) 
           <span className="text-muted-foreground">•••</span>
         </CardAction>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex-1">
         {chartData.length === 0 ? (
-          <div className="flex h-48 items-center justify-center rounded-md border border-dashed text-sm text-muted-foreground">
-            Belum ada data posisi pada status applied.
-          </div>
+          <DashboardEmptyState message="Belum ada data posisi pada status applied." />
         ) : (
-          <div className="grid gap-4 md:grid-cols-[220px_1fr] md:items-center h-full">
-            <div className="relative mx-auto h-47.5 w-55">
-              <ChartContainer config={chartConfig} className="h-47.5 w-55">
+          <div className="grid gap-4 md:grid-cols-[220px_1fr] md:items-center">
+            <div className="relative mx-auto h-47.5 w-55 md:min-h-51.5">
+              <ChartContainer
+                config={chartConfig}
+                className="h-47.5 w-55 md:min-h-51.5"
+              >
                 <PieChart>
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <Pie

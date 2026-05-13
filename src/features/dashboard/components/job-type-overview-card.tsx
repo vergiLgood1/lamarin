@@ -5,6 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { DashboardEmptyState } from "@/features/dashboard/components/dashboard-empty-state";
 import {
   BriefcaseBusiness,
   CalendarClock,
@@ -78,20 +79,18 @@ export function JobTypeOverviewCard({ data }: JobTypeOverviewCardProps) {
     .slice(0, 4);
 
   return (
-    <Card className="h-full">
+    <Card>
       <CardHeader>
         <CardTitle>Job Type Overview</CardTitle>
         <CardDescription>
           Komposisi jenis pekerjaan yang paling sering Anda apply.
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex-1">
         {ranked.every((item) => item.total === 0) ? (
-          <div className="flex h-28 items-center justify-center rounded-md border border-dashed text-sm text-muted-foreground">
-            Belum ada aktivitas job type.
-          </div>
+          <DashboardEmptyState message="Belum ada aktivitas job type." />
         ) : (
-          <div className="space-y-3">
+          <div className="min-h-56 space-y-3">
             {ranked.map((item) => (
               <Card
                 key={item.type}

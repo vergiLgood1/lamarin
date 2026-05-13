@@ -12,6 +12,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { DashboardEmptyState } from "@/features/dashboard/components/dashboard-empty-state";
 import { Cell, Label, Pie, PieChart, Sector } from "recharts";
 
 const STATUS_COLORS: Record<string, string> = {
@@ -92,11 +93,6 @@ export function StatusChart({ data }: StatusChartProps) {
   );
 
   const total = chartData.reduce((sum, item) => sum + item.value, 0);
-  const activeIndex = chartData.reduce(
-    (maxIndex, item, index, items) =>
-      item.value > items[maxIndex].value ? index : maxIndex,
-    0,
-  );
 
   if (data.length === 0) {
     return (
@@ -105,8 +101,8 @@ export function StatusChart({ data }: StatusChartProps) {
           <CardTitle>Status Lamaran</CardTitle>
           <CardDescription>Breakdown berdasarkan status</CardDescription>
         </CardHeader>
-        <CardContent className="flex h-[200px] items-center justify-center">
-          <p className="text-sm text-muted-foreground">Belum ada data</p>
+        <CardContent className="flex-1">
+          <DashboardEmptyState message="Belum ada data status lamaran." />
         </CardContent>
       </Card>
     );
@@ -118,7 +114,7 @@ export function StatusChart({ data }: StatusChartProps) {
         <CardTitle>Status Lamaran</CardTitle>
         <CardDescription>Breakdown berdasarkan status</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex-1">
         <ChartContainer config={chartConfig} className="mx-auto h-[220px]">
           <PieChart>
             <ChartTooltip content={<ChartTooltipContent />} />

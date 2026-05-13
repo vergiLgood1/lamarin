@@ -12,6 +12,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { DashboardEmptyState } from "@/features/dashboard/components/dashboard-empty-state";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 interface TopSourcesCardProps {
@@ -39,13 +40,11 @@ export function TopSourcesCard({ data }: TopSourcesCardProps) {
           5 sumber lowongan dengan jumlah apply tertinggi.
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex-1">
         {chartData.length === 0 ? (
-          <div className="flex h-28 items-center justify-center rounded-md border border-dashed text-sm text-muted-foreground">
-            Belum ada data sumber lowongan.
-          </div>
+          <DashboardEmptyState message="Belum ada data sumber lowongan." />
         ) : (
-          <ChartContainer config={chartConfig} className="h-47.5 w-full">
+          <ChartContainer config={chartConfig} className="h-47.5 w-full ">
             <BarChart data={chartData} margin={{ left: 8, right: 8, top: 8 }}>
               <CartesianGrid vertical={false} />
               <YAxis hide type="number" tickLine={false} axisLine={false} />

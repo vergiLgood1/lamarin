@@ -15,6 +15,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { StatusBadge } from "@/features/applications/components/status-badge";
+import { DashboardEmptyState } from "@/features/dashboard/components/dashboard-empty-state";
 import type { JobApplication } from "@/types";
 import Link from "next/link";
 
@@ -33,9 +34,10 @@ export function ApplicationsTableCard({ applications }: ApplicationsTableCardPro
       </CardHeader>
       <CardContent className="min-h-0 flex-1">
         {applications.length === 0 ? (
-          <div className="flex h-28 items-center justify-center rounded-md border border-dashed text-sm text-muted-foreground">
-            Belum ada data lamaran.
-          </div>
+          <DashboardEmptyState
+            className="min-h-[260px]"
+            message="Belum ada data lamaran."
+          />
         ) : (
           <ScrollArea className="h-[52vh] min-h-[260px] max-h-[420px] rounded-md border lg:h-full lg:max-h-none">
             <Table>

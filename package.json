@@ -14,7 +14,8 @@
     "db:migrate": "bun --bun drizzle-kit migrate",
     "db:seed:dashboard": "bun scripts/seed-dashboard.ts",
     "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "db:reset": "bun --bun drizzle-kit reset"
   },
   "dependencies": {
     "@ai-sdk/google": "^3.0.67",

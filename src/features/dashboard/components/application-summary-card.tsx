@@ -38,7 +38,7 @@ export function ApplicationSummaryCard({
           </Link>
         </CardAction>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex-1">
         <StatsCards
           appliedCount={appliedCount}
           interviewCount={interviewCount}
