@@ -63,10 +63,7 @@ export function FilterBar() {
           }}
         />
       </div>
-      <Select
-        value={status}
-        onValueChange={(v) => updateParams("status", v || "all")}
-      >
+      <Select value={status} onValueChange={(v) => updateParams("status", v || "all")}>
         <SelectTrigger className="w-full sm:w-[180px]">
           <SelectValue placeholder="Status" />
         </SelectTrigger>
@@ -79,7 +76,7 @@ export function FilterBar() {
         </SelectContent>
       </Select>
       {(search || status !== "all") && (
-        <Button variant="ghost" size="sm" onClick={clearFilters}>
+        <Button variant="ghost" size="sm" className="w-full sm:w-auto" onClick={clearFilters}>
           <X className="mr-1 h-4 w-4" />
           Reset
         </Button>

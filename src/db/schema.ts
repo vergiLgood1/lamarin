@@ -97,6 +97,12 @@ export const jobTypeEnum = pgEnum("job_type", [
   "other",
 ]);
 
+export const workModeEnum = pgEnum("work_mode", [
+  "onsite",
+  "hybrid",
+  "remote",
+]);
+
 // ============================================
 // Application Tables
 // ============================================
@@ -108,7 +114,8 @@ export const jobApplications = pgTable("job_applications", {
     .references(() => user.id, { onDelete: "cascade" }),
   applicationDate: date("application_date").notNull(),
   companyName: varchar("company_name", { length: 255 }).notNull(),
-  location: varchar("location", { length: 255 }),
+  companyLocation: varchar("company_location", { length: 255 }),
+  workMode: workModeEnum("work_mode").notNull().default("onsite"),
   position: varchar("position", { length: 255 }).notNull(),
   jobSource: varchar("job_source", { length: 255 }),
   jobType: jobTypeEnum("job_type").notNull().default("other"),

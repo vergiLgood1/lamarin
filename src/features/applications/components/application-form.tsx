@@ -62,6 +62,12 @@ const JOB_TYPE_OPTIONS = [
   { value: "other", label: "Other" },
 ];
 
+const WORK_MODE_OPTIONS = [
+  { value: "onsite", label: "On-site" },
+  { value: "hybrid", label: "Hybrid" },
+  { value: "remote", label: "Remote" },
+];
+
 interface UploadedFile {
   name: string;
   url: string;
@@ -99,7 +105,8 @@ export function ApplicationForm({
         application?.applicationDate || new Date().toISOString().split("T")[0],
       companyName: application?.companyName || "",
       position: application?.position || "",
-      location: application?.location || "",
+      companyLocation: application?.companyLocation || "",
+      workMode: application?.workMode || "onsite",
       jobSource: application?.jobSource || "",
       jobType: application?.jobType || "other",
       salary: application?.salary || "",
@@ -219,13 +226,13 @@ export function ApplicationForm({
             </div>
 
             <div className="space-y-2">
-              <Label>Lokasi</Label>
+              <Label>Lokasi Perusahaan</Label>
               <Controller
-                name="location"
+                name="companyLocation"
                 control={control}
                 render={({ field }) => (
                   <Combobox
-                    name="location"
+                    name="companyLocation"
                     value={field.value}
                     onValueChange={(v) => field.onChange(v || "")}
                   >
@@ -241,6 +248,32 @@ export function ApplicationForm({
                       <ComboboxEmpty>Tidak ditemukan</ComboboxEmpty>
                     </ComboboxContent>
                   </Combobox>
+                )}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="workMode">Mode Kerja</Label>
+              <Controller
+                name="workMode"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    name="workMode"
+                    value={field.value}
+                    onValueChange={field.onChange}
+                  >
+                    <SelectTrigger className={"flex w-full"}>
+                      <SelectValue placeholder="Pilih mode kerja" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {WORK_MODE_OPTIONS.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 )}
               />
             </div>
@@ -283,7 +316,7 @@ export function ApplicationForm({
                     value={field.value}
                     onValueChange={field.onChange}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className={"flex w-full"}>
                       <SelectValue placeholder="Pilih jenis pekerjaan" />
                     </SelectTrigger>
                     <SelectContent>
@@ -309,7 +342,7 @@ export function ApplicationForm({
                     value={field.value}
                     onValueChange={field.onChange}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className={"flex w-full"}>
                       <SelectValue placeholder="Pilih status" />
                     </SelectTrigger>
                     <SelectContent>

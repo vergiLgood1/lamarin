@@ -33,6 +33,8 @@ import { NavGroup } from "@/types";
  * Note: The `visible` function is deprecated but still supported for backward compatibility.
  * Use the `access` property for new items.
  */
+
+
 export const navGroups: NavGroup[] = [
   {
     label: "Overview",

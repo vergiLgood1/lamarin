@@ -26,7 +26,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const navMain = [
     {
       title: "Dashboard",
-      url: "/dashboard",
+      url: "/dashboard/overview",
       icon: <LayoutDashboard />,
       isActive: pathname === "/dashboard",
     },
@@ -48,7 +48,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       icon: <Settings />,
       isActive: pathname.startsWith("/dashboard/settings"),
     },
-  ]
+  ];
 
   const userData = {
     name: user?.name || "User",

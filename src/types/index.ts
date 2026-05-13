@@ -62,7 +62,8 @@ export interface ApplicationFilters {
   status?: ApplicationStatus;
   startDate?: string;
   endDate?: string;
-  location?: string;
+  companyLocation?: string;
+  workMode?: "onsite" | "hybrid" | "remote";
   jobSource?: string;
   sortBy?: "applicationDate" | "companyName" | "status" | "createdAt";
   sortOrder?: "asc" | "desc";

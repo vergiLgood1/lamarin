@@ -18,7 +18,8 @@ export async function getApplications(filters: ApplicationFilters = {}) {
     status,
     startDate,
     endDate,
-    location,
+    companyLocation,
+    workMode,
     jobSource,
     sortBy = "createdAt",
     sortOrder = "desc",
@@ -46,8 +47,12 @@ export async function getApplications(filters: ApplicationFilters = {}) {
     conditions.push(lte(jobApplications.applicationDate, endDate));
   }
 
-  if (location) {
-    conditions.push(ilike(jobApplications.location, `%${location}%`));
+  if (companyLocation) {
+    conditions.push(ilike(jobApplications.companyLocation, `%${companyLocation}%`));
+  }
+
+  if (workMode) {
+    conditions.push(eq(jobApplications.workMode, workMode));
   }
 
   if (jobSource) {

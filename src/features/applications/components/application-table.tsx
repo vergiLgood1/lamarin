@@ -59,7 +59,7 @@ export function ApplicationTable({ applications }: ApplicationTableProps) {
   }
 
   return (
-    <div className="rounded-md border">
+    <div className="overflow-x-auto rounded-md border">
       <Table>
         <TableHeader>
           <TableRow>
@@ -67,6 +67,7 @@ export function ApplicationTable({ applications }: ApplicationTableProps) {
             <TableHead>Perusahaan</TableHead>
             <TableHead>Posisi</TableHead>
             <TableHead className="hidden md:table-cell">Lokasi</TableHead>
+            <TableHead className="hidden md:table-cell">Mode</TableHead>
             <TableHead className="hidden lg:table-cell">Sumber</TableHead>
             <TableHead>Status</TableHead>
             <TableHead className="w-[50px]"></TableHead>
@@ -82,7 +83,10 @@ export function ApplicationTable({ applications }: ApplicationTableProps) {
               <TableCell className="font-medium">{app.companyName}</TableCell>
               <TableCell className="text-sm">{app.position}</TableCell>
               <TableCell className="hidden text-sm md:table-cell">
-                {app.location || "-"}
+                {app.companyLocation || "-"}
+              </TableCell>
+              <TableCell className="hidden text-sm md:table-cell">
+                {app.workMode || "-"}
               </TableCell>
               <TableCell className="hidden text-sm lg:table-cell">
                 {app.jobSource || "-"}

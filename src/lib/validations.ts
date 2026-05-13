@@ -15,7 +15,8 @@ export const documentFileSchema = z.object({
 export const applicationSchema = z.object({
   applicationDate: z.string().min(1, "Tanggal lamar wajib diisi"),
   companyName: z.string().min(1, "Nama perusahaan wajib diisi"),
-  location: z.string().optional(),
+  companyLocation: z.string().optional(),
+  workMode: z.enum(["onsite", "hybrid", "remote"]).default("onsite"),
   position: z.string().min(1, "Posisi wajib diisi"),
   jobSource: z.string().optional(),
   jobType: z

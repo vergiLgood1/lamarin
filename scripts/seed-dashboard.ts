@@ -29,6 +29,8 @@ const statuses = [
   "rejected",
 ] as const;
 
+const workModes = ["onsite", "hybrid", "remote"] as const;
+
 const sources = [
   "LinkedIn",
   "Kalibrr",
@@ -105,7 +107,8 @@ async function seedDashboard() {
         userId: targetUser.id,
         applicationDate: toDateString(applyDate),
         companyName: randomFrom(companies),
-        location: randomFrom(["Jakarta", "Bandung", "Remote", "Surabaya"]),
+        companyLocation: randomFrom(["Jakarta", "Bandung", "Surabaya", "Singapore"]),
+        workMode: randomFrom(workModes),
         position: randomFrom(positions),
         jobSource: randomFrom(sources),
         jobType: randomFrom(jobTypes),

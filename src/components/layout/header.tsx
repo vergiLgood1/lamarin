@@ -31,8 +31,8 @@ export function Header() {
 
   return (
     // </header>
-    <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 justify-between border-b px-4 lg:px-6 ">
-      <div className="flex items-center gap-2 ">
+    <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center justify-between gap-2 border-b px-3 sm:px-4 lg:px-6">
+      <div className="flex min-w-0 items-center gap-2">
         <SidebarTrigger className="-ml-1" />
         <Separator
           orientation="vertical"
@@ -41,7 +41,7 @@ export function Header() {
         <Breadcrumbs />
       </div>
 
-      <div className="flex items-center gap-2 px-4">
+      <div className="flex items-center gap-1.5 sm:gap-2">
         {/* <CtaGithub /> */}
         <div className="hidden md:flex">
           <SearchInput />

@@ -13,11 +13,6 @@ export const LOCATION_SUGGESTIONS = [
   "Bali",
   "Malang",
   "Solo",
-  "Remote",
-  "Hybrid - Jakarta",
-  "Hybrid - Bandung",
-  "Hybrid - Surabaya",
-  "WFH",
   "Singapore",
   "Malaysia",
 ];

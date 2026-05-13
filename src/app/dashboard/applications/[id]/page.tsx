@@ -63,7 +63,11 @@ export default async function ApplicationDetailPage({ params }: PageProps) {
               label="Tanggal Lamar"
               value={application.applicationDate}
             />
-            <DetailItem label="Lokasi" value={application.location} />
+            <DetailItem
+              label="Lokasi Perusahaan"
+              value={application.companyLocation}
+            />
+            <DetailItem label="Mode Kerja" value={application.workMode} />
             <DetailItem label="Sumber Lowongan" value={application.jobSource} />
             <DetailItem
               label="Tanggal Follow Up"

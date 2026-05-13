@@ -1,17 +1,21 @@
 "use client";
 
-import { useUploadThing } from "@/lib/uploadthing-client";
-import { useState, useCallback } from "react";
-import { Button } from "@/components/ui/button";
+import {
+  Dropzone,
+  DropzoneContent,
+  DropzoneEmptyState,
+} from "@/components/dropzone";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import { Upload, X, FileText, Image as ImageIcon, Loader2, Eye } from "lucide-react";
+import { useUploadThing } from "@/lib/uploadthing-client";
+import { Eye, FileText, Image as ImageIcon, Loader2, X } from "lucide-react";
+import { useCallback, useState } from "react";
 import { toast } from "sonner";
 
 interface UploadedFile {
@@ -62,9 +66,8 @@ export function FileUpload({
   });
 
   const handleFileSelect = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const selectedFiles = e.target.files;
-      if (!selectedFiles || selectedFiles.length === 0) return;
+    (selectedFiles: File[]) => {
+      if (selectedFiles.length === 0) return;
 
       const remaining = maxFiles - files.length;
       if (selectedFiles.length > remaining) {
@@ -72,10 +75,9 @@ export function FileUpload({
         return;
       }
 
-      startUpload(Array.from(selectedFiles));
-      e.target.value = "";
+      startUpload(selectedFiles);
     },
-    [files.length, maxFiles, startUpload]
+    [files.length, maxFiles, startUpload],
   );
 
   function removeFile(key: string) {
@@ -96,34 +98,37 @@ export function FileUpload({
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center gap-2">
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
+      <div className="space-y-2">
+        <Dropzone
+          src={undefined}
+          maxFiles={Math.max(1, maxFiles - files.length)}
           disabled={isUploading || files.length >= maxFiles}
-          onClick={() => document.getElementById("doc-upload")?.click()}
+          accept={{
+            "application/pdf": [".pdf"],
+            "image/png": [".png"],
+            "image/jpeg": [".jpg", ".jpeg"],
+            "image/webp": [".webp"],
+          }}
+          maxSize={8 * 1024 * 1024}
+          onDrop={(acceptedFiles) => handleFileSelect(acceptedFiles)}
+          className="p-4"
         >
           {isUploading ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            <div className="flex items-center gap-2 text-sm">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Uploading...
+            </div>
           ) : (
-            <Upload className="mr-2 h-4 w-4" />
+            <>
+              <DropzoneContent />
+              <DropzoneEmptyState />
+            </>
           )}
-          {isUploading ? "Uploading..." : "Upload Dokumen"}
-        </Button>
+        </Dropzone>
         <span className="text-xs text-muted-foreground">
           PDF, gambar. Maks {maxFiles} file.
         </span>
       </div>
-
-      <input
-        id="doc-upload"
-        type="file"
-        multiple
-        accept=".pdf,.png,.jpg,.jpeg,.webp"
-        className="hidden"
-        onChange={handleFileSelect}
-      />
 
       {files.length > 0 && (
         <div className="flex flex-wrap gap-2">
