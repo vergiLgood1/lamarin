@@ -1,8 +1,17 @@
 "use server";
 
 import { db } from "@/db";
-import { followUpEmails, followUpSchedules } from "@/db/schema";
+import {
+  calendarEvents,
+  followUpEmails,
+  followUpSchedules,
+  jobApplications,
+} from "@/db/schema";
 import { auth } from "@/lib/auth";
+import {
+  deleteGoogleCalendarEvent,
+  upsertGoogleCalendarEvent,
+} from "@/lib/calendar/google";
 import { sendEmail } from "@/lib/email";
 import { logger } from "@/lib/logger";
 import { followUpEmailSchema, scheduleSchema } from "@/lib/validations";
@@ -224,6 +233,34 @@ export async function createSchedule(
       })
       .returning();
 
+    const [application] = await db
+      .select()
+      .from(jobApplications)
+      .where(eq(jobApplications.id, result.data.applicationId));
+
+    if (application) {
+      const event = await upsertGoogleCalendarEvent({
+        userId: session.user.id,
+        title: `Follow-up: ${application.companyName} - ${application.position}`,
+        description: `Status: ${application.status}\nKontak HR: ${application.hrContact || "-"}`,
+        start: new Date(result.data.scheduledDate),
+        timezone: "Asia/Jakarta",
+      });
+
+      if (event?.id) {
+        await db.insert(calendarEvents).values({
+          userId: session.user.id,
+          applicationId: application.id,
+          provider: "google",
+          eventType: "follow_up",
+          externalEventId: event.id,
+          title: event.summary || `Follow-up ${application.companyName}`,
+          scheduledAt: new Date(result.data.scheduledDate),
+          externalUpdatedAt: event.updated ? new Date(event.updated) : null,
+        });
+      }
+    }
+
     logger.info("Follow-up schedule created", {
       userId: session.user.id,
       scheduleId: schedule.id,
@@ -273,6 +310,26 @@ export async function cancelSchedule(
       userId: session.user.id,
       scheduleId,
     });
+
+    const [linkedEvent] = await db
+      .select()
+      .from(calendarEvents)
+      .where(
+        and(
+          eq(calendarEvents.applicationId, updated.applicationId),
+          eq(calendarEvents.userId, session.user.id),
+          eq(calendarEvents.eventType, "follow_up")
+        )
+      );
+
+    if (linkedEvent) {
+      await deleteGoogleCalendarEvent({
+        userId: session.user.id,
+        externalEventId: linkedEvent.externalEventId,
+      }).catch(() => null);
+
+      await db.delete(calendarEvents).where(eq(calendarEvents.id, linkedEvent.id));
+    }
 
     revalidatePath("/dashboard/follow-ups");
     return { success: true, message: "Jadwal berhasil dibatalkan" };

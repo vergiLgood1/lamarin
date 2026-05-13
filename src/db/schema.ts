@@ -103,6 +103,14 @@ export const workModeEnum = pgEnum("work_mode", [
   "remote",
 ]);
 
+export const calendarProviderEnum = pgEnum("calendar_provider", ["google"]);
+
+export const calendarEventTypeEnum = pgEnum("calendar_event_type", [
+  "follow_up",
+  "interview",
+  "deadline",
+]);
+
 // ============================================
 // Application Tables
 // ============================================
@@ -175,4 +183,63 @@ export const followUpSchedules = pgTable("follow_up_schedules", {
   isActive: boolean("is_active").notNull().default(true),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const calendarConnections = pgTable("calendar_connections", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  provider: calendarProviderEnum("provider").notNull().default("google"),
+  accessToken: text("access_token").notNull(),
+  refreshToken: text("refresh_token"),
+  tokenExpiresAt: timestamp("token_expires_at"),
+  calendarId: varchar("calendar_id", { length: 255 }).notNull().default("primary"),
+  timezone: varchar("timezone", { length: 100 }).notNull().default("Asia/Jakarta"),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const calendarEvents = pgTable("calendar_events", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  applicationId: uuid("application_id")
+    .notNull()
+    .references(() => jobApplications.id, { onDelete: "cascade" }),
+  provider: calendarProviderEnum("provider").notNull().default("google"),
+  eventType: calendarEventTypeEnum("event_type").notNull().default("follow_up"),
+  externalEventId: text("external_event_id").notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  scheduledAt: timestamp("scheduled_at").notNull(),
+  externalUpdatedAt: timestamp("external_updated_at"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const telegramConnections = pgTable("telegram_connections", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  chatId: varchar("chat_id", { length: 255 }).notNull(),
+  username: varchar("username", { length: 255 }),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const telegramReminderLogs = pgTable("telegram_reminder_logs", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  scheduleId: uuid("schedule_id")
+    .notNull()
+    .references(() => followUpSchedules.id, { onDelete: "cascade" }),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  reminderType: varchar("reminder_type", { length: 20 }).notNull(),
+  reminderDate: date("reminder_date").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
 });
