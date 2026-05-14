@@ -4,10 +4,18 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   deleteFollowUpEmail,
   sendFollowUpEmail,
 } from "@/features/follow-up/actions/mutations";
-import { Loader2, Send, Trash2 } from "lucide-react";
+import { EllipsisVertical, Loader2, Pencil, Send, Trash2 } from "lucide-react";
+import Link from "next/link";
 import { useTransition } from "react";
 import { toast } from "sonner";
 
@@ -79,38 +87,107 @@ export function EmailPreview({ emails }: EmailPreviewProps) {
       <CardHeader>
         <CardTitle>Riwayat Email</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        {emails.map((email) => (
-          <div key={email.id} className="rounded-md border p-4 space-y-2">
-            <div className="flex items-start justify-between">
-              <div className="space-y-0.5">
-                <p className="text-sm font-medium">{email.subject}</p>
-                <p className="text-xs text-muted-foreground">
-                  Ke: {email.recipientEmail} | {email.companyName} -{" "}
-                  {email.position}
-                </p>
+      <CardContent>
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-4">
+          {emails.map((email) => (
+            <Link
+              key={email.id}
+              href={`/dashboard/follow-ups/compose/${email.id}`}
+              className="block space-y-2 rounded-md border p-4 transition-colors hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            >
+              <div className="flex items-start justify-between">
+                <div className="space-y-0.5">
+                  <p className="text-sm font-medium hover:underline">
+                    {email.subject}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Ke: {email.recipientEmail} | {email.companyName} -{" "}
+                    {email.position}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-1">
+                  <Badge
+                    variant={email.status === "sent" ? "default" : "secondary"}
+                  >
+                    {STATUS_LABELS[email.status] || email.status}
+                  </Badge>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger
+                      render={
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-7 w-7"
+                          onClick={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                          }}
+                        >
+                          <EllipsisVertical className="h-4 w-4" />
+                        </Button>
+                      }
+                    />
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        render={
+                          <Link
+                            href={`/dashboard/follow-ups/compose/${email.id}?mode=edit`}
+                          >
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Edit
+                          </Link>
+                        }
+                      />
+                      {email.status === "draft" ? (
+                        <DropdownMenuItem
+                          onClick={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            handleSend(email.id);
+                          }}
+                        >
+                          <Send className="mr-2 h-4 w-4" />
+                          Kirim
+                        </DropdownMenuItem>
+                      ) : null}
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        className="text-destructive"
+                        onClick={(event) => {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          handleDelete(email.id);
+                        }}
+                      >
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Hapus
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               </div>
-              <Badge
-                variant={email.status === "sent" ? "default" : "secondary"}
-              >
-                {STATUS_LABELS[email.status] || email.status}
-              </Badge>
-            </div>
-            <p className="text-sm text-muted-foreground line-clamp-2">
-              {email.body}
-            </p>
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-muted-foreground">
-                {new Date(email.createdAt).toLocaleDateString("id-ID")}
-                {email.sentAt &&
-                  ` | Terkirim: ${new Date(email.sentAt).toLocaleDateString("id-ID")}`}
-              </span>
-              <div className="flex gap-2">
-                {email.status === "draft" && (
+
+              <p className="line-clamp-2 text-sm text-muted-foreground">
+                {email.body}
+              </p>
+
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">
+                  {new Date(email.createdAt).toLocaleDateString("id-ID")}
+                  {email.sentAt
+                    ? ` | Terkirim: ${new Date(email.sentAt).toLocaleDateString("id-ID")}`
+                    : ""}
+                </span>
+                {email.status === "draft" ? (
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => handleSend(email.id)}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      handleSend(email.id);
+                    }}
                     disabled={isPending}
                   >
                     {isPending ? (
@@ -120,20 +197,11 @@ export function EmailPreview({ emails }: EmailPreviewProps) {
                     )}
                     Kirim
                   </Button>
-                )}
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="text-destructive"
-                  onClick={() => handleDelete(email.id)}
-                  disabled={isPending}
-                >
-                  <Trash2 className="h-3 w-3" />
-                </Button>
+                ) : null}
               </div>
-            </div>
-          </div>
-        ))}
+            </Link>
+          ))}
+        </div>
       </CardContent>
     </Card>
   );

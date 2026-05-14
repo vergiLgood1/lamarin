@@ -1,9 +1,9 @@
-import { ExportDataCard } from "@/features/settings/components/export-data-card";
 import {
   getCalendarConnection,
   getGoogleCalendarOptions,
 } from "@/features/calendar/actions/queries";
 import { CalendarIntegrationCard } from "@/features/settings/components/calendar-integration-card";
+import { ExportDataCard } from "@/features/settings/components/export-data-card";
 import { ProfileCard } from "@/features/settings/components/profile-card";
 import { TelegramIntegrationCard } from "@/features/settings/components/telegram-integration-card";
 import { getTelegramConnection } from "@/features/telegram/actions/queries";

@@ -452,7 +452,7 @@ export function UnifiedFollowUpForm({
         </CardContent>
       </Card>
 
-      {activeSchedules.length > 0 && (
+      {/* {activeSchedules.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle>Jadwal Aktif ({activeSchedules.length})</CardTitle>
@@ -494,7 +494,7 @@ export function UnifiedFollowUpForm({
             ))}
           </CardContent>
         </Card>
-      )}
+      )} */}
     </div>
   );
 }

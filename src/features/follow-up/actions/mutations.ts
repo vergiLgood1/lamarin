@@ -346,6 +346,78 @@ export async function cancelSchedule(
   }
 }
 
+export async function upsertScheduleForEmail(
+  emailId: string,
+  scheduledDate: string
+): Promise<ActionState<FollowUpSchedule>> {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) {
+    return { success: false, message: "Unauthorized" };
+  }
+
+  try {
+    const [email] = await db
+      .select()
+      .from(followUpEmails)
+      .where(
+        and(eq(followUpEmails.id, emailId), eq(followUpEmails.userId, session.user.id))
+      );
+
+    if (!email) {
+      return { success: false, message: "Email tidak ditemukan" };
+    }
+
+    const [existing] = await db
+      .select()
+      .from(followUpSchedules)
+      .where(
+        and(
+          eq(followUpSchedules.applicationId, email.applicationId),
+          eq(followUpSchedules.userId, session.user.id),
+          eq(followUpSchedules.isActive, true)
+        )
+      );
+
+    const nextDate = new Date(scheduledDate);
+
+    let schedule: FollowUpSchedule;
+    if (existing) {
+      const [updated] = await db
+        .update(followUpSchedules)
+        .set({ scheduledDate: nextDate, emailId, updatedAt: new Date() })
+        .where(eq(followUpSchedules.id, existing.id))
+        .returning();
+      schedule = updated;
+    } else {
+      const [created] = await db
+        .insert(followUpSchedules)
+        .values({
+          applicationId: email.applicationId,
+          userId: session.user.id,
+          emailId,
+          scheduledDate: nextDate,
+        })
+        .returning();
+      schedule = created;
+    }
+
+    await db
+      .update(followUpEmails)
+      .set({ status: "scheduled" })
+      .where(eq(followUpEmails.id, emailId));
+
+    revalidatePath("/dashboard/follow-ups");
+    return { success: true, message: "Jadwal berhasil disimpan", data: schedule };
+  } catch (error) {
+    logger.error("Failed to upsert schedule for email", {
+      userId: session.user.id,
+      emailId,
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+    return { success: false, message: "Gagal menyimpan jadwal" };
+  }
+}
+
 export async function createScheduledFollowUp(
   prevState: ActionState<FollowUpEmail>,
   formData: FormData
