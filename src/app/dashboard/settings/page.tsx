@@ -1,6 +1,5 @@
 import {
   getCalendarConnection,
-  getGoogleCalendarOptions,
 } from "@/features/calendar/actions/queries";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ExportDataCard } from "@/features/settings/components/export-data-card";

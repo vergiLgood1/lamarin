@@ -22,6 +22,7 @@ import {
   updateCalendarPreferences,
 } from "@/features/calendar/actions/mutations";
 import { Calendar } from "lucide-react";
+import Link from "next/link";
 import { useTransition } from "react";
 import { toast } from "sonner";
 
@@ -49,12 +50,12 @@ export function CalendarIntegrationCard(props: CalendarIntegrationCardProps) {
       </CardHeader>
       <CardContent className="space-y-4">
         {!props.isConnected ? (
-          <a href="/api/calendar/connect" className="inline-flex">
+          <Link href="/api/calendar/connect" className="inline-flex">
             <Button>
             <Calendar className="mr-2 h-4 w-4" />
             Connect Google Calendar
             </Button>
-          </a>
+          </Link>
         ) : (
           <>
             <form
