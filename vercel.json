@@ -1,16 +1,16 @@
 {
   "crons": [
     {
-      "path": "/api/cron/calendar-sync",
-      "schedule": "*/15 * * * *"
-    },
-    {
       "path": "/api/cron/follow-up",
       "schedule": "*/15 * * * *"
     },
     {
       "path": "/api/cron/telegram-reminders",
-      "schedule": "*/30 * * * *"
+      "schedule": "7,37 * * * *"
+    },
+    {
+      "path": "/api/cron/calendar-sync",
+      "schedule": "12,42 * * * *"
     }
   ]
 }

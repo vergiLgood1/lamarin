@@ -2,20 +2,18 @@ import {
   getCalendarConnection,
   getGoogleCalendarOptions,
 } from "@/features/calendar/actions/queries";
-import { CalendarIntegrationCard } from "@/features/settings/components/calendar-integration-card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ExportDataCard } from "@/features/settings/components/export-data-card";
 import { ProfileCard } from "@/features/settings/components/profile-card";
-import { TelegramIntegrationCard } from "@/features/settings/components/telegram-integration-card";
 import { getTelegramConnection } from "@/features/telegram/actions/queries";
 import { auth } from "@/lib/auth";
+import { ArrowRight, Bot, Calendar } from "lucide-react";
 import { headers } from "next/headers";
+import Link from "next/link";
 
 export default async function SettingsPage() {
   const session = await auth.api.getSession({ headers: await headers() });
   const calendarConnection = await getCalendarConnection().catch(() => null);
-  const calendarOptions = calendarConnection
-    ? await getGoogleCalendarOptions().catch(() => [])
-    : [];
   const telegramConnection = await getTelegramConnection().catch(() => null);
 
   return (
@@ -30,17 +28,47 @@ export default async function SettingsPage() {
         email={session?.user?.email || ""}
       />
       <ExportDataCard />
-      <CalendarIntegrationCard
-        isConnected={!!(calendarConnection && calendarConnection.isActive)}
-        calendarId={calendarConnection?.calendarId || "primary"}
-        timezone={calendarConnection?.timezone || "Asia/Jakarta"}
-        calendarOptions={calendarOptions}
-      />
-      <TelegramIntegrationCard
-        isConnected={!!(telegramConnection && telegramConnection.isActive)}
-        chatId={telegramConnection?.chatId || ""}
-        username={telegramConnection?.username || ""}
-      />
+      <div className="grid gap-4 md:grid-cols-2">
+        <Link href="/dashboard/settings/calendar" className="group block">
+          <Card className="h-full transition-colors group-hover:bg-muted/40">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Calendar className="h-5 w-5" />
+                Google Calendar
+              </CardTitle>
+              <CardDescription>
+                Kelola integrasi follow-up dengan Google Calendar
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex items-center justify-between">
+              <span className="text-sm text-muted-foreground">
+                {calendarConnection?.isActive ? "Terhubung" : "Belum terhubung"}
+              </span>
+              <ArrowRight className="h-4 w-4 text-muted-foreground" />
+            </CardContent>
+          </Card>
+        </Link>
+
+        <Link href="/dashboard/settings/telegram" className="group block">
+          <Card className="h-full transition-colors group-hover:bg-muted/40">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Bot className="h-5 w-5" />
+                Telegram Bot
+              </CardTitle>
+              <CardDescription>
+                Kelola notifikasi reminder H-1 dan H-0 via Telegram
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex items-center justify-between">
+              <span className="text-sm text-muted-foreground">
+                {telegramConnection?.isActive ? "Terhubung" : "Belum terhubung"}
+              </span>
+              <ArrowRight className="h-4 w-4 text-muted-foreground" />
+            </CardContent>
+          </Card>
+        </Link>
+      </div>
     </div>
   );
 }
