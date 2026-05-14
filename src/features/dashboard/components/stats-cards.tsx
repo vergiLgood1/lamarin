@@ -19,7 +19,7 @@ export function StatsCards({
           <CardTitle className="text-sm font-medium text-muted-foreground">
             Applied
           </CardTitle>
-          <Briefcase className="h-4 w-4 text-muted-foreground" />
+          <Briefcase className="size-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold tabular-nums">{appliedCount}</div>
@@ -34,7 +34,7 @@ export function StatsCards({
           <CardTitle className="text-sm font-medium text-muted-foreground">
             Interview
           </CardTitle>
-          <MessageCircleQuestion className="h-4 w-4 text-muted-foreground" />
+          <MessageCircleQuestion className="size-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold tabular-nums">{interviewCount}</div>
@@ -49,7 +49,7 @@ export function StatsCards({
           <CardTitle className="text-sm font-medium text-muted-foreground">
             Rejected
           </CardTitle>
-          <CircleX className="h-4 w-4 text-muted-foreground" />
+          <CircleX className="size-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold tabular-nums">{rejectedCount}</div>

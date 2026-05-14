@@ -2,15 +2,14 @@
 
 import { db } from "@/db";
 import { telegramConnections } from "@/db/schema";
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/auth-server";
 import { logger } from "@/lib/logger";
 import { sendTelegramMessage, validateTelegramChatId } from "@/lib/telegram";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
 
 export async function connectTelegram(formData: FormData) {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) return { success: false, message: "Unauthorized" };
 
   const chatId = String(formData.get("chatId") || "").trim();
@@ -53,7 +52,7 @@ export async function connectTelegram(formData: FormData) {
 }
 
 export async function disconnectTelegram() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) return { success: false, message: "Unauthorized" };
 
   await db
@@ -66,7 +65,7 @@ export async function disconnectTelegram() {
 }
 
 export async function testTelegramConnection() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) return { success: false, message: "Unauthorized" };
 
   const [connection] = await db

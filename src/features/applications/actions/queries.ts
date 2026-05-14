@@ -1,14 +1,13 @@
 "use server";
 
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/auth-server";
 import { db } from "@/db";
 import { jobApplications, applicationDocuments } from "@/db/schema";
 import { eq, and, ilike, gte, lte, desc, asc, count, sql } from "drizzle-orm";
 import type { ApplicationFilters } from "@/types";
 
 export async function getApplications(filters: ApplicationFilters = {}) {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) {
     throw new Error("Unauthorized");
   }
@@ -98,7 +97,7 @@ export async function getApplications(filters: ApplicationFilters = {}) {
 }
 
 export async function getApplicationById(id: string) {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) {
     throw new Error("Unauthorized");
   }
@@ -118,7 +117,7 @@ export async function getApplicationById(id: string) {
 }
 
 export async function getApplicationsCount() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) {
     throw new Error("Unauthorized");
   }
@@ -132,7 +131,7 @@ export async function getApplicationsCount() {
 }
 
 export async function getApplicationDocuments(applicationId: string) {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) {
     throw new Error("Unauthorized");
   }

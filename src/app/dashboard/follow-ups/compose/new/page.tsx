@@ -16,7 +16,7 @@ export default async function FollowUpComposeNewPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">
+          <h1 className="text-2xl font-semibold tracking-tight">
             Compose Follow-up
           </h1>
           <p className="text-sm text-muted-foreground">
@@ -30,7 +30,7 @@ export default async function FollowUpComposeNewPage() {
             "w-full sm:w-auto",
           )}
         >
-          <ArrowLeft className="mr-2 h-4 w-4" />
+          <ArrowLeft className="mr-2 size-4" />
           Kembali
         </Link>
       </div>

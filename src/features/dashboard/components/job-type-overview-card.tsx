@@ -101,8 +101,8 @@ export function JobTypeOverviewCard({ data }: JobTypeOverviewCardProps) {
                     const Icon = JOB_TYPE_ICONS[item.type];
 
                     return (
-                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-background text-muted-foreground shadow-sm">
-                        <Icon className="h-5 w-5" />
+                      <div className="flex size-11 shrink-0 items-center justify-center rounded-full bg-background text-muted-foreground shadow-sm">
+                        <Icon className="size-5" />
                       </div>
                     );
                   })()}

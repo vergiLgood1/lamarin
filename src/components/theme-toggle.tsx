@@ -32,7 +32,7 @@ export function ThemeToggle() {
               <span className="truncate text-left">
                 Select a schema: <span className="ml-2">{scheme}</span>
               </span>
-              <ChevronDown className="ml-1 h-3 w-3" />
+              <ChevronDown className="ml-1 size-3" />
             </Button>
           }
         />
@@ -45,7 +45,7 @@ export function ThemeToggle() {
               />
               <span className="flex-1">{cs.label}</span>
               {scheme === cs.id && (
-                <Check className="ml-2 h-3.5 w-3.5 text-primary" />
+                <Check className="ml-2 size-3.5 text-primary" />
               )}
             </DropdownMenuItem>
           ))}

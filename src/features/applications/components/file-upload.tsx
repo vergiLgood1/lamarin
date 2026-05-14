@@ -105,7 +105,7 @@ export function FileUpload({
         >
           {isUploading ? (
             <div className="flex items-center gap-2 text-sm">
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader2 className="size-4 animate-spin" />
               Mengupload dokumen...
             </div>
           ) : (
@@ -130,9 +130,9 @@ export function FileUpload({
                 className="group flex items-center gap-1.5 rounded-md border border-dashed bg-muted/30 px-2.5 py-1.5 text-xs"
               >
                 {isImage(file.type) ? (
-                  <ImageIcon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                  <ImageIcon className="size-3.5 shrink-0 text-muted-foreground" />
                 ) : (
-                  <FileText className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                  <FileText className="size-3.5 shrink-0 text-muted-foreground" />
                 )}
                 <span className="max-w-[120px] truncate font-medium">{file.name}</span>
                 <span className="text-muted-foreground">{formatFileSize(file.size)}</span>
@@ -141,19 +141,19 @@ export function FileUpload({
                   type="button"
                   variant="ghost"
                   size="icon-xs"
-                  className="h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100"
+                  className="size-4 opacity-0 transition-opacity group-hover:opacity-100"
                   onClick={() => setPreviewPendingFile(file)}
                 >
-                  <Eye className="h-3 w-3" />
+                  <Eye className="size-3" />
                 </Button>
                 <Button
                   type="button"
                   variant="ghost"
                   size="icon-xs"
-                  className="h-4 w-4 text-destructive opacity-0 transition-opacity group-hover:opacity-100"
+                  className="size-4 text-destructive opacity-0 transition-opacity group-hover:opacity-100"
                   onClick={() => removePendingFile(file.name)}
                 >
-                  <X className="h-3 w-3" />
+                  <X className="size-3" />
                 </Button>
               </div>
             ))}
@@ -171,9 +171,9 @@ export function FileUpload({
                 className="group flex items-center gap-1.5 rounded-md border bg-muted/50 px-2.5 py-1.5 text-xs"
               >
                 {isImage(file.type) ? (
-                  <ImageIcon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                  <ImageIcon className="size-3.5 shrink-0 text-muted-foreground" />
                 ) : (
-                  <FileText className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                  <FileText className="size-3.5 shrink-0 text-muted-foreground" />
                 )}
                 <span className="max-w-[120px] truncate font-medium">{file.name}</span>
                 <span className="text-muted-foreground">{formatFileSize(file.size)}</span>
@@ -181,19 +181,19 @@ export function FileUpload({
                   type="button"
                   variant="ghost"
                   size="icon-xs"
-                  className="h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100"
+                  className="size-4 opacity-0 transition-opacity group-hover:opacity-100"
                   onClick={() => setPreviewFile(file)}
                 >
-                  <Eye className="h-3 w-3" />
+                  <Eye className="size-3" />
                 </Button>
                 <Button
                   type="button"
                   variant="ghost"
                   size="icon-xs"
-                  className="h-4 w-4 text-destructive opacity-0 transition-opacity group-hover:opacity-100"
+                  className="size-4 text-destructive opacity-0 transition-opacity group-hover:opacity-100"
                   onClick={() => removeExistingFile(file.key)}
                 >
-                  <X className="h-3 w-3" />
+                  <X className="size-3" />
                 </Button>
               </div>
             ))}
@@ -242,7 +242,7 @@ export function FileUpload({
               <iframe src={previewFile.url} title={previewFile.name} className="h-[65vh] w-full rounded-md border" />
             ) : (
               <div className="flex flex-col items-center justify-center gap-3 py-12">
-                <FileText className="h-12 w-12 text-muted-foreground" />
+                <FileText className="size-12 text-muted-foreground" />
                 <p className="text-sm text-muted-foreground">Preview tidak tersedia untuk tipe file ini</p>
                 {previewFile && (
                   <Link

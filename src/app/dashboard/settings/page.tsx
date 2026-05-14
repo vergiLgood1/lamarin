@@ -5,20 +5,21 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ExportDataCard } from "@/features/settings/components/export-data-card";
 import { ProfileCard } from "@/features/settings/components/profile-card";
 import { getTelegramConnection } from "@/features/telegram/actions/queries";
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/auth-server";
 import { ArrowRight, Bot, Calendar } from "lucide-react";
-import { headers } from "next/headers";
 import Link from "next/link";
 
 export default async function SettingsPage() {
-  const session = await auth.api.getSession({ headers: await headers() });
-  const calendarConnection = await getCalendarConnection().catch(() => null);
-  const telegramConnection = await getTelegramConnection().catch(() => null);
+  const [session, calendarConnection, telegramConnection] = await Promise.all([
+    getSession(),
+    getCalendarConnection().catch(() => null),
+    getTelegramConnection().catch(() => null),
+  ]);
 
   return (
     <div className="mx-auto space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Pengaturan</h1>
+        <h1 className="text-2xl font-semibold">Pengaturan</h1>
         <p className="text-muted-foreground">Kelola akun dan preferensi Anda</p>
       </div>
 
@@ -32,7 +33,7 @@ export default async function SettingsPage() {
           <Card className="h-full transition-colors group-hover:bg-muted/40">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Calendar className="h-5 w-5" />
+                <Calendar className="size-5" />
                 Google Calendar
               </CardTitle>
               <CardDescription>
@@ -43,7 +44,7 @@ export default async function SettingsPage() {
               <span className="text-sm text-muted-foreground">
                 {calendarConnection?.isActive ? "Terhubung" : "Belum terhubung"}
               </span>
-              <ArrowRight className="h-4 w-4 text-muted-foreground" />
+              <ArrowRight className="size-4 text-muted-foreground" />
             </CardContent>
           </Card>
         </Link>
@@ -52,7 +53,7 @@ export default async function SettingsPage() {
           <Card className="h-full transition-colors group-hover:bg-muted/40">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Bot className="h-5 w-5" />
+                <Bot className="size-5" />
                 Telegram Bot
               </CardTitle>
               <CardDescription>
@@ -63,7 +64,7 @@ export default async function SettingsPage() {
               <span className="text-sm text-muted-foreground">
                 {telegramConnection?.isActive ? "Terhubung" : "Belum terhubung"}
               </span>
-              <ArrowRight className="h-4 w-4 text-muted-foreground" />
+              <ArrowRight className="size-4 text-muted-foreground" />
             </CardContent>
           </Card>
         </Link>

@@ -2,13 +2,12 @@
 
 import { db } from "@/db";
 import { applicationDocuments, jobApplications } from "@/db/schema";
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/auth-server";
 import { logger } from "@/lib/logger";
 import { applicationSchema, documentFileSchema } from "@/lib/validations";
 import type { ActionState, JobApplication } from "@/types";
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
 import { z } from "zod";
 
 interface DocumentFile {
@@ -67,7 +66,7 @@ export async function createApplication(
   prevState: ActionState<JobApplication>,
   formData: FormData
 ): Promise<ActionState<JobApplication>> {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) {
     return { success: false, message: "Unauthorized" };
   }
@@ -135,7 +134,7 @@ export async function updateApplication(
   prevState: ActionState<JobApplication>,
   formData: FormData
 ): Promise<ActionState<JobApplication>> {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) {
     return { success: false, message: "Unauthorized" };
   }
@@ -212,7 +211,7 @@ export async function updateApplication(
 }
 
 export async function deleteApplication(id: string): Promise<ActionState> {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) {
     return { success: false, message: "Unauthorized" };
   }
@@ -260,7 +259,7 @@ export async function updateApplicationStatus(
     | "rejected"
     | "withdrawn"
 ): Promise<ActionState<JobApplication>> {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) {
     return { success: false, message: "Unauthorized" };
   }

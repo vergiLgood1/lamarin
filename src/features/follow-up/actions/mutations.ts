@@ -7,7 +7,7 @@ import {
   followUpSchedules,
   jobApplications,
 } from "@/db/schema";
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/auth-server";
 import {
   deleteGoogleCalendarEvent,
   upsertGoogleCalendarEvent,
@@ -22,13 +22,12 @@ import {
 import type { ActionState, FollowUpEmail, FollowUpSchedule } from "@/types";
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
 
 export async function createFollowUpDraft(
   prevState: ActionState<FollowUpEmail>,
   formData: FormData
 ): Promise<ActionState<FollowUpEmail>> {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) {
     return { success: false, message: "Unauthorized" };
   }
@@ -82,7 +81,7 @@ export async function createFollowUpDraft(
 export async function sendFollowUpEmail(
   emailId: string
 ): Promise<ActionState> {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) {
     return { success: false, message: "Unauthorized" };
   }
@@ -141,7 +140,7 @@ export async function updateFollowUpDraft(
   emailId: string,
   data: { subject?: string; body?: string }
 ): Promise<ActionState<FollowUpEmail>> {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) {
     return { success: false, message: "Unauthorized" };
   }
@@ -176,7 +175,7 @@ export async function updateFollowUpDraft(
 export async function deleteFollowUpEmail(
   emailId: string
 ): Promise<ActionState> {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) {
     return { success: false, message: "Unauthorized" };
   }
@@ -211,7 +210,7 @@ export async function createSchedule(
   prevState: ActionState<FollowUpSchedule>,
   formData: FormData
 ): Promise<ActionState<FollowUpSchedule>> {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) {
     return { success: false, message: "Unauthorized" };
   }
@@ -289,7 +288,7 @@ export async function createSchedule(
 export async function cancelSchedule(
   scheduleId: string
 ): Promise<ActionState> {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) {
     return { success: false, message: "Unauthorized" };
   }
@@ -350,7 +349,7 @@ export async function upsertScheduleForEmail(
   emailId: string,
   scheduledDate: string
 ): Promise<ActionState<FollowUpSchedule>> {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) {
     return { success: false, message: "Unauthorized" };
   }
@@ -422,7 +421,7 @@ export async function createScheduledFollowUp(
   prevState: ActionState<FollowUpEmail>,
   formData: FormData
 ): Promise<ActionState<FollowUpEmail>> {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) {
     return { success: false, message: "Unauthorized" };
   }

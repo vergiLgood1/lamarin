@@ -124,9 +124,9 @@ export function ComposeEmailEditor({
 
       <Button onClick={handleSave} disabled={isPending}>
         {isPending ? (
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          <Loader2 className="mr-2 size-4 animate-spin" />
         ) : (
-          <Save className="mr-2 h-4 w-4" />
+          <Save className="mr-2 size-4" />
         )}
         Simpan Perubahan
       </Button>
@@ -141,7 +141,7 @@ export function ComposeEmailEditor({
               variant="outline"
               onClick={() => setShowScheduleForm(true)}
             >
-              <Plus className="mr-2 h-4 w-4" />
+              <Plus className="mr-2 size-4" />
               Add Schedule
             </Button>
           ) : null}
@@ -167,9 +167,9 @@ export function ComposeEmailEditor({
                 variant="outline"
               >
                 {isPending ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="mr-2 size-4 animate-spin" />
                 ) : (
-                  <CalendarClock className="mr-2 h-4 w-4" />
+                  <CalendarClock className="mr-2 size-4" />
                 )}
                 {hasActiveSchedule ? "Update Jadwal" : "Tambah Jadwal"}
               </Button>
@@ -182,7 +182,7 @@ export function ComposeEmailEditor({
                   variant="ghost"
                   className="text-destructive"
                 >
-                  <X className="mr-2 h-4 w-4" />
+                  <X className="mr-2 size-4" />
                   Batalkan Jadwal
                 </Button>
               ) : (

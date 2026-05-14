@@ -2,13 +2,12 @@
 
 import { db } from "@/db";
 import { calendarConnections } from "@/db/schema";
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/auth-server";
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
 
 export async function disconnectGoogleCalendar() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) return { success: false, message: "Unauthorized" };
 
   await db
@@ -26,7 +25,7 @@ export async function disconnectGoogleCalendar() {
 }
 
 export async function updateCalendarPreferences(formData: FormData) {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) return { success: false, message: "Unauthorized" };
 
   const calendarId = String(formData.get("calendarId") || "primary");

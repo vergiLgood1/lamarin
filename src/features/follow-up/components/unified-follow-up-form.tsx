@@ -333,9 +333,9 @@ export function UnifiedFollowUpForm({
                   disabled={!canGenerate}
                 >
                   {generating ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="mr-2 size-4 animate-spin" />
                   ) : (
-                    <Sparkles className="mr-2 h-4 w-4" />
+                    <Sparkles className="mr-2 size-4" />
                   )}
                   {generating ? "Generating..." : "Generate dengan AI"}
                 </Button>
@@ -346,7 +346,7 @@ export function UnifiedFollowUpForm({
                   onClick={handleGenerateAndSchedule}
                   disabled={!canGenerate}
                 >
-                  <Sparkles className="mr-2 h-4 w-4" />
+                  <Sparkles className="mr-2 size-4" />
                   Generate + Jadwalkan
                 </Button>
               </div>
@@ -441,9 +441,9 @@ export function UnifiedFollowUpForm({
 
               <Button type="submit" disabled={isProcessing} className="w-full">
                 {isPending ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="mr-2 size-4 animate-spin" />
                 ) : (
-                  <submitConfig.Icon className="mr-2 h-4 w-4" />
+                  <submitConfig.Icon className="mr-2 size-4" />
                 )}
                 {isPending ? submitConfig.pendingLabel : submitConfig.label}
               </Button>
@@ -479,7 +479,7 @@ export function UnifiedFollowUpForm({
                     onClick={() => handleEditSchedule(schedule)}
                     title="Edit jadwal"
                   >
-                    <Clock className="h-4 w-4" />
+                    <Clock className="size-4" />
                   </Button>
                   <Button
                     size="sm"
@@ -487,7 +487,7 @@ export function UnifiedFollowUpForm({
                     onClick={() => handleCancelSchedule(schedule.id)}
                     title="Batalkan jadwal"
                   >
-                    <X className="h-4 w-4" />
+                    <X className="size-4" />
                   </Button>
                 </div>
               </div>

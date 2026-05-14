@@ -41,6 +41,8 @@ const STATUS_LABELS: Record<string, string> = {
   failed: "Gagal",
 };
 
+const DATE_FORMATTER = new Intl.DateTimeFormat("id-ID", { timeZone: "UTC" });
+
 export function EmailPreview({ emails }: EmailPreviewProps) {
   const [isPending, startTransition] = useTransition();
 
@@ -89,8 +91,14 @@ export function EmailPreview({ emails }: EmailPreviewProps) {
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-4">
-          {emails.map((email) => (
-            <Link
+          {emails.map((email) => {
+            const createdAtDisplay = DATE_FORMATTER.format(new Date(email.createdAt));
+            const sentAtDisplay = email.sentAt
+              ? DATE_FORMATTER.format(new Date(email.sentAt))
+              : null;
+
+            return (
+              <Link
               key={email.id}
               href={`/dashboard/follow-ups/compose/${email.id}`}
               className="block space-y-2 rounded-md border p-4 transition-colors hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
@@ -118,13 +126,13 @@ export function EmailPreview({ emails }: EmailPreviewProps) {
                         <Button
                           size="icon"
                           variant="ghost"
-                          className="h-7 w-7"
+                          className="size-7"
                           onClick={(event) => {
                             event.preventDefault();
                             event.stopPropagation();
                           }}
                         >
-                          <EllipsisVertical className="h-4 w-4" />
+                          <EllipsisVertical className="size-4" />
                         </Button>
                       }
                     />
@@ -134,7 +142,7 @@ export function EmailPreview({ emails }: EmailPreviewProps) {
                           <Link
                             href={`/dashboard/follow-ups/compose/${email.id}?mode=edit`}
                           >
-                            <Pencil className="mr-2 h-4 w-4" />
+                            <Pencil className="mr-2 size-4" />
                             Edit
                           </Link>
                         }
@@ -147,7 +155,7 @@ export function EmailPreview({ emails }: EmailPreviewProps) {
                             handleSend(email.id);
                           }}
                         >
-                          <Send className="mr-2 h-4 w-4" />
+                          <Send className="mr-2 size-4" />
                           Kirim
                         </DropdownMenuItem>
                       ) : null}
@@ -160,7 +168,7 @@ export function EmailPreview({ emails }: EmailPreviewProps) {
                           handleDelete(email.id);
                         }}
                       >
-                        <Trash2 className="mr-2 h-4 w-4" />
+                        <Trash2 className="mr-2 size-4" />
                         Hapus
                       </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -174,10 +182,8 @@ export function EmailPreview({ emails }: EmailPreviewProps) {
 
               <div className="flex items-center justify-between">
                 <span className="text-xs text-muted-foreground">
-                  {new Date(email.createdAt).toLocaleDateString("id-ID")}
-                  {email.sentAt
-                    ? ` | Terkirim: ${new Date(email.sentAt).toLocaleDateString("id-ID")}`
-                    : ""}
+                  {createdAtDisplay}
+                  {sentAtDisplay ? ` | Terkirim: ${sentAtDisplay}` : ""}
                 </span>
                 {email.status === "draft" ? (
                   <Button
@@ -191,16 +197,17 @@ export function EmailPreview({ emails }: EmailPreviewProps) {
                     disabled={isPending}
                   >
                     {isPending ? (
-                      <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                      <Loader2 className="mr-1 size-3 animate-spin" />
                     ) : (
-                      <Send className="mr-1 h-3 w-3" />
+                      <Send className="mr-1 size-3" />
                     )}
                     Kirim
                   </Button>
                 ) : null}
               </div>
             </Link>
-          ))}
+            );
+          })}
         </div>
       </CardContent>
     </Card>

@@ -1,13 +1,12 @@
 "use server";
 
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/auth-server";
 import { db } from "@/db";
 import { followUpEmails, followUpSchedules, jobApplications } from "@/db/schema";
 import { eq, and, desc } from "drizzle-orm";
 
 export async function getFollowUpEmails(applicationId?: string) {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) {
     throw new Error("Unauthorized");
   }
@@ -41,7 +40,7 @@ export async function getFollowUpEmails(applicationId?: string) {
 }
 
 export async function getFollowUpSchedules() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) {
     throw new Error("Unauthorized");
   }
@@ -70,7 +69,7 @@ export async function getFollowUpSchedules() {
 }
 
 export async function getFollowUpEmailById(emailId: string) {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) {
     throw new Error("Unauthorized");
   }

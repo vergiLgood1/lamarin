@@ -1,7 +1,6 @@
 "use server";
 
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/auth-server";
 import { db } from "@/db";
 import { jobApplications } from "@/db/schema";
 import { eq, and, gte, lte, desc } from "drizzle-orm";
@@ -12,7 +11,7 @@ export async function getExportData(filters?: {
   startDate?: string;
   endDate?: string;
 }) {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) {
     throw new Error("Unauthorized");
   }

@@ -2,12 +2,11 @@
 
 import { db } from "@/db";
 import { telegramConnections } from "@/db/schema";
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/auth-server";
 import { eq } from "drizzle-orm";
-import { headers } from "next/headers";
 
 export async function getTelegramConnection() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) throw new Error("Unauthorized");
 
   const [connection] = await db

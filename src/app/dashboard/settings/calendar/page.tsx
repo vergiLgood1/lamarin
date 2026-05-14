@@ -18,14 +18,14 @@ export default async function CalendarSettingsPage() {
     <div className="mx-auto space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Pengaturan Google Calendar</h1>
+          <h1 className="text-2xl font-semibold">Pengaturan Google Calendar</h1>
           <p className="text-muted-foreground">Kelola koneksi dan preferensi calendar.</p>
         </div>
         <Link
           href="/dashboard/settings"
           className={cn(buttonVariants({ variant: "outline" }), "w-full sm:w-auto")}
         >
-          <ArrowLeft className="mr-2 h-4 w-4" />
+          <ArrowLeft className="mr-2 size-4" />
           Kembali
         </Link>
       </div>

@@ -18,6 +18,12 @@ const STATUS_LABELS: Record<string, string> = {
   failed: "Gagal",
 };
 
+const DATE_TIME_FORMATTER = new Intl.DateTimeFormat("id-ID", {
+  dateStyle: "medium",
+  timeStyle: "short",
+  timeZone: "UTC",
+});
+
 interface FollowUpComposeDetailPageProps {
   params: Promise<{ emailId: string }>;
   searchParams: Promise<{ mode?: string }>;
@@ -27,12 +33,12 @@ export default async function FollowUpComposeDetailPage({
   params,
   searchParams,
 }: FollowUpComposeDetailPageProps) {
-  const { emailId } = await params;
-  const { mode } = await searchParams;
-  const [email, schedules] = await Promise.all([
-    getFollowUpEmailById(emailId),
+  const [{ emailId }, { mode }, schedules] = await Promise.all([
+    params,
+    searchParams,
     getFollowUpSchedules(),
   ]);
+  const email = await getFollowUpEmailById(emailId);
 
   if (!email) notFound();
 
@@ -43,12 +49,16 @@ export default async function FollowUpComposeDetailPage({
   const activeSchedule = relatedSchedules.find((schedule) => schedule.isActive);
   const isEditableStatus = email.status === "draft" || email.status === "scheduled";
   const isEditMode = mode === "edit" && isEditableStatus;
+  const createdAtDisplay = DATE_TIME_FORMATTER.format(new Date(email.createdAt));
+  const sentAtDisplay = email.sentAt
+    ? DATE_TIME_FORMATTER.format(new Date(email.sentAt))
+    : "-";
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Detail Compose Email</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Detail Compose Email</h1>
           <p className="text-sm text-muted-foreground">
             Detail email follow-up beserta jadwal yang terhubung.
           </p>
@@ -57,7 +67,7 @@ export default async function FollowUpComposeDetailPage({
           href="/dashboard/follow-ups/compose"
           className={cn(buttonVariants({ variant: "outline" }), "w-full sm:w-auto")}
         >
-          <ArrowLeft className="mr-2 h-4 w-4" />
+          <ArrowLeft className="mr-2 size-4" />
           Kembali
         </Link>
       </div>
@@ -81,11 +91,11 @@ export default async function FollowUpComposeDetailPage({
             </p>
             <p>
               <span className="text-muted-foreground">Dibuat:</span>{" "}
-              {new Date(email.createdAt).toLocaleString("id-ID")}
+              {createdAtDisplay}
             </p>
             <p>
               <span className="text-muted-foreground">Terkirim:</span>{" "}
-              {email.sentAt ? new Date(email.sentAt).toLocaleString("id-ID") : "-"}
+              {sentAtDisplay}
             </p>
           </div>
 
@@ -120,24 +130,28 @@ export default async function FollowUpComposeDetailPage({
           {relatedSchedules.length === 0 ? (
             <p className="text-sm text-muted-foreground">Belum ada jadwal terkait email ini.</p>
           ) : (
-            relatedSchedules.map((schedule) => (
-              <div
-                key={schedule.id}
-                className="flex items-center justify-between rounded-md border p-3"
-              >
-                <div className="space-y-0.5">
-                  <p className="text-sm font-medium">
-                    {schedule.companyName} - {schedule.position}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {new Date(schedule.scheduledDate).toLocaleString("id-ID")}
-                  </p>
+            relatedSchedules.map((schedule) => {
+              const scheduledDateDisplay = DATE_TIME_FORMATTER.format(
+                new Date(schedule.scheduledDate),
+              );
+
+              return (
+                <div
+                  key={schedule.id}
+                  className="flex items-center justify-between rounded-md border p-3"
+                >
+                  <div className="space-y-0.5">
+                    <p className="text-sm font-medium">
+                      {schedule.companyName} - {schedule.position}
+                    </p>
+                    <p className="text-xs text-muted-foreground">{scheduledDateDisplay}</p>
+                  </div>
+                  <Badge variant={schedule.isActive ? "outline" : "secondary"}>
+                    {schedule.isActive ? "Aktif" : "Nonaktif"}
+                  </Badge>
                 </div>
-                <Badge variant={schedule.isActive ? "outline" : "secondary"}>
-                  {schedule.isActive ? "Aktif" : "Nonaktif"}
-                </Badge>
-              </div>
-            ))
+              );
+            })
           )}
         </CardContent>
       </Card>

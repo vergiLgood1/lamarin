@@ -48,7 +48,7 @@ export function ApplicationTable({ applications }: ApplicationTableProps) {
     return (
       <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-16 text-center">
         <div className="mb-4 rounded-full bg-muted p-3">
-          <FileText className="h-6 w-6 text-muted-foreground" />
+          <FileText className="size-6 text-muted-foreground" />
         </div>
         <h3 className="text-base font-semibold">Belum Ada Lamaran</h3>
         <p className="mt-1 max-w-sm text-sm text-muted-foreground">
@@ -101,10 +101,10 @@ export function ApplicationTable({ applications }: ApplicationTableProps) {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8"
+                        className="size-8"
                         disabled={isPending}
                       >
-                        <MoreHorizontal className="h-4 w-4" />
+                        <MoreHorizontal className="size-4" />
                       </Button>
                     }
                   />
@@ -114,7 +114,7 @@ export function ApplicationTable({ applications }: ApplicationTableProps) {
                         <Link href={`/dashboard/applications/${app.id}`} />
                       }
                     >
-                      <Eye className="mr-2 h-4 w-4" />
+                      <Eye className="mr-2 size-4" />
                       Lihat Detail
                     </DropdownMenuItem>
                     <DropdownMenuItem
@@ -122,7 +122,7 @@ export function ApplicationTable({ applications }: ApplicationTableProps) {
                         <Link href={`/dashboard/applications/${app.id}/edit`} />
                       }
                     >
-                      <Pencil className="mr-2 h-4 w-4" />
+                      <Pencil className="mr-2 size-4" />
                       Edit
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
@@ -130,7 +130,7 @@ export function ApplicationTable({ applications }: ApplicationTableProps) {
                       variant="destructive"
                       onClick={() => handleDelete(app.id, app.companyName)}
                     >
-                      <Trash2 className="mr-2 h-4 w-4" />
+                      <Trash2 className="mr-2 size-4" />
                       Hapus
                     </DropdownMenuItem>
                   </DropdownMenuContent>

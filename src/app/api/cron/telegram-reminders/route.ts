@@ -10,7 +10,7 @@ import { sendTelegramMessage } from "@/lib/telegram";
 import { and, eq, gte, lte } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
+async function runTelegramReminders(req: NextRequest) {
   const authHeader = req.headers.get("authorization");
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -87,4 +87,12 @@ export async function GET(req: NextRequest) {
   }
 
   return NextResponse.json({ success: true, sent });
+}
+
+export async function POST(req: NextRequest) {
+  return runTelegramReminders(req);
+}
+
+export async function GET() {
+  return NextResponse.json({ error: "Method not allowed" }, { status: 405 });
 }

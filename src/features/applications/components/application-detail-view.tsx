@@ -29,14 +29,14 @@ export function ApplicationDetailView({
           href="/dashboard/applications"
           className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
         >
-          <ArrowLeft className="mr-2 h-4 w-4" />
+          <ArrowLeft className="mr-2 size-4" />
           Kembali
         </Link>
         <Link
           href={`/dashboard/applications/${application.id}/edit`}
           className={cn(buttonVariants())}
         >
-          <Pencil className="mr-2 h-4 w-4" />
+          <Pencil className="mr-2 size-4" />
           Edit
         </Link>
       </div>
@@ -87,7 +87,7 @@ export function ApplicationDetailView({
                   className="inline-flex items-center gap-1 text-sm text-primary underline-offset-4 hover:underline"
                 >
                   {application.meetingLink}
-                  <ExternalLink className="h-3 w-3" />
+                  <ExternalLink className="size-3" />
                 </a>
               </div>
             </>
@@ -110,9 +110,9 @@ export function ApplicationDetailView({
                       className="flex w-full items-center justify-start gap-2 rounded-lg border p-2 hover:bg-muted"
                     >
                       {doc.fileType.startsWith("image/") ? (
-                        <ImageIcon className="h-4 w-4 text-muted-foreground" />
+                        <ImageIcon className="size-4 text-muted-foreground" />
                       ) : (
-                        <FileText className="h-4 w-4 text-muted-foreground" />
+                        <FileText className="size-4 text-muted-foreground" />
                       )}
                       <div className="min-w-0 flex-1 text-left">
                         <p className="truncate text-sm font-medium">
@@ -122,7 +122,7 @@ export function ApplicationDetailView({
                           {doc.documentType}
                         </p>
                       </div>
-                      <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                      <ExternalLink className="size-3 text-muted-foreground" />
                     </a>
                   ))}
                 </div>
@@ -147,11 +147,11 @@ export function ApplicationDetailView({
           <Separator />
 
           <div className="flex gap-4 text-xs text-muted-foreground">
-            <span>
+            <span suppressHydrationWarning>
               Dibuat:{" "}
               {new Date(application.createdAt).toLocaleDateString("id-ID")}
             </span>
-            <span>
+            <span suppressHydrationWarning>
               Diperbarui:{" "}
               {new Date(application.updatedAt).toLocaleDateString("id-ID")}
             </span>

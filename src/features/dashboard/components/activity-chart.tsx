@@ -137,7 +137,7 @@ export function ActivityChart({ data }: ActivityChartProps) {
                     {chartConfig[item.type].label}
                   </CardTitle>
                   <Icon
-                    className="h-4 w-4"
+                    className="size-4"
                     style={{ color: chartConfig[item.type].color }}
                   />
                 </CardHeader>

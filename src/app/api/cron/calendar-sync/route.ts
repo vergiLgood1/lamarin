@@ -5,7 +5,7 @@ import { logger } from "@/lib/logger";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
+async function runCalendarSync(req: NextRequest) {
   const authHeader = req.headers.get("authorization");
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -84,4 +84,12 @@ export async function GET(req: NextRequest) {
     processed,
     synced,
   });
+}
+
+export async function POST(req: NextRequest) {
+  return runCalendarSync(req);
+}
+
+export async function GET() {
+  return NextResponse.json({ error: "Method not allowed" }, { status: 405 });
 }

@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import type { Metadata, Viewport } from "next";
 import { cookies } from "next/headers";
+import Script from "next/script";
 import "../styles/globals.css";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -63,7 +64,9 @@ export default async function RootLayout({
       data-theme={themeToApply}
     >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: metaTheme }} />
+        <Script id="meta-theme" strategy="beforeInteractive">
+          {metaTheme}
+        </Script>
       </head>
       <body
         className={cn(

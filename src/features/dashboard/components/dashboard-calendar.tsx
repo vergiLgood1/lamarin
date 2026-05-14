@@ -1,6 +1,8 @@
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent } from "@/components/ui/card";
 
+const TODAY = new Date();
+
 export default function DashboardCalendar() {
   return (
     <Card>
@@ -11,7 +13,7 @@ export default function DashboardCalendar() {
         </CardDescription>
       </CardHeader> */}
       <CardContent className="flex justify-center">
-        <Calendar mode="single" selected={new Date()} className="p-0" />
+        <Calendar mode="single" selected={TODAY} className="p-0" />
       </CardContent>
     </Card>
   );

@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import type { ApplicationStatus } from "@/types";
 import { Plus } from "lucide-react";
 import Link from "next/link";
+import { Suspense } from "react";
 
 interface PageProps {
   searchParams: Promise<{
@@ -30,7 +31,7 @@ export default async function ApplicationsPage({ searchParams }: PageProps) {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-xl font-bold tracking-tight sm:text-2xl">Lamaran Kerja</h1>
+          <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">Lamaran Kerja</h1>
           <p className="text-sm text-muted-foreground">
             Kelola semua data lamaran kerja Anda
           </p>
@@ -39,12 +40,14 @@ export default async function ApplicationsPage({ searchParams }: PageProps) {
           href="/dashboard/applications/new"
           className={cn(buttonVariants(), "w-full sm:w-auto")}
         >
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className="mr-2 size-4" />
           Tambah Lamaran
         </Link>
       </div>
 
-      <FilterBar />
+      <Suspense fallback={null}>
+        <FilterBar />
+      </Suspense>
 
       <ApplicationTable applications={applications} />
 

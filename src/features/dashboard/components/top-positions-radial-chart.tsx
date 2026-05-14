@@ -95,8 +95,8 @@ export function TopPositionsRadialChart({ data }: TopPositionsRadialChartProps) 
                 </PieChart>
               </ChartContainer>
 
-              <div className="pointer-events-none absolute left-1/2 top-1/2 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border bg-background">
-                <CalendarClock className="h-6 w-6 text-muted-foreground" />
+              <div className="pointer-events-none absolute left-1/2 top-1/2 flex size-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border bg-background">
+                <CalendarClock className="size-6 text-muted-foreground" />
               </div>
             </div>
 

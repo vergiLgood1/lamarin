@@ -44,7 +44,7 @@ export function ThemeSelector() {
               </span>
               <span className="w-24 truncate text-left">{activeThemeName}</span>
               <Kbd>T T</Kbd>
-              <IconChevronDown className="ml-1 h-3 w-3 text-muted-foreground" />
+              <IconChevronDown className="ml-1 size-3 text-muted-foreground" />
             </Button>
           }
         />

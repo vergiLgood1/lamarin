@@ -1,6 +1,7 @@
 "use server";
 
 import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/auth-server";
 import { loginSchema, registerSchema } from "@/lib/validations";
 import { APIError } from "better-auth";
 import { headers } from "next/headers";
@@ -16,6 +17,8 @@ export async function loginAction(
   _prevState: AuthActionState,
   formData: FormData
 ): Promise<AuthActionState> {
+  await getSession();
+
   const rawData = Object.fromEntries(formData);
   const result = loginSchema.safeParse(rawData);
 
@@ -55,6 +58,8 @@ export async function registerAction(
   _prevState: AuthActionState,
   formData: FormData
 ): Promise<AuthActionState> {
+  await getSession();
+
   const rawData = Object.fromEntries(formData);
   const result = registerSchema.safeParse(rawData);
 

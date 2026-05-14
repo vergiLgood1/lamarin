@@ -19,7 +19,7 @@ export function SubmitButton({
 
   return (
     <Button type="submit" disabled={pending || disabled} {...props}>
-      {pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+      {pending && <Loader2 className="mr-2 size-4 animate-spin" />}
       {pending ? (pendingText || "Memproses...") : children}
     </Button>
   );

@@ -12,7 +12,7 @@ export default async function FollowUpsOverviewPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">
+          <h1 className="text-2xl font-semibold tracking-tight">
             Follow-up Dashboard
           </h1>
           <p className="text-sm text-muted-foreground">
@@ -23,7 +23,7 @@ export default async function FollowUpsOverviewPage() {
           href="/dashboard/follow-ups/compose/new"
           className={cn(buttonVariants(), "w-full sm:w-auto")}
         >
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className="mr-2 size-4" />
           Add
         </Link>
       </div>

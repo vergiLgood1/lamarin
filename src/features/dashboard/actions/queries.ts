@@ -1,13 +1,12 @@
 "use server";
 
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/auth-server";
 import { db } from "@/db";
 import { jobApplications } from "@/db/schema";
 import { eq, and, gte, lte, count, sql, desc } from "drizzle-orm";
 
 export async function getDashboardStats() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) {
     throw new Error("Unauthorized");
   }
@@ -19,75 +18,74 @@ export async function getDashboardStats() {
 
   const userId = session.user.id;
 
-  // Total applications
-  const [totalResult] = await db
-    .select({ count: count() })
-    .from(jobApplications)
-    .where(eq(jobApplications.userId, userId));
-
-  // This month
-  const [thisMonthResult] = await db
-    .select({ count: count() })
-    .from(jobApplications)
-    .where(
-      and(
-        eq(jobApplications.userId, userId),
-        gte(jobApplications.applicationDate, startOfThisMonth.toISOString().split("T")[0])
-      )
-    );
-
-  // Last month
-  const [lastMonthResult] = await db
-    .select({ count: count() })
-    .from(jobApplications)
-    .where(
-      and(
-        eq(jobApplications.userId, userId),
-        gte(jobApplications.applicationDate, startOfLastMonth.toISOString().split("T")[0]),
-        lte(jobApplications.applicationDate, endOfLastMonth.toISOString().split("T")[0])
-      )
-    );
-
-  // Status breakdown
-  const statusBreakdown = await db
-    .select({
-      status: jobApplications.status,
-      count: count(),
-    })
-    .from(jobApplications)
-    .where(eq(jobApplications.userId, userId))
-    .groupBy(jobApplications.status);
-
-  // Top sources
-  const topSources = await db
-    .select({
-      source: jobApplications.jobSource,
-      count: count(),
-    })
-    .from(jobApplications)
-    .where(
-      and(
-        eq(jobApplications.userId, userId),
-        sql`${jobApplications.jobSource} IS NOT NULL AND ${jobApplications.jobSource} != ''`
-      )
-    )
-    .groupBy(jobApplications.jobSource)
-    .orderBy(desc(count()))
-    .limit(5);
-
-  // Upcoming follow-ups
   const today = now.toISOString().split("T")[0];
-  const upcomingFollowUps = await db
-    .select()
-    .from(jobApplications)
-    .where(
-      and(
-        eq(jobApplications.userId, userId),
-        gte(jobApplications.followUpDate, today)
+  const [
+    totalResultRows,
+    thisMonthResultRows,
+    lastMonthResultRows,
+    statusBreakdown,
+    topSources,
+    upcomingFollowUps,
+  ] = await Promise.all([
+    db.select({ count: count() }).from(jobApplications).where(eq(jobApplications.userId, userId)),
+    db
+      .select({ count: count() })
+      .from(jobApplications)
+      .where(
+        and(
+          eq(jobApplications.userId, userId),
+          gte(jobApplications.applicationDate, startOfThisMonth.toISOString().split("T")[0])
+        )
+      ),
+    db
+      .select({ count: count() })
+      .from(jobApplications)
+      .where(
+        and(
+          eq(jobApplications.userId, userId),
+          gte(jobApplications.applicationDate, startOfLastMonth.toISOString().split("T")[0]),
+          lte(jobApplications.applicationDate, endOfLastMonth.toISOString().split("T")[0])
+        )
+      ),
+    db
+      .select({
+        status: jobApplications.status,
+        count: count(),
+      })
+      .from(jobApplications)
+      .where(eq(jobApplications.userId, userId))
+      .groupBy(jobApplications.status),
+    db
+      .select({
+        source: jobApplications.jobSource,
+        count: count(),
+      })
+      .from(jobApplications)
+      .where(
+        and(
+          eq(jobApplications.userId, userId),
+          sql`${jobApplications.jobSource} IS NOT NULL AND ${jobApplications.jobSource} != ''`
+        )
       )
-    )
-    .orderBy(jobApplications.followUpDate)
-    .limit(5);
+      .groupBy(jobApplications.jobSource)
+      .orderBy(desc(count()))
+      .limit(5),
+    db
+      .select()
+      .from(jobApplications)
+      .where(
+        and(
+          eq(jobApplications.userId, userId),
+          gte(jobApplications.followUpDate, today)
+        )
+      )
+      .orderBy(jobApplications.followUpDate)
+      .limit(5),
+  ]);
+
+  const [totalResult] = totalResultRows;
+  const [thisMonthResult] = thisMonthResultRows;
+  const [lastMonthResult] = lastMonthResultRows;
 
   return {
     totalApplications: totalResult?.count || 0,
@@ -106,7 +104,7 @@ export async function getDashboardStats() {
 }
 
 export async function getMonthlyTrend() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) {
     throw new Error("Unauthorized");
   }
@@ -151,7 +149,7 @@ type JobTypeActivityRow = {
 };
 
 export async function getJobTypeActivity() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) {
     throw new Error("Unauthorized");
   }
@@ -209,7 +207,7 @@ export async function getJobTypeActivity() {
 }
 
 export async function getTopAppliedPositions() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) {
     throw new Error("Unauthorized");
   }

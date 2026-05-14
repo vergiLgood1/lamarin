@@ -98,7 +98,7 @@ export default function LoginPage() {
             )}
           </div>
           <Button type="submit" className="w-full" disabled={isDisabled}>
-            {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {isPending && <Loader2 className="mr-2 size-4 animate-spin" />}
             {isPending ? "Memproses..." : "Masuk"}
           </Button>
         </form>
@@ -115,7 +115,7 @@ export default function LoginPage() {
           onClick={handleGoogleLogin}
           disabled={isDisabled}
         >
-          <IconBrandGoogle className="mr-2 h-4 w-4" />
+          <IconBrandGoogle className="mr-2 size-4" />
           Masuk dengan Google
         </Button>
       </CardContent>

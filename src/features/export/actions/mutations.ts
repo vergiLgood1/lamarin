@@ -1,7 +1,6 @@
 "use server";
 
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/auth-server";
 import { logger } from "@/lib/logger";
 import { getExportData } from "./queries";
 import * as XLSX from "xlsx";
@@ -11,7 +10,7 @@ export async function exportToCSV(filters?: {
   startDate?: string;
   endDate?: string;
 }) {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) {
     throw new Error("Unauthorized");
   }
@@ -70,7 +69,7 @@ export async function exportToExcel(filters?: {
   startDate?: string;
   endDate?: string;
 }) {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) {
     throw new Error("Unauthorized");
   }

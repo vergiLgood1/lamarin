@@ -52,7 +52,7 @@ export function CalendarIntegrationCard(props: CalendarIntegrationCardProps) {
         {!props.isConnected ? (
           <Link href="/api/calendar/connect" className="inline-flex">
             <Button>
-            <Calendar className="mr-2 h-4 w-4" />
+            <Calendar className="mr-2 size-4" />
             Connect Google Calendar
             </Button>
           </Link>

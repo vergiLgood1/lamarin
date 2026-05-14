@@ -63,11 +63,11 @@ export function ExportDataCard() {
       </CardHeader>
       <CardContent className="flex flex-col gap-3 sm:flex-row">
         <Button variant="outline" onClick={handleExportCSV}>
-          <Download className="mr-2 h-4 w-4" />
+          <Download className="mr-2 size-4" />
           Export ke CSV
         </Button>
         <Button variant="outline" onClick={handleExportExcel}>
-          <Download className="mr-2 h-4 w-4" />
+          <Download className="mr-2 size-4" />
           Export ke Excel
         </Button>
       </CardContent>
