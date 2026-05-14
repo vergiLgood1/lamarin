@@ -1,6 +1,10 @@
-import { openai } from "@ai-sdk/openai";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
 
-export const aiModel = openai("gpt-4o-mini");
+const google = createGoogleGenerativeAI({
+  apiKey: process.env.GEMINI_API_KEY,
+});
+
+export const aiModel = google("gemini-2.5-flash");
 
 export const FOLLOW_UP_SYSTEM_PROMPT = `You are a professional email writer helping job applicants write follow-up emails to HR/recruiters.
 

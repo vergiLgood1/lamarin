@@ -1,10 +1,8 @@
 import { db } from "@/db";
 import { followUpEmails, followUpSchedules, jobApplications } from "@/db/schema";
-import { aiModel, FOLLOW_UP_SYSTEM_PROMPT } from "@/lib/ai";
 import { sendEmail } from "@/lib/email";
 import { logger } from "@/lib/logger";
-import { streamText } from "ai";
-import { and, eq, lte } from "drizzle-orm";
+import { and, eq, isNotNull, lte } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -16,75 +14,56 @@ export async function POST(req: NextRequest) {
 
   const now = new Date();
 
-  // Get all active schedules that are due
+  // Get all active schedules that are due and have an associated email
   const dueSchedules = await db
     .select({
       schedule: followUpSchedules,
       application: jobApplications,
+      email: followUpEmails,
     })
     .from(followUpSchedules)
     .innerJoin(
       jobApplications,
       eq(followUpSchedules.applicationId, jobApplications.id)
     )
+    .leftJoin(
+      followUpEmails,
+      eq(followUpSchedules.emailId, followUpEmails.id)
+    )
     .where(
       and(
         eq(followUpSchedules.isActive, true),
-        lte(followUpSchedules.scheduledDate, now)
+        lte(followUpSchedules.scheduledDate, now),
+        isNotNull(followUpSchedules.emailId)
       )
     );
 
   let sentCount = 0;
   let failedCount = 0;
 
-  for (const { schedule, application } of dueSchedules) {
+  for (const { schedule, application, email } of dueSchedules) {
     try {
-      if (!application.hrContact) {
-        logger.warn("No HR contact for scheduled follow-up", {
+      if (!email) {
+        logger.warn("No email found for scheduled follow-up", {
           scheduleId: schedule.id,
           applicationId: application.id,
         });
+        failedCount++;
         continue;
       }
 
-      // Generate email with AI
-      const prompt = `Generate a professional follow-up email for a job application:
-- Company: ${application.companyName}
-- Position: ${application.position}
-- Current Status: ${application.status}
-- HR Contact: ${application.hrContact}
-
-Write the email subject on the first line prefixed with "Subject: ", then leave a blank line, then write the email body.`;
-
-      const { text } = await streamText({
-        model: aiModel,
-        system: FOLLOW_UP_SYSTEM_PROMPT,
-        prompt,
-      });
-
-      const fullText = await text;
-      const lines = fullText.split("\n");
-      const subject = lines[0]?.replace("Subject: ", "") || "Follow-up on Application";
-      const body = lines.slice(2).join("\n");
-
-      // Send email
+      // Send the pre-composed email
       await sendEmail({
-        to: application.hrContact,
-        subject,
-        body,
+        to: email.recipientEmail,
+        subject: email.subject,
+        body: email.body,
       });
 
-      // Log the sent email
-      await db.insert(followUpEmails).values({
-        applicationId: application.id,
-        userId: schedule.userId,
-        subject,
-        body,
-        recipientEmail: application.hrContact,
-        status: "sent",
-        mode: "automatic",
-        sentAt: new Date(),
-      });
+      // Update email status to sent
+      await db
+        .update(followUpEmails)
+        .set({ status: "sent", sentAt: new Date() })
+        .where(eq(followUpEmails.id, email.id));
 
       // Deactivate the schedule
       await db
@@ -93,15 +72,26 @@ Write the email subject on the first line prefixed with "Subject: ", then leave 
         .where(eq(followUpSchedules.id, schedule.id));
 
       sentCount++;
-      logger.info("Auto follow-up email sent", {
+      logger.info("Scheduled follow-up email sent", {
         scheduleId: schedule.id,
+        emailId: email.id,
         applicationId: application.id,
-        to: application.hrContact,
+        to: email.recipientEmail,
       });
     } catch (error) {
       failedCount++;
-      logger.error("Failed to send auto follow-up", {
+      
+      // Update email status to failed if it exists
+      if (email) {
+        await db
+          .update(followUpEmails)
+          .set({ status: "failed" })
+          .where(eq(followUpEmails.id, email.id));
+      }
+
+      logger.error("Failed to send scheduled follow-up", {
         scheduleId: schedule.id,
+        emailId: email?.id,
         error: error instanceof Error ? error.message : "Unknown error",
       });
     }

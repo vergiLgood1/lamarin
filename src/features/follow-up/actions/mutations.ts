@@ -14,7 +14,11 @@ import {
 } from "@/lib/calendar/google";
 import { sendEmail } from "@/lib/email";
 import { logger } from "@/lib/logger";
-import { followUpEmailSchema, scheduleSchema } from "@/lib/validations";
+import {
+  followUpEmailSchema,
+  scheduleSchema,
+  unifiedFollowUpSchema,
+} from "@/lib/validations";
 import type { ActionState, FollowUpEmail, FollowUpSchedule } from "@/types";
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
@@ -339,5 +343,159 @@ export async function cancelSchedule(
       error: error instanceof Error ? error.message : "Unknown error",
     });
     return { success: false, message: "Gagal membatalkan jadwal" };
+  }
+}
+
+export async function createScheduledFollowUp(
+  prevState: ActionState<FollowUpEmail>,
+  formData: FormData
+): Promise<ActionState<FollowUpEmail>> {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) {
+    return { success: false, message: "Unauthorized" };
+  }
+
+  const rawData = Object.fromEntries(formData);
+  const result = unifiedFollowUpSchema.safeParse(rawData);
+
+  if (!result.success) {
+    return {
+      success: false,
+      message: "Validasi gagal",
+      errors: result.error.flatten().fieldErrors as Record<string, string[]>,
+    };
+  }
+
+  const { applicationId, subject, body, recipientEmail, action, scheduledDate } =
+    result.data;
+
+  try {
+    // 1. Create email draft with appropriate status
+    const emailStatus =
+      action === "schedule" ? "scheduled" : action === "draft" ? "draft" : "sent";
+
+    const [email] = await db
+      .insert(followUpEmails)
+      .values({
+        applicationId,
+        userId: session.user.id,
+        subject,
+        body,
+        recipientEmail,
+        status: emailStatus,
+        mode: "manual",
+        sentAt: action === "send" ? new Date() : null,
+      })
+      .returning();
+
+    // 2. If action is "send", send email immediately
+    if (action === "send") {
+      try {
+        await sendEmail({
+          to: recipientEmail,
+          subject,
+          body,
+        });
+
+        logger.info("Follow-up email sent immediately", {
+          userId: session.user.id,
+          emailId: email.id,
+          to: recipientEmail,
+        });
+      } catch (error) {
+        // Update status to failed if send fails
+        await db
+          .update(followUpEmails)
+          .set({ status: "failed" })
+          .where(eq(followUpEmails.id, email.id));
+
+        logger.error("Failed to send follow-up email immediately", {
+          userId: session.user.id,
+          emailId: email.id,
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+
+        return { success: false, message: "Gagal mengirim email" };
+      }
+    }
+
+    // 3. If action is "schedule", create schedule and calendar event
+    if (action === "schedule" && scheduledDate) {
+      const [schedule] = await db
+        .insert(followUpSchedules)
+        .values({
+          applicationId,
+          userId: session.user.id,
+          emailId: email.id,
+          scheduledDate: new Date(scheduledDate),
+        })
+        .returning();
+
+      // Get application details for calendar event
+      const [application] = await db
+        .select()
+        .from(jobApplications)
+        .where(eq(jobApplications.id, applicationId));
+
+      if (application) {
+        const event = await upsertGoogleCalendarEvent({
+          userId: session.user.id,
+          title: `Follow-up: ${application.companyName} - ${application.position}`,
+          description: `Status: ${application.status}\nKontak HR: ${application.hrContact || "-"}\n\nSubject: ${subject}`,
+          start: new Date(scheduledDate),
+          timezone: "Asia/Jakarta",
+        });
+
+        if (event?.id) {
+          await db.insert(calendarEvents).values({
+            userId: session.user.id,
+            applicationId: application.id,
+            provider: "google",
+            eventType: "follow_up",
+            externalEventId: event.id,
+            title: event.summary || `Follow-up ${application.companyName}`,
+            scheduledAt: new Date(scheduledDate),
+            externalUpdatedAt: event.updated ? new Date(event.updated) : null,
+          });
+        }
+      }
+
+      logger.info("Follow-up scheduled", {
+        userId: session.user.id,
+        emailId: email.id,
+        scheduleId: schedule.id,
+        scheduledDate,
+      });
+    }
+
+    revalidatePath("/dashboard/follow-ups");
+
+    const successMessage =
+      action === "send"
+        ? "Email berhasil dikirim"
+        : action === "draft"
+          ? "Draft email berhasil disimpan"
+          : "Follow-up berhasil dijadwalkan";
+
+    return {
+      success: true,
+      message: successMessage,
+      data: email,
+    };
+  } catch (error) {
+    logger.error("Failed to create scheduled follow-up", {
+      userId: session.user.id,
+      action,
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+
+    const errorMessage =
+      action === "send"
+        ? "Gagal mengirim email"
+        : action === "draft"
+          ? "Gagal menyimpan draft"
+          : "Gagal menjadwalkan follow-up";
+
+    return { success: false, message: errorMessage };
   }
 }

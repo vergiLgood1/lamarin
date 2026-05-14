@@ -28,7 +28,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       title: "Dashboard",
       url: "/dashboard/overview",
       icon: <LayoutDashboard />,
-      isActive: pathname === "/dashboard",
+      isActive: pathname === "/dashboard/overview",
     },
     {
       title: "Lamaran",
@@ -38,9 +38,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     },
     {
       title: "Follow-up",
-      url: "/dashboard/follow-ups",
+      url: "/dashboard/follow-ups/overview",
       icon: <Mail />,
-      isActive: pathname.startsWith("/dashboard/follow-ups"),
+      items: [
+        {
+          title: "Overview",
+          url: "/dashboard/follow-ups/overview",
+          isActive: pathname === "/dashboard/follow-ups/overview",
+        },
+        {
+          title: "Compose",
+          url: "/dashboard/follow-ups/compose",
+          isActive: pathname.startsWith("/dashboard/follow-ups/compose"),
+        },
+      ],
     },
     {
       title: "Pengaturan",

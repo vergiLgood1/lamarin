@@ -179,6 +179,9 @@ export const followUpSchedules = pgTable("follow_up_schedules", {
   userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
+  emailId: uuid("email_id").references(() => followUpEmails.id, {
+    onDelete: "set null",
+  }),
   scheduledDate: timestamp("scheduled_date").notNull(),
   isActive: boolean("is_active").notNull().default(true),
   createdAt: timestamp("created_at").notNull().defaultNow(),

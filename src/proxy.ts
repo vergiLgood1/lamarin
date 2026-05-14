@@ -1,23 +1,41 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export async function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+const PUBLIC_ROUTES = [
+  "/login",
+  "/register",
+  "/api/auth",
+  "/api/cron",
+  "/api/uploadthing",
+];
 
-  // Public routes that don't need auth
-  const publicRoutes = ["/login", "/register", "/api/auth", "/api/cron", "/api/uploadthing"];
-  const isPublicRoute = publicRoutes.some((route) => pathname.startsWith(route));
+const AUTH_ROUTES = ["/login", "/register"];
 
-  if (isPublicRoute) {
-    return NextResponse.next();
+export function proxy(request: NextRequest) {
+  const { pathname, search } = request.nextUrl;
+
+  const isPublicRoute = PUBLIC_ROUTES.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`),
+  );
+
+  const isAuthRoute = AUTH_ROUTES.includes(pathname);
+
+  // better-auth cookie
+  const session = request.cookies.get("better-auth.session_token")?.value;
+
+  if (!session && !isPublicRoute) {
+    const loginUrl = new URL("/login", request.url);
+
+    loginUrl.searchParams.set("callbackUrl", `${pathname}${search}`);
+
+    return NextResponse.redirect(loginUrl);
   }
 
-  // Check for session cookie
-  const sessionCookie = request.cookies.get("better-auth.session_token");
+  if (session && isAuthRoute) {
+    return NextResponse.redirect(new URL("/dashboard/overview", request.url));
+  }
 
-  if (!sessionCookie) {
-    const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("callbackUrl", pathname);
-    return NextResponse.redirect(loginUrl);
+  if (session && pathname === "/") {
+    return NextResponse.redirect(new URL("/dashboard/overview", request.url));
   }
 
   return NextResponse.next();

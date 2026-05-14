@@ -67,6 +67,32 @@ export const scheduleSchema = z.object({
   scheduledDate: z.string().min(1, "Tanggal jadwal wajib diisi"),
 });
 
+export const unifiedFollowUpSchema = z
+  .object({
+    applicationId: z.string().uuid("Application ID tidak valid"),
+    subject: z.string().min(1, "Subject wajib diisi"),
+    body: z.string().min(1, "Body email wajib diisi"),
+    recipientEmail: z.string().email("Email tidak valid"),
+    action: z.enum(["send", "draft", "schedule"]),
+    scheduledDate: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      // Jika action = schedule, scheduledDate wajib dan harus di masa depan
+      if (data.action === "schedule") {
+        if (!data.scheduledDate) return false;
+        const scheduledTime = new Date(data.scheduledDate);
+        const now = new Date();
+        return scheduledTime > now;
+      }
+      return true;
+    },
+    {
+      message: "Tanggal jadwal wajib diisi dan harus di masa depan",
+      path: ["scheduledDate"],
+    },
+  );
+
 // ============================================
 // Auth Schemas
 // ============================================
@@ -101,5 +127,6 @@ export const registerSchema = z
 export type ApplicationFormData = z.input<typeof applicationSchema>;
 export type FollowUpEmailFormData = z.infer<typeof followUpEmailSchema>;
 export type ScheduleFormData = z.infer<typeof scheduleSchema>;
+export type UnifiedFollowUpFormData = z.infer<typeof unifiedFollowUpSchema>;
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;

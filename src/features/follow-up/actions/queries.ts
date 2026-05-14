@@ -50,6 +50,7 @@ export async function getFollowUpSchedules() {
     .select({
       id: followUpSchedules.id,
       applicationId: followUpSchedules.applicationId,
+      emailId: followUpSchedules.emailId,
       scheduledDate: followUpSchedules.scheduledDate,
       isActive: followUpSchedules.isActive,
       createdAt: followUpSchedules.createdAt,

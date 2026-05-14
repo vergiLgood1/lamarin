@@ -9,7 +9,6 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
@@ -29,6 +28,7 @@ export function NavMain({
     items?: {
       title: string
       url: string
+      isActive?: boolean
     }[]
   }[]
 }) {
@@ -39,33 +39,36 @@ export function NavMain({
         {items.map((item) => (
           <Collapsible
             key={item.title}
-            defaultOpen={item.isActive}
+            defaultOpen={
+              item.isActive || item.items?.some((subItem) => subItem.isActive)
+            }
             render={<SidebarMenuItem />}
           >
-            <SidebarMenuButton
-              tooltip={item.title}
-              isActive={item.isActive}
-              render={<a href={item.url} />}
-            >
-              {item.icon}
-              <span>{item.title}</span>
-            </SidebarMenuButton>
             {item.items?.length ? (
               <>
                 <CollapsibleTrigger
                   render={
-                    <SidebarMenuAction className="aria-expanded:rotate-90" />
+                    <SidebarMenuButton
+                      tooltip={item.title}
+                      isActive={item.isActive}
+                      className="justify-between"
+                    />
                   }
                 >
-                  <ChevronRightIcon
-                  />
-                  <span className="sr-only">Toggle</span>
+                  <span className="flex items-center gap-2">
+                    {item.icon}
+                    <span>{item.title}</span>
+                  </span>
+                  <ChevronRightIcon className="transition-transform group-data-[state=open]/collapsible:rotate-90" />
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <SidebarMenuSub>
                     {item.items?.map((subItem) => (
                       <SidebarMenuSubItem key={subItem.title}>
-                        <SidebarMenuSubButton render={<a href={subItem.url} />}>
+                        <SidebarMenuSubButton
+                          isActive={subItem.isActive}
+                          render={<a href={subItem.url} />}
+                        >
                           <span>{subItem.title}</span>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
@@ -73,7 +76,16 @@ export function NavMain({
                   </SidebarMenuSub>
                 </CollapsibleContent>
               </>
-            ) : null}
+            ) : (
+              <SidebarMenuButton
+                tooltip={item.title}
+                isActive={item.isActive}
+                render={<a href={item.url} />}
+              >
+                {item.icon}
+                <span>{item.title}</span>
+              </SidebarMenuButton>
+            )}
           </Collapsible>
         ))}
       </SidebarMenu>
