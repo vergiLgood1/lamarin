@@ -20,7 +20,8 @@ export async function sendEmail({
   }
 
   const result = await resend.emails.send({
-    from: from || "Applyorbit <noreply@applyorbit.com>",
+    from: "Diyo Anggara <jobs@diyoanggara.dev>",
+    replyTo: from,
     to: [to],
     subject,
     text: body,

@@ -3,7 +3,7 @@
 import { getSession } from "@/lib/auth-server";
 import { db } from "@/db";
 import { followUpEmails, followUpSchedules, jobApplications } from "@/db/schema";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, count, sql, gte } from "drizzle-orm";
 
 export async function getFollowUpEmails(applicationId?: string) {
   const session = await getSession();
@@ -82,4 +82,124 @@ export async function getFollowUpEmailById(emailId: string) {
     );
 
   return email || null;
+}
+
+export async function getFollowUpStats() {
+  const session = await getSession();
+  if (!session) {
+    throw new Error("Unauthorized");
+  }
+
+  const userId = session.user.id;
+
+  const [totalResult, draftResult, scheduledResult, sentResult, failedResult] =
+    await Promise.all([
+      db
+        .select({ count: count() })
+        .from(followUpEmails)
+        .where(eq(followUpEmails.userId, userId)),
+      db
+        .select({ count: count() })
+        .from(followUpEmails)
+        .where(
+          and(
+            eq(followUpEmails.userId, userId),
+            eq(followUpEmails.status, "draft")
+          )
+        ),
+      db
+        .select({ count: count() })
+        .from(followUpEmails)
+        .where(
+          and(
+            eq(followUpEmails.userId, userId),
+            eq(followUpEmails.status, "scheduled")
+          )
+        ),
+      db
+        .select({ count: count() })
+        .from(followUpEmails)
+        .where(
+          and(
+            eq(followUpEmails.userId, userId),
+            eq(followUpEmails.status, "sent")
+          )
+        ),
+      db
+        .select({ count: count() })
+        .from(followUpEmails)
+        .where(
+          and(
+            eq(followUpEmails.userId, userId),
+            eq(followUpEmails.status, "failed")
+          )
+        ),
+    ]);
+
+  return {
+    total: totalResult[0]?.count || 0,
+    draft: draftResult[0]?.count || 0,
+    scheduled: scheduledResult[0]?.count || 0,
+    sent: sentResult[0]?.count || 0,
+    failed: failedResult[0]?.count || 0,
+  };
+}
+
+type EmailStatusKey = "draft" | "scheduled" | "sent" | "failed";
+
+type EmailTrendRow = {
+  month: string;
+  status: EmailStatusKey;
+  count: number;
+};
+
+export async function getFollowUpTrend() {
+  const session = await getSession();
+  if (!session) {
+    throw new Error("Unauthorized");
+  }
+
+  const sixMonthsAgo = new Date();
+  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+  const rawRows = await db
+    .select({
+      month: sql<string>`TO_CHAR(${followUpEmails.createdAt}::date, 'YYYY-MM')`,
+      status: followUpEmails.status,
+      count: count(),
+    })
+    .from(followUpEmails)
+    .where(
+      and(
+        eq(followUpEmails.userId, session.user.id),
+        gte(followUpEmails.createdAt, sixMonthsAgo)
+      )
+    )
+    .groupBy(
+      sql`TO_CHAR(${followUpEmails.createdAt}::date, 'YYYY-MM')`,
+      followUpEmails.status
+    )
+    .orderBy(sql`TO_CHAR(${followUpEmails.createdAt}::date, 'YYYY-MM')`);
+
+  const rows = rawRows as EmailTrendRow[];
+
+  const byMonth = new Map<string, Record<EmailStatusKey, number>>();
+
+  for (const row of rows) {
+    const current =
+      byMonth.get(row.month) ?? {
+        draft: 0,
+        scheduled: 0,
+        sent: 0,
+        failed: 0,
+      };
+
+    current[row.status] = row.count;
+    byMonth.set(row.month, current);
+  }
+
+  return Array.from(byMonth.entries()).map(([month, counts]) => ({
+    month,
+    ...counts,
+  }));
 }
