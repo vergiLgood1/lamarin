@@ -55,7 +55,7 @@ export default async function DashboardPage() {
         </div>
 
         <div className="space-y-4 lg:col-span-5">
-          <DashboardCalendar />
+          <DashboardCalendar schedules={stats.upcomingFollowUps} />
 
           <UpcomingScheduleCard applications={stats.upcomingFollowUps} />
 

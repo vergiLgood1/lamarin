@@ -83,7 +83,9 @@ export function NavUser({
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                   <Avatar className="size-8 rounded-lg">
                     <AvatarImage src={user.avatar} alt={user.name} />
-                    <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
+                    <AvatarFallback className="rounded-lg">
+                      {initials}
+                    </AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-medium">{user.name}</span>
@@ -94,15 +96,15 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => router.push("/dashboard/settings")}>
+              <DropdownMenuItem onClick={() => router.push("#")}>
                 <BadgeCheckIcon />
                 Akun
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => router.push("/dashboard/settings/billing")}>
+              <DropdownMenuItem onClick={() => router.push("#")}>
                 <CreditCardIcon />
                 Tagihan
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => router.push("/dashboard/settings/notifications")}>
+              <DropdownMenuItem onClick={() => router.push("#")}>
                 <BellIcon />
                 Notifikasi
               </DropdownMenuItem>
@@ -116,5 +118,5 @@ export function NavUser({
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
+  );
 }
