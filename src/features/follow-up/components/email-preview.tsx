@@ -27,6 +27,8 @@ import {
   CheckCircle2,
   Clock3,
   EllipsisVertical,
+  LayoutGrid,
+  List,
   Loader2,
   Mail,
   Pencil,
@@ -35,8 +37,10 @@ import {
   XCircle,
 } from "lucide-react";
 import Link from "next/link";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { toast } from "sonner";
+
+type EmailLayout = "grid" | "list";
 
 interface EmailPreviewProps {
   emails: {
@@ -92,6 +96,7 @@ const DATE_FORMATTER = new Intl.DateTimeFormat("id-ID", {
 });
 
 export function EmailPreview({ emails }: EmailPreviewProps) {
+  const [layout, setLayout] = useState<EmailLayout>("grid");
   const [isPending, startTransition] = useTransition();
 
   function handleSend(emailId: string) {
@@ -150,7 +155,7 @@ export function EmailPreview({ emails }: EmailPreviewProps) {
 
   return (
     <Card className="border-border/60">
-      <CardHeader className="flex flex-row items-center justify-between gap-4">
+      <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="space-y-1">
           <CardTitle>Riwayat Email</CardTitle>
 
@@ -159,13 +164,48 @@ export function EmailPreview({ emails }: EmailPreviewProps) {
           </CardDescription>
         </div>
 
-        <Badge variant="secondary" className="rounded-full px-3 py-1">
-          {emails.length} Email
-        </Badge>
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <Badge variant="secondary" className="rounded-full px-3 py-1">
+            {emails.length} Email
+          </Badge>
+
+          <div className="flex rounded-2xl border bg-muted/40 p-1">
+            <Button
+              type="button"
+              size="icon"
+              variant={layout === "grid" ? "secondary" : "ghost"}
+              className="size-8 rounded-xl"
+              aria-label="Tampilkan sebagai kolom"
+              aria-pressed={layout === "grid"}
+              onClick={() => setLayout("grid")}
+            >
+              <LayoutGrid className="size-4" />
+            </Button>
+
+            <Button
+              type="button"
+              size="icon"
+              variant={layout === "list" ? "secondary" : "ghost"}
+              className="size-8 rounded-xl"
+              aria-label="Tampilkan sebagai baris"
+              aria-pressed={layout === "list"}
+              onClick={() => setLayout("list")}
+            >
+              <List className="size-4" />
+            </Button>
+          </div>
+        </div>
       </CardHeader>
 
       <CardContent>
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div
+          className={cn(
+            "grid gap-4",
+            layout === "grid"
+              ? "sm:grid-cols-2 xl:grid-cols-3"
+              : "grid-cols-1",
+          )}
+        >
           {emails.map((email) => {
             const createdAtDisplay = DATE_FORMATTER.format(
               new Date(email.createdAt),
@@ -187,6 +227,7 @@ export function EmailPreview({ emails }: EmailPreviewProps) {
                   "group relative overflow-hidden rounded-2xl border bg-card p-5 transition-all duration-200",
                   "hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
+                  layout === "list" && "sm:p-6",
                 )}
               >
                 <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
@@ -268,7 +309,13 @@ export function EmailPreview({ emails }: EmailPreviewProps) {
                   </DropdownMenu>
                 </div>
 
-                <div className="mt-5 space-y-3">
+                <div
+                  className={cn(
+                    "mt-5 space-y-3",
+                    layout === "list" &&
+                      "sm:grid sm:grid-cols-[minmax(0,1fr)_minmax(18rem,0.8fr)] sm:gap-6 sm:space-y-0",
+                  )}
+                >
                   <div className="space-y-2">
                     <h3 className="line-clamp-2 text-base font-semibold leading-snug transition-colors group-hover:text-primary">
                       {email.subject}
@@ -290,7 +337,12 @@ export function EmailPreview({ emails }: EmailPreviewProps) {
                     </div>
                   </div>
 
-                  <p className="line-clamp-3 text-sm leading-relaxed text-muted-foreground">
+                  <p
+                    className={cn(
+                      "line-clamp-3 text-sm leading-relaxed text-muted-foreground",
+                      layout === "list" && "sm:line-clamp-2",
+                    )}
+                  >
                     {email.body}
                   </p>
                 </div>
