@@ -1,7 +1,8 @@
-import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
+import { Badge } from "@/components/ui/badge";
+import { SettingsHeader } from "@/features/settings/components/settings-header";
 import { TelegramIntegrationCard } from "@/features/settings/components/telegram-integration-card";
 import { getTelegramConnection } from "@/features/telegram/actions/queries";
 
@@ -21,52 +22,29 @@ import {
 import Link from "next/link";
 
 export default async function TelegramSettingsPage() {
-  const telegramConnection =
-    await getTelegramConnection().catch(() => null);
+  const telegramConnection = await getTelegramConnection().catch(() => null);
 
-  const isConnected = !!(
-    telegramConnection && telegramConnection.isActive
-  );
+  const isConnected = !!(telegramConnection && telegramConnection.isActive);
 
   return (
-    <div className="mx-auto max-w-6xl space-y-8">
-      <section className="relative overflow-hidden rounded-3xl border bg-card p-8 shadow-sm">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,hsl(var(--primary)/0.12),transparent_35%)]" />
-
-        <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-          <div className="space-y-4">
-            <Badge
-              variant="secondary"
-              className="w-fit rounded-full px-3 py-1"
-            >
-              <Sparkles className="mr-1 size-3.5" />
-              Telegram Integration
-            </Badge>
-
-            <div className="space-y-2">
-              <h1 className="text-3xl font-bold tracking-tight">
-                Telegram Bot
-              </h1>
-
-              <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-                Hubungkan akun Telegram untuk menerima reminder
-                follow-up interview otomatis secara real-time.
-              </p>
-            </div>
-          </div>
-
-          <Link
-            href="/dashboard/settings"
-            className={cn(
-              buttonVariants({ variant: "outline" }),
-              "rounded-2xl border-border/60 bg-background/70 backdrop-blur",
-            )}
-          >
-            <ArrowLeft className="mr-2 size-4" />
-            Kembali
-          </Link>
-        </div>
-      </section>
+    <div className="mx-auto space-y-8">
+      <SettingsHeader
+        eyebrow="Telegram Integration"
+        title="Telegram Bot"
+        description="Hubungkan akun Telegram untuk menerima reminder follow-up interview otomatis secara real-time."
+        icon={Sparkles}
+      >
+        <Link
+          href="/dashboard/settings"
+          className={cn(
+            buttonVariants({ variant: "outline" }),
+            "w-full rounded-2xl border-border/60 bg-background/70 backdrop-blur sm:w-auto",
+          )}
+        >
+          <ArrowLeft className="mr-2 size-4" />
+          Kembali
+        </Link>
+      </SettingsHeader>
 
       <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
         <TelegramIntegrationCard
@@ -95,10 +73,8 @@ export default async function TelegramSettingsPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <h2 className="font-semibold">
-                      Status Koneksi
-                    </h2>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h2 className="font-semibold">Status Koneksi</h2>
 
                     <Badge
                       variant="outline"
@@ -109,9 +85,7 @@ export default async function TelegramSettingsPage() {
                           : "bg-muted text-muted-foreground",
                       )}
                     >
-                      {isConnected
-                        ? "Terhubung"
-                        : "Belum terhubung"}
+                      {isConnected ? "Terhubung" : "Belum terhubung"}
                     </Badge>
                   </div>
 
@@ -128,9 +102,7 @@ export default async function TelegramSettingsPage() {
           <Card className="rounded-3xl border-border/60">
             <CardContent className="space-y-5 p-6">
               <div className="space-y-1">
-                <h2 className="font-semibold">
-                  Fitur Telegram Bot
-                </h2>
+                <h2 className="font-semibold">Fitur Telegram Bot</h2>
 
                 <p className="text-sm text-muted-foreground">
                   Integrasi otomatis untuk workflow follow-up Anda.
@@ -142,8 +114,7 @@ export default async function TelegramSettingsPage() {
                   {
                     icon: BellRing,
                     title: "Reminder Otomatis",
-                    description:
-                      "Notifikasi H-1 dan H-0 follow-up interview.",
+                    description: "Notifikasi H-1 dan H-0 follow-up interview.",
                   },
                   {
                     icon: MessageCircleMore,
@@ -160,8 +131,7 @@ export default async function TelegramSettingsPage() {
                   {
                     icon: Bot,
                     title: "Bot Automation",
-                    description:
-                      "Mengurangi risiko lupa follow-up recruiter.",
+                    description: "Mengurangi risiko lupa follow-up recruiter.",
                   },
                 ].map((feature) => {
                   const Icon = feature.icon;
@@ -176,9 +146,7 @@ export default async function TelegramSettingsPage() {
                       </div>
 
                       <div className="space-y-1">
-                        <h3 className="text-sm font-medium">
-                          {feature.title}
-                        </h3>
+                        <h3 className="text-sm font-medium">{feature.title}</h3>
 
                         <p className="text-sm text-muted-foreground">
                           {feature.description}
