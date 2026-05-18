@@ -2,7 +2,13 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,7 +20,20 @@ import {
   deleteFollowUpEmail,
   sendFollowUpEmail,
 } from "@/features/follow-up/actions/mutations";
-import { EllipsisVertical, Loader2, Pencil, Send, Trash2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import {
+  Building2,
+  CalendarDays,
+  CheckCircle2,
+  Clock3,
+  EllipsisVertical,
+  Loader2,
+  Mail,
+  Pencil,
+  Send,
+  Trash2,
+  XCircle,
+} from "lucide-react";
 import Link from "next/link";
 import { useTransition } from "react";
 import { toast } from "sonner";
@@ -34,14 +53,43 @@ interface EmailPreviewProps {
   }[];
 }
 
-const STATUS_LABELS: Record<string, string> = {
-  draft: "Draft",
-  scheduled: "Dijadwalkan",
-  sent: "Terkirim",
-  failed: "Gagal",
+const STATUS_CONFIG: Record<
+  string,
+  {
+    label: string;
+    icon: React.ElementType;
+    className: string;
+  }
+> = {
+  draft: {
+    label: "Draft",
+    icon: Clock3,
+    className:
+      "border-yellow-500/20 bg-yellow-500/10 text-yellow-600 dark:text-yellow-400",
+  },
+  scheduled: {
+    label: "Dijadwalkan",
+    icon: CalendarDays,
+    className:
+      "border-blue-500/20 bg-blue-500/10 text-blue-600 dark:text-blue-400",
+  },
+  sent: {
+    label: "Terkirim",
+    icon: CheckCircle2,
+    className:
+      "border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+  },
+  failed: {
+    label: "Gagal",
+    icon: XCircle,
+    className: "border-red-500/20 bg-red-500/10 text-red-600 dark:text-red-400",
+  },
 };
 
-const DATE_FORMATTER = new Intl.DateTimeFormat("id-ID", { timeZone: "UTC" });
+const DATE_FORMATTER = new Intl.DateTimeFormat("id-ID", {
+  dateStyle: "medium",
+  timeStyle: "short",
+});
 
 export function EmailPreview({ emails }: EmailPreviewProps) {
   const [isPending, startTransition] = useTransition();
@@ -49,6 +97,7 @@ export function EmailPreview({ emails }: EmailPreviewProps) {
   function handleSend(emailId: string) {
     startTransition(async () => {
       const result = await sendFollowUpEmail(emailId);
+
       if (result.success) {
         toast.success(result.message);
       } else {
@@ -59,8 +108,10 @@ export function EmailPreview({ emails }: EmailPreviewProps) {
 
   function handleDelete(emailId: string) {
     if (!confirm("Hapus email ini?")) return;
+
     startTransition(async () => {
       const result = await deleteFollowUpEmail(emailId);
+
       if (result.success) {
         toast.success(result.message);
       } else {
@@ -71,62 +122,94 @@ export function EmailPreview({ emails }: EmailPreviewProps) {
 
   if (emails.length === 0) {
     return (
-      <Card>
+      <Card className="border-dashed">
         <CardHeader>
           <CardTitle>Riwayat Email</CardTitle>
+          <CardDescription>
+            Semua email follow-up akan muncul di sini.
+          </CardDescription>
         </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground">
-            Belum ada email follow-up
-          </p>
+
+        <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+          <div className="flex size-16 items-center justify-center rounded-2xl bg-muted">
+            <Mail className="size-8 text-muted-foreground" />
+          </div>
+
+          <div className="mt-5 space-y-2">
+            <h3 className="text-lg font-semibold">Belum ada email follow-up</h3>
+
+            <p className="max-w-sm text-sm text-muted-foreground">
+              Buat email follow-up pertama untuk mulai melacak komunikasi
+              lamaran kerja kamu.
+            </p>
+          </div>
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Riwayat Email</CardTitle>
+    <Card className="border-border/60">
+      <CardHeader className="flex flex-row items-center justify-between gap-4">
+        <div className="space-y-1">
+          <CardTitle>Riwayat Email</CardTitle>
+
+          <CardDescription>
+            Kelola dan pantau semua email follow-up lamaran kerja.
+          </CardDescription>
+        </div>
+
+        <Badge variant="secondary" className="rounded-full px-3 py-1">
+          {emails.length} Email
+        </Badge>
       </CardHeader>
+
       <CardContent>
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-4">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {emails.map((email) => {
-            const createdAtDisplay = DATE_FORMATTER.format(new Date(email.createdAt));
+            const createdAtDisplay = DATE_FORMATTER.format(
+              new Date(email.createdAt),
+            );
+
             const sentAtDisplay = email.sentAt
               ? DATE_FORMATTER.format(new Date(email.sentAt))
               : null;
 
+            const status = STATUS_CONFIG[email.status] || STATUS_CONFIG.draft;
+
+            const StatusIcon = status.icon;
+
             return (
               <Link
-              key={email.id}
-              href={`/dashboard/follow-ups/compose/${email.id}`}
-              className="block space-y-2 rounded-md border p-4 transition-colors hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-            >
-              <div className="flex items-start justify-between">
-                <div className="space-y-0.5">
-                  <p className="text-sm font-medium hover:underline">
-                    {email.subject}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Ke: {email.recipientEmail} | {email.companyName} -{" "}
-                    {email.position}
-                  </p>
-                </div>
+                key={email.id}
+                href={`/dashboard/follow-ups/compose/${email.id}`}
+                className={cn(
+                  "group relative overflow-hidden rounded-2xl border bg-card p-5 transition-all duration-200",
+                  "hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
+                )}
+              >
+                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
 
-                <div className="flex items-center gap-1">
+                <div className="flex items-start justify-between gap-3">
                   <Badge
-                    variant={email.status === "sent" ? "default" : "secondary"}
+                    variant="outline"
+                    className={cn(
+                      "gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium",
+                      status.className,
+                    )}
                   >
-                    {STATUS_LABELS[email.status] || email.status}
+                    <StatusIcon className="size-3.5" />
+                    {status.label}
                   </Badge>
+
                   <DropdownMenu>
                     <DropdownMenuTrigger
                       render={
                         <Button
                           size="icon"
                           variant="ghost"
-                          className="size-7"
+                          className="size-8 rounded-xl opacity-70 transition-opacity hover:opacity-100"
                           onClick={(event) => {
                             event.preventDefault();
                             event.stopPropagation();
@@ -136,35 +219,45 @@ export function EmailPreview({ emails }: EmailPreviewProps) {
                         </Button>
                       }
                     />
-                    <DropdownMenuContent align="end">
+
+                    <DropdownMenuContent
+                      align="end"
+                      className="w-44 rounded-xl"
+                    >
                       <DropdownMenuItem
                         render={
                           <Link
                             href={`/dashboard/follow-ups/compose/${email.id}?mode=edit`}
+                            className="flex w-full items-center"
                           >
                             <Pencil className="mr-2 size-4" />
                             Edit
                           </Link>
                         }
                       />
+
                       {email.status === "draft" ? (
                         <DropdownMenuItem
                           onClick={(event) => {
                             event.preventDefault();
                             event.stopPropagation();
+
                             handleSend(email.id);
                           }}
                         >
                           <Send className="mr-2 size-4" />
-                          Kirim
+                          Kirim Email
                         </DropdownMenuItem>
                       ) : null}
+
                       <DropdownMenuSeparator />
+
                       <DropdownMenuItem
-                        className="text-destructive"
+                        className="text-destructive focus:text-destructive"
                         onClick={(event) => {
                           event.preventDefault();
                           event.stopPropagation();
+
                           handleDelete(email.id);
                         }}
                       >
@@ -174,38 +267,69 @@ export function EmailPreview({ emails }: EmailPreviewProps) {
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
-              </div>
 
-              <p className="line-clamp-2 text-sm text-muted-foreground">
-                {email.body}
-              </p>
+                <div className="mt-5 space-y-3">
+                  <div className="space-y-2">
+                    <h3 className="line-clamp-2 text-base font-semibold leading-snug transition-colors group-hover:text-primary">
+                      {email.subject}
+                    </h3>
 
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">
-                  {createdAtDisplay}
-                  {sentAtDisplay ? ` | Terkirim: ${sentAtDisplay}` : ""}
-                </span>
-                {email.status === "draft" ? (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={(event) => {
-                      event.preventDefault();
-                      event.stopPropagation();
-                      handleSend(email.id);
-                    }}
-                    disabled={isPending}
-                  >
-                    {isPending ? (
-                      <Loader2 className="mr-1 size-3 animate-spin" />
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                      <span className="inline-flex items-center gap-1">
+                        <Mail className="size-3.5" />
+                        {email.recipientEmail}
+                      </span>
+
+                      {(email.companyName || email.position) && (
+                        <span className="inline-flex items-center gap-1">
+                          <Building2 className="size-3.5" />
+                          {email.companyName}
+                          {email.position ? ` • ${email.position}` : ""}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <p className="line-clamp-3 text-sm leading-relaxed text-muted-foreground">
+                    {email.body}
+                  </p>
+                </div>
+
+                <div className="mt-5 flex items-end justify-between gap-3 border-t pt-4">
+                  <div className="space-y-1 text-xs text-muted-foreground">
+                    <p>Dibuat {createdAtDisplay}</p>
+
+                    {sentAtDisplay ? (
+                      <p className="text-emerald-600 dark:text-emerald-400">
+                        Terkirim {sentAtDisplay}
+                      </p>
                     ) : (
-                      <Send className="mr-1 size-3" />
+                      <p>Belum dikirim</p>
                     )}
-                    Kirim
-                  </Button>
-                ) : null}
-              </div>
-            </Link>
+                  </div>
+
+                  {email.status === "draft" ? (
+                    <Button
+                      size="sm"
+                      className="rounded-xl"
+                      onClick={(event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+
+                        handleSend(email.id);
+                      }}
+                      disabled={isPending}
+                    >
+                      {isPending ? (
+                        <Loader2 className="mr-2 size-4 animate-spin" />
+                      ) : (
+                        <Send className="mr-2 size-4" />
+                      )}
+                      Kirim
+                    </Button>
+                  ) : null}
+                </div>
+              </Link>
             );
           })}
         </div>

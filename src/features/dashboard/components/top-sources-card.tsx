@@ -13,18 +13,23 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { DashboardEmptyState } from "@/features/dashboard/components/dashboard-empty-state";
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts";
 
 interface TopSourcesCardProps {
   data: { source: string; count: number }[];
 }
 
 const chartConfig = {
-  count: {
-    label: "Lamaran",
-    color: "#8fd3f4",
-  },
+  count: { label: "Lamaran" },
 };
+
+const barColors = [
+  "var(--chart-1)",
+  "var(--chart-2)",
+  "var(--chart-3)",
+  "var(--chart-4)",
+  "var(--chart-5)",
+];
 
 export function TopSourcesCard({ data }: TopSourcesCardProps) {
   const chartData = data.slice(0, 5).map((item) => ({
@@ -58,9 +63,16 @@ export function TopSourcesCard({ data }: TopSourcesCardProps) {
               <ChartTooltip content={<ChartTooltipContent />} />
               <Bar
                 dataKey="count"
-                fill="var(--color-count)"
+                fill="var(--chart-1)"
                 radius={[8, 8, 0, 0]}
-              />
+              >
+                {chartData.map((item, index) => (
+                  <Cell
+                    key={item.source}
+                    fill={barColors[index % barColors.length]}
+                  />
+                ))}
+              </Bar>
             </BarChart>
           </ChartContainer>
         )}
