@@ -17,6 +17,10 @@ import {
 
 type NewJobApplication = InferInsertModel<typeof jobApplications>;
 type NewFollowUpEmail = InferInsertModel<typeof followUpEmails>;
+type NewApplicationDocument = InferInsertModel<typeof applicationDocuments>;
+type NewCalendarEvent = InferInsertModel<typeof calendarEvents>;
+type NewFollowUpSchedule = InferInsertModel<typeof followUpSchedules>;
+type SeedJobApplication = NewJobApplication & { id: string };
 
 const SEED_USER_ID = "seed-user-applyorbit";
 const SEED_USER_EMAIL = "diyo.seed@example.com";
@@ -184,7 +188,7 @@ function emailCreatedAt(index: number): Date {
   );
 }
 
-function buildApplications(): NewJobApplication[] {
+function buildApplications(): SeedJobApplication[] {
   const applicationDates = buildApplicationDates();
   const jobTypeSequence = buildJobTypes();
 
@@ -245,16 +249,15 @@ async function seedAccount(): Promise<void> {
 }
 
 async function seedApplications(
-  applications: readonly NewJobApplication[],
+  applications: readonly SeedJobApplication[],
 ): Promise<void> {
-  await db.insert(jobApplications).values(applications);
+  await db.insert(jobApplications).values([...applications]);
 }
 
 async function seedDocuments(
-  applications: readonly NewJobApplication[],
+  applications: readonly SeedJobApplication[],
 ): Promise<void> {
-  await db.insert(applicationDocuments).values(
-    applications.slice(0, 20).map((application, index) => ({
+  const documents = applications.slice(0, 20).map((application, index) => ({
       applicationId: application.id,
       userId: SEED_USER_ID,
       fileName: `diyo-anggara-${index % 2 === 0 ? "resume" : "portfolio"}-${index + 1}.pdf`,
@@ -263,12 +266,13 @@ async function seedDocuments(
       fileSize: `${240 + index * 16} KB`,
       fileType: "application/pdf",
       documentType: index % 2 === 0 ? "resume" : "portfolio",
-    })),
-  );
+    })) satisfies NewApplicationDocument[];
+
+  await db.insert(applicationDocuments).values(documents);
 }
 
 async function seedFollowUps(
-  applications: readonly NewJobApplication[],
+  applications: readonly SeedJobApplication[],
 ): Promise<void> {
   const emails = applications.slice(0, 30).map((application, index) => ({
     id: seedUuid(101 + index),
@@ -286,8 +290,7 @@ async function seedFollowUps(
   })) satisfies NewFollowUpEmail[];
 
   await db.insert(followUpEmails).values(emails);
-  await db.insert(followUpSchedules).values(
-    emails.slice(0, 15).map((email, index) => ({
+  const schedules = emails.slice(0, 15).map((email, index) => ({
       id: seedUuid(151 + index),
       applicationId: email.applicationId,
       userId: SEED_USER_ID,
@@ -296,12 +299,13 @@ async function seedFollowUps(
         `2026-06-${String(index + 5).padStart(2, "0")}T03:00:00.000Z`,
       ),
       isActive: index % 4 !== 0,
-    })),
-  );
+    })) satisfies NewFollowUpSchedule[];
+
+  await db.insert(followUpSchedules).values(schedules);
 }
 
 async function seedIntegrations(
-  applications: readonly NewJobApplication[],
+  applications: readonly SeedJobApplication[],
 ): Promise<void> {
   await db.insert(calendarConnections).values({
     userId: SEED_USER_ID,
@@ -311,8 +315,7 @@ async function seedIntegrations(
     tokenExpiresAt: new Date("2026-06-01T00:00:00.000Z"),
   });
 
-  await db.insert(calendarEvents).values(
-    applications.slice(0, 12).map((application, index) => ({
+  const events = applications.slice(0, 12).map((application, index) => ({
       userId: SEED_USER_ID,
       applicationId: application.id,
       provider: "google",
@@ -323,8 +326,9 @@ async function seedIntegrations(
         `2026-06-${String(index + 10).padStart(2, "0")}T04:00:00.000Z`,
       ),
       externalUpdatedAt: new Date("2026-05-18T07:00:00.000Z"),
-    })),
-  );
+    })) satisfies NewCalendarEvent[];
+
+  await db.insert(calendarEvents).values(events);
 
   await db.insert(telegramConnections).values({
     userId: SEED_USER_ID,
