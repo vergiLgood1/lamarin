@@ -25,6 +25,8 @@ import {
   Building2,
   CalendarDays,
   CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
   Clock3,
   EllipsisVertical,
   LayoutGrid,
@@ -41,6 +43,8 @@ import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
 type EmailLayout = "grid" | "list";
+
+const EMAILS_PER_PAGE = 6;
 
 interface EmailPreviewProps {
   emails: {
@@ -97,7 +101,18 @@ const DATE_FORMATTER = new Intl.DateTimeFormat("id-ID", {
 
 export function EmailPreview({ emails }: EmailPreviewProps) {
   const [layout, setLayout] = useState<EmailLayout>("grid");
+  const [currentPage, setCurrentPage] = useState(1);
   const [isPending, startTransition] = useTransition();
+
+  const totalPages = Math.ceil(emails.length / EMAILS_PER_PAGE);
+  const activePage = Math.min(currentPage, totalPages);
+  const pageStart = (activePage - 1) * EMAILS_PER_PAGE;
+  const visibleEmails = emails.slice(pageStart, pageStart + EMAILS_PER_PAGE);
+  const pageEnd = pageStart + visibleEmails.length;
+
+  function goToPage(page: number) {
+    setCurrentPage(Math.min(Math.max(page, 1), totalPages));
+  }
 
   function handleSend(emailId: string) {
     startTransition(async () => {
@@ -206,7 +221,7 @@ export function EmailPreview({ emails }: EmailPreviewProps) {
               : "grid-cols-1",
           )}
         >
-          {emails.map((email) => {
+          {visibleEmails.map((email) => {
             const createdAtDisplay = DATE_FORMATTER.format(
               new Date(email.createdAt),
             );
@@ -385,6 +400,61 @@ export function EmailPreview({ emails }: EmailPreviewProps) {
             );
           })}
         </div>
+
+        {totalPages > 1 ? (
+          <div className="mt-6 flex flex-col gap-3 border-t pt-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-muted-foreground">
+              Menampilkan {pageStart + 1}-{pageEnd} dari {emails.length} email
+            </p>
+
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="size-9 rounded-xl"
+                aria-label="Halaman sebelumnya"
+                disabled={activePage === 1}
+                onClick={() => goToPage(activePage - 1)}
+              >
+                <ChevronLeft className="size-4" />
+              </Button>
+
+              <div className="flex items-center gap-1">
+                {Array.from({ length: totalPages }, (_, index) => {
+                  const page = index + 1;
+
+                  return (
+                    <Button
+                      key={page}
+                      type="button"
+                      variant={activePage === page ? "secondary" : "ghost"}
+                      size="icon"
+                      className="size-9 rounded-xl"
+                      aria-label={`Halaman ${page}`}
+                      aria-current={activePage === page ? "page" : undefined}
+                      onClick={() => goToPage(page)}
+                    >
+                      {page}
+                    </Button>
+                  );
+                })}
+              </div>
+
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="size-9 rounded-xl"
+                aria-label="Halaman berikutnya"
+                disabled={activePage === totalPages}
+                onClick={() => goToPage(activePage + 1)}
+              >
+                <ChevronRight className="size-4" />
+              </Button>
+            </div>
+          </div>
+        ) : null}
       </CardContent>
     </Card>
   );

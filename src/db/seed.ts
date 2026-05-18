@@ -22,6 +22,7 @@ const SEED_USER_ID = "seed-user-applyorbit";
 const SEED_USER_EMAIL = "diyo.seed@example.com";
 const SEED_USER_PASSWORD = "password123";
 const APPLICATION_COUNT = 100;
+const priorityFollowUpOffsets = [0, 1, 2, 3, 4, 5, 6, 7] as const;
 
 const monthPlan = [
   { month: 11, year: 2025, total: 4, fulltime: 2, internship: 1, freelance: 1 },
@@ -134,6 +135,26 @@ function dateString(year: number, month: number, day: number): string {
   return new Date(Date.UTC(year, month, day)).toISOString().slice(0, 10);
 }
 
+function relativeDateString(daysFromToday: number): string {
+  const date = new Date();
+  date.setHours(0, 0, 0, 0);
+  date.setDate(date.getDate() + daysFromToday);
+
+  return date.toISOString().slice(0, 10);
+}
+
+function followUpDateForIndex(index: number): string | null {
+  if (index < priorityFollowUpOffsets.length) {
+    return relativeDateString(priorityFollowUpOffsets[index]);
+  }
+
+  if (index % 5 === 0) {
+    return null;
+  }
+
+  return relativeDateString(8 + (index % 7));
+}
+
 function buildJobTypes(): NewJobApplication["jobType"][] {
   return monthPlan.flatMap((plan) => [
     ...Array.from({ length: plan.fulltime }, () => "fulltime" as const),
@@ -171,24 +192,23 @@ function buildApplications(): NewJobApplication[] {
     const number = index + 1;
     const [companyName, companyLocation, jobSource] =
       companyProfiles[index % companyProfiles.length];
-    const status = statusPlan[index];
+    const status = statusPlan[index % statusPlan.length];
     const position =
       status === "applied"
         ? appliedPositions[index % appliedPositions.length]
         : fallbackPositions[index % fallbackPositions.length];
-    const followUpDate =
-      index % 5 === 0 ? null : dateString(2026, 4, 19 + (index % 24));
+    const followUpDate = followUpDateForIndex(index);
 
     return {
       id: seedUuid(number),
       userId: SEED_USER_ID,
-      applicationDate: applicationDates[index],
+      applicationDate: applicationDates[index % applicationDates.length],
       companyName,
       companyLocation,
       workMode: (["remote", "hybrid", "onsite", "remote"] as const)[index % 4],
       position,
       jobSource,
-      jobType: jobTypeSequence[index],
+      jobType: jobTypeSequence[index % jobTypeSequence.length],
       followUpDate,
       status,
       hrContact: `talent${number}@${companyName.toLowerCase().replaceAll(" ", "")}.example`,
