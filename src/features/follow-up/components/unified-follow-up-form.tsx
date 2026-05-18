@@ -2,7 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Field,
   FieldError,
@@ -25,11 +25,22 @@ import {
   cancelSchedule,
   createScheduledFollowUp,
 } from "@/features/follow-up/actions/mutations";
+import { cn } from "@/lib/utils";
 import { unifiedFollowUpSchema } from "@/lib/validations";
 import type { JobApplication } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Clock, Loader2, Save, Send, Sparkles, X } from "lucide-react";
-import { useEffect, useRef, useState, useTransition } from "react";
+import {
+  Bot,
+  CalendarClock,
+  CheckCircle2,
+  Clock,
+  Loader2,
+  Save,
+  Send,
+  Sparkles,
+  Wand2,
+} from "lucide-react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import type { z } from "zod";
@@ -76,6 +87,7 @@ function parseGeneratedEmail(fullText: string, fallbackSubject: string) {
 
   const subject = subjectLine.replace(SUBJECT_PREFIX, "").trim();
   const subjectIndex = lines.indexOf(subjectLine);
+
   const body = lines
     .slice(subjectIndex + 1)
     .join("\n")
@@ -100,11 +112,33 @@ async function readStreamToString(stream: ReadableStream<Uint8Array> | null) {
   return fullText;
 }
 
+const ACTION_OPTIONS = [
+  {
+    value: "send",
+    label: "Kirim Sekarang",
+    description: "Email langsung dikirim ke HR",
+    icon: Send,
+  },
+  {
+    value: "draft",
+    label: "Simpan Draft",
+    description: "Simpan email untuk diedit nanti",
+    icon: Save,
+  },
+  {
+    value: "schedule",
+    label: "Jadwalkan",
+    description: "Atur waktu kirim otomatis",
+    icon: CalendarClock,
+  },
+] as const;
+
 export function UnifiedFollowUpForm({
   applications,
   schedules,
 }: UnifiedFollowUpFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
+
   const [generating, setGenerating] = useState(false);
   const [isPending, startTransition] = useTransition();
 
@@ -122,24 +156,37 @@ export function UnifiedFollowUpForm({
 
   const selectedApp = form.watch("applicationId");
   const action = form.watch("action");
+  const bodyValue = form.watch("body");
+  const subjectValue = form.watch("subject");
 
-  const selectedApplication = applications.find(
-    (app) => String(app.id) === String(selectedApp),
+  const selectedApplication = useMemo(
+    () => applications.find((app) => String(app.id) === String(selectedApp)),
+    [applications, selectedApp],
   );
 
   const activeSchedules = schedules.filter((s) => s.isActive);
+
   const errors = form.formState.errors;
   const isProcessing = generating || isPending;
+
   const canGenerate = Boolean(selectedApp) && !isProcessing;
 
   const submitActionConfig: Record<
     FollowUpAction,
     { label: string; pendingLabel: string; Icon: typeof Send }
   > = {
-    send: { label: "Kirim Sekarang", pendingLabel: "Mengirim...", Icon: Send },
-    draft: { label: "Simpan Draft", pendingLabel: "Menyimpan...", Icon: Save },
+    send: {
+      label: "Kirim Sekarang",
+      pendingLabel: "Mengirim...",
+      Icon: Send,
+    },
+    draft: {
+      label: "Simpan Draft",
+      pendingLabel: "Menyimpan...",
+      Icon: Save,
+    },
     schedule: {
-      label: "Jadwalkan",
+      label: "Jadwalkan Email",
       pendingLabel: "Menjadwalkan...",
       Icon: Clock,
     },
@@ -151,6 +198,7 @@ export function UnifiedFollowUpForm({
     if (!selectedApp) return;
 
     const app = applications.find((a) => String(a.id) === String(selectedApp));
+
     if (app?.hrContact) {
       form.setValue("recipientEmail", app.hrContact);
     }
@@ -164,6 +212,7 @@ export function UnifiedFollowUpForm({
         "scheduledDate",
         toDatetimeLocal(new Date(existingSchedule.scheduledDate)),
       );
+
       form.setValue("action", "schedule");
     } else {
       form.setValue("scheduledDate", getDefaultScheduledDate());
@@ -177,10 +226,13 @@ export function UnifiedFollowUpForm({
     }
 
     setGenerating(true);
+
     try {
       const response = await fetch("/api/ai/generate", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           companyName: selectedApplication.companyName,
           position: selectedApplication.position,
@@ -190,10 +242,14 @@ export function UnifiedFollowUpForm({
         }),
       });
 
-      if (!response.ok) throw new Error("Failed to generate");
+      if (!response.ok) {
+        throw new Error("Failed to generate");
+      }
 
       const fullText = await readStreamToString(response.body);
+
       const fallbackSubject = `Follow-up ${selectedApplication.companyName} - ${selectedApplication.position}`;
+
       const generated = parseGeneratedEmail(fullText, fallbackSubject);
 
       form.setValue("subject", generated.subject);
@@ -203,7 +259,8 @@ export function UnifiedFollowUpForm({
         form.setValue("recipientEmail", selectedApplication.hrContact);
       }
 
-      toast.success("Email berhasil di-generate oleh AI");
+      toast.success("Email berhasil di-generate AI");
+
       return generated;
     } catch {
       toast.error("Gagal generate email");
@@ -215,14 +272,17 @@ export function UnifiedFollowUpForm({
 
   async function handleGenerateAndSchedule() {
     const generated = await handleGenerate();
+
     if (!generated) return;
 
     form.setValue("action", "schedule");
-    toast.success("Email di-generate! Pilih waktu pengiriman.");
+
+    toast.success("Email berhasil dibuat dan siap dijadwalkan");
   }
 
   async function handleCancelSchedule(scheduleId: string) {
     const result = await cancelSchedule(scheduleId);
+
     if (result.success) {
       toast.success(result.message);
     } else {
@@ -232,23 +292,29 @@ export function UnifiedFollowUpForm({
 
   function handleEditSchedule(schedule: (typeof schedules)[0]) {
     form.setValue("applicationId", schedule.applicationId);
+
     form.setValue("action", "schedule");
+
     form.setValue(
       "scheduledDate",
       toDatetimeLocal(new Date(schedule.scheduledDate)),
     );
 
-    formRef.current?.scrollIntoView({ behavior: "smooth" });
+    formRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
   }
 
   async function onSubmit(data: FormValues) {
     startTransition(async () => {
       const formData = new FormData();
+
       formData.set("applicationId", data.applicationId);
       formData.set("recipientEmail", data.recipientEmail);
       formData.set("subject", data.subject);
       formData.set("body", data.body);
       formData.set("action", data.action);
+
       if (data.scheduledDate) {
         formData.set("scheduledDate", data.scheduledDate);
       }
@@ -260,7 +326,15 @@ export function UnifiedFollowUpForm({
 
       if (result.success) {
         toast.success(result.message);
-        form.reset();
+
+        form.reset({
+          applicationId: "",
+          recipientEmail: "",
+          subject: "",
+          body: "",
+          action: "send",
+          scheduledDate: "",
+        });
       } else if (result.errors) {
         Object.entries(result.errors).forEach(([field, messages]) => {
           form.setError(field as keyof FormValues, {
@@ -275,226 +349,319 @@ export function UnifiedFollowUpForm({
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Follow-up Email</CardTitle>
-        </CardHeader>
-        <CardContent>
+      <Card className="overflow-hidden border-border/60 shadow-sm">
+        <CardContent className="p-6">
           <form
             ref={formRef}
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4"
+            className="space-y-6"
           >
             <FieldGroup>
-              <Controller
-                control={form.control}
-                name="applicationId"
-                render={({ field }) => (
-                  <Field data-invalid={!!errors.applicationId}>
-                    <FieldLabel htmlFor="applicationId">
-                      Pilih Lamaran
-                    </FieldLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger
-                        id="applicationId"
-                        aria-invalid={!!errors.applicationId}
-                      >
-                        <SelectValue placeholder="Pilih lamaran..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {applications.map((app) => (
-                          <SelectItem key={app.id} value={app.id}>
-                            <div className="flex items-center gap-2">
-                              <span>
-                                {app.companyName} - {app.position}
-                              </span>
-                              {app.hrContact ? (
-                                <Badge variant="outline">AI Ready</Badge>
-                              ) : (
-                                <Badge variant="secondary">
-                                  Tanpa HR Contact
-                                </Badge>
-                              )}
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FieldError errors={[errors.applicationId]} />
-                  </Field>
-                )}
-              />
+              <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
+                {/* LEFT */}
+                <div className="space-y-6">
+                  <Controller
+                    control={form.control}
+                    name="applicationId"
+                    render={({ field }) => (
+                      <Field data-invalid={!!errors.applicationId}>
+                        <FieldLabel htmlFor="applicationId">
+                          Pilih Lamaran
+                        </FieldLabel>
 
-              <div className="flex gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleGenerate}
-                  disabled={!canGenerate}
-                >
-                  {generating ? (
-                    <Loader2 className="mr-2 size-4 animate-spin" />
-                  ) : (
-                    <Sparkles className="mr-2 size-4" />
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
+                          <SelectTrigger
+                            id="applicationId"
+                            className="h-11"
+                            aria-invalid={!!errors.applicationId}
+                          >
+                            <SelectValue placeholder="Pilih lamaran..." />
+                          </SelectTrigger>
+
+                          <SelectContent>
+                            {applications.map((app) => (
+                              <SelectItem key={app.id} value={app.id}>
+                                <div className="flex items-center gap-2">
+                                  <span>
+                                    {app.companyName} — {app.position}
+                                  </span>
+
+                                  {app.hrContact ? (
+                                    <Badge
+                                      variant="outline"
+                                      className="rounded-full"
+                                    >
+                                      AI Ready
+                                    </Badge>
+                                  ) : (
+                                    <Badge
+                                      variant="secondary"
+                                      className="rounded-full"
+                                    >
+                                      No HR Contact
+                                    </Badge>
+                                  )}
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+
+                        <FieldError errors={[errors.applicationId]} />
+                      </Field>
+                    )}
+                  />
+
+                  {selectedApplication && (
+                    <div className="rounded-2xl border bg-muted/30 p-4">
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="space-y-1">
+                          <h3 className="font-medium">
+                            {selectedApplication.companyName}
+                          </h3>
+
+                          <p className="text-sm text-muted-foreground">
+                            {selectedApplication.position}
+                          </p>
+                        </div>
+
+                        <div className="flex flex-wrap gap-2">
+                          <Badge variant="secondary">
+                            {selectedApplication.status}
+                          </Badge>
+
+                          {selectedApplication.hrContact && (
+                            <Badge variant="outline">
+                              <CheckCircle2 className="mr-1 size-3" />
+                              HR Contact
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    </div>
                   )}
-                  {generating ? "Generating..." : "Generate dengan AI"}
-                </Button>
 
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleGenerateAndSchedule}
-                  disabled={!canGenerate}
-                >
-                  <Sparkles className="mr-2 size-4" />
-                  Generate + Jadwalkan
-                </Button>
-              </div>
+                  <div className="flex flex-wrap gap-3">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="h-11 rounded-xl"
+                      onClick={handleGenerate}
+                      disabled={!canGenerate}
+                    >
+                      {generating ? (
+                        <Loader2 className="mr-2 size-4 animate-spin" />
+                      ) : (
+                        <Sparkles className="mr-2 size-4" />
+                      )}
 
-              <Field data-invalid={!!errors.recipientEmail}>
-                <FieldLabel htmlFor="recipientEmail">Email Tujuan</FieldLabel>
-                <Input
-                  id="recipientEmail"
-                  type="email"
-                  placeholder="hr@perusahaan.com"
-                  aria-invalid={!!errors.recipientEmail}
-                  {...form.register("recipientEmail")}
-                />
-                <FieldError errors={[errors.recipientEmail]} />
-              </Field>
+                      {generating ? "Generating..." : "Generate dengan AI"}
+                    </Button>
 
-              <Field data-invalid={!!errors.subject}>
-                <FieldLabel htmlFor="subject">Subject</FieldLabel>
-                <Input
-                  id="subject"
-                  placeholder="Subject email..."
-                  aria-invalid={!!errors.subject}
-                  {...form.register("subject")}
-                />
-                <FieldError errors={[errors.subject]} />
-              </Field>
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      className="h-11 rounded-xl"
+                      onClick={handleGenerateAndSchedule}
+                      disabled={!canGenerate}
+                    >
+                      <Wand2 className="mr-2 size-4" />
+                      Generate + Schedule
+                    </Button>
+                  </div>
 
-              <Field data-invalid={!!errors.body}>
-                <FieldLabel htmlFor="body">Isi Email</FieldLabel>
-                <Textarea
-                  id="body"
-                  placeholder="Tulis isi email atau generate dengan AI..."
-                  rows={8}
-                  aria-invalid={!!errors.body}
-                  {...form.register("body")}
-                />
-                <FieldError errors={[errors.body]} />
-              </Field>
+                  <Field data-invalid={!!errors.recipientEmail}>
+                    <FieldLabel htmlFor="recipientEmail">
+                      Email Tujuan
+                    </FieldLabel>
 
-              <Controller
-                control={form.control}
-                name="action"
-                render={({ field }) => (
+                    <Input
+                      id="recipientEmail"
+                      type="email"
+                      placeholder="hr@company.com"
+                      className="h-11"
+                      aria-invalid={!!errors.recipientEmail}
+                      {...form.register("recipientEmail")}
+                    />
+
+                    <FieldError errors={[errors.recipientEmail]} />
+                  </Field>
+
+                  <Field data-invalid={!!errors.subject}>
+                    <FieldLabel htmlFor="subject">Subject</FieldLabel>
+
+                    <Input
+                      id="subject"
+                      placeholder="Subject email..."
+                      className="h-11"
+                      aria-invalid={!!errors.subject}
+                      {...form.register("subject")}
+                    />
+
+                    <FieldError errors={[errors.subject]} />
+                  </Field>
+
+                  <Field data-invalid={!!errors.body}>
+                    <FieldLabel htmlFor="body">Isi Email</FieldLabel>
+
+                    <Textarea
+                      id="body"
+                      rows={12}
+                      placeholder="Tulis isi email atau generate dengan AI..."
+                      className="resize-none"
+                      aria-invalid={!!errors.body}
+                      {...form.register("body")}
+                    />
+
+                    <div className="flex items-center justify-between pt-1">
+                      <FieldError errors={[errors.body]} />
+
+                      <span className="text-xs text-muted-foreground">
+                        {bodyValue?.length || 0} karakter
+                      </span>
+                    </div>
+                  </Field>
+                </div>
+
+                {/* RIGHT */}
+                <div className="space-y-6">
                   <FieldSet
-                    className="rounded-lg border p-4"
+                    className="rounded-2xl border bg-muted/20 p-5"
                     data-invalid={!!errors.action}
                   >
-                    <FieldLabel>Pilih Aksi</FieldLabel>
-                    <RadioGroup
-                      onValueChange={field.onChange}
-                      value={field.value}
-                      className="space-y-2"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="send" id="send" />
-                        <Label htmlFor="send" className="font-normal">
-                          Kirim Sekarang
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="draft" id="draft" />
-                        <Label htmlFor="draft" className="font-normal">
-                          Simpan Draft
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="schedule" id="schedule" />
-                        <Label htmlFor="schedule" className="font-normal">
-                          Jadwalkan Pengiriman
-                        </Label>
-                      </div>
-                    </RadioGroup>
+                    <div className="mb-4">
+                      <FieldLabel className="text-base">Pilih Aksi</FieldLabel>
+
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        Tentukan bagaimana email akan diproses.
+                      </p>
+                    </div>
+
+                    <Controller
+                      control={form.control}
+                      name="action"
+                      render={({ field }) => (
+                        <RadioGroup
+                          onValueChange={field.onChange}
+                          value={field.value}
+                          className="space-y-3"
+                        >
+                          {ACTION_OPTIONS.map((option) => {
+                            const Icon = option.icon;
+                            const isSelected = field.value === option.value;
+
+                            return (
+                              <Label
+                                key={option.value}
+                                htmlFor={option.value}
+                                className={cn(
+                                  "flex cursor-pointer items-start gap-4 rounded-2xl border bg-background p-4 transition-all",
+                                  isSelected &&
+                                    "border-primary bg-primary/5 ring-1 ring-primary/20",
+                                )}
+                              >
+                                <RadioGroupItem
+                                  value={option.value}
+                                  id={option.value}
+                                  className="mt-1"
+                                />
+
+                                <div className="flex flex-1 items-start gap-3">
+                                  <div
+                                    className={cn(
+                                      "flex size-10 items-center justify-center rounded-xl",
+                                      isSelected
+                                        ? "bg-primary text-primary-foreground"
+                                        : "bg-muted",
+                                    )}
+                                  >
+                                    <Icon className="size-4" />
+                                  </div>
+
+                                  <div className="space-y-1">
+                                    <p className="font-medium">
+                                      {option.label}
+                                    </p>
+
+                                    <p className="text-sm text-muted-foreground">
+                                      {option.description}
+                                    </p>
+                                  </div>
+                                </div>
+                              </Label>
+                            );
+                          })}
+                        </RadioGroup>
+                      )}
+                    />
+
                     <FieldError errors={[errors.action]} />
                   </FieldSet>
-                )}
-              />
 
-              {action === "schedule" && (
-                <Field data-invalid={!!errors.scheduledDate}>
-                  <FieldLabel htmlFor="scheduledDate">
-                    Tanggal & Waktu Kirim
-                  </FieldLabel>
-                  <Input
-                    id="scheduledDate"
-                    type="datetime-local"
-                    aria-invalid={!!errors.scheduledDate}
-                    {...form.register("scheduledDate")}
-                  />
-                  <FieldError errors={[errors.scheduledDate]} />
-                </Field>
-              )}
+                  {action === "schedule" && (
+                    <Field data-invalid={!!errors.scheduledDate}>
+                      <FieldLabel htmlFor="scheduledDate">
+                        Jadwal Pengiriman
+                      </FieldLabel>
 
-              <Button type="submit" disabled={isProcessing} className="w-full">
-                {isPending ? (
-                  <Loader2 className="mr-2 size-4 animate-spin" />
-                ) : (
-                  <submitConfig.Icon className="mr-2 size-4" />
-                )}
-                {isPending ? submitConfig.pendingLabel : submitConfig.label}
-              </Button>
+                      <Input
+                        id="scheduledDate"
+                        type="datetime-local"
+                        className="h-11"
+                        aria-invalid={!!errors.scheduledDate}
+                        {...form.register("scheduledDate")}
+                      />
+
+                      <FieldError errors={[errors.scheduledDate]} />
+                    </Field>
+                  )}
+
+                  <Card className="border-dashed bg-muted/20 shadow-none">
+                    <CardContent className="space-y-4 p-5">
+                      <div className="flex items-center gap-3">
+                        <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                          <Bot className="size-5" />
+                        </div>
+
+                        <div>
+                          <h3 className="font-medium">AI Assistant</h3>
+
+                          <p className="text-sm text-muted-foreground">
+                            Generate email follow-up otomatis.
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2 text-sm text-muted-foreground">
+                        <p>• Generate subject & body email otomatis</p>
+                        <p>• Menyesuaikan posisi dan status lamaran</p>
+                        <p>• Bisa langsung dijadwalkan</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Button
+                    type="submit"
+                    disabled={isProcessing}
+                    className="h-12 w-full rounded-xl text-sm font-medium"
+                  >
+                    {isPending ? (
+                      <Loader2 className="mr-2 size-4 animate-spin" />
+                    ) : (
+                      <submitConfig.Icon className="mr-2 size-4" />
+                    )}
+
+                    {isPending ? submitConfig.pendingLabel : submitConfig.label}
+                  </Button>
+                </div>
+              </div>
             </FieldGroup>
           </form>
         </CardContent>
       </Card>
-
-      {/* {activeSchedules.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Jadwal Aktif ({activeSchedules.length})</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {activeSchedules.map((schedule) => (
-              <div
-                key={schedule.id}
-                className="flex items-center justify-between rounded-md border p-3"
-              >
-                <div className="space-y-0.5">
-                  <p className="text-sm font-medium">
-                    {schedule.companyName} - {schedule.position}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {new Date(schedule.scheduledDate).toLocaleString("id-ID")}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline">Aktif</Badge>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => handleEditSchedule(schedule)}
-                    title="Edit jadwal"
-                  >
-                    <Clock className="size-4" />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => handleCancelSchedule(schedule.id)}
-                    title="Batalkan jadwal"
-                  >
-                    <X className="size-4" />
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      )} */}
     </div>
   );
 }
