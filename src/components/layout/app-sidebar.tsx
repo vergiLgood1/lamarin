@@ -15,7 +15,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { FileText, LayoutDashboard, Mail, Orbit, Settings } from "lucide-react"
+import { FileText, LayoutDashboard, Mail, MailPlus, Orbit, Settings } from "lucide-react"
 import Link from "next/link"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -35,6 +35,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       url: "/dashboard/applications",
       icon: <FileText />,
       isActive: pathname.startsWith("/dashboard/applications"),
+    },
+    {
+      title: "Kirim Email",
+      url: "/dashboard/send-email",
+      icon: <MailPlus />,
+      isActive: pathname.startsWith("/dashboard/send-email"),
     },
     {
       title: "Follow-up",

@@ -165,6 +165,9 @@ export const followUpEmails = pgTable("follow_up_emails", {
   subject: varchar("subject", { length: 500 }).notNull(),
   body: text("body").notNull(),
   recipientEmail: varchar("recipient_email", { length: 255 }).notNull(),
+  templateKey: varchar("template_key", { length: 100 })
+    .notNull()
+    .default("follow_up"),
   sentAt: timestamp("sent_at"),
   status: emailStatusEnum("status").notNull().default("draft"),
   mode: emailModeEnum("mode").notNull().default("manual"),
