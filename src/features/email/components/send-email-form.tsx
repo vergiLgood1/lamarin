@@ -20,7 +20,6 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import {
   createEmailDraft,
-  scheduleApplicationEmail,
   sendApplicationEmail,
 } from "@/features/email/actions/mutations";
 import {
@@ -28,9 +27,9 @@ import {
   EMAIL_TEMPLATES,
   type EmailTemplateKey,
 } from "@/features/email/lib/templates";
-import type { ActionState, FollowUpEmail, FollowUpSchedule, JobApplication } from "@/types";
+import type { ActionState, FollowUpEmail, JobApplication } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CalendarClock, Loader2, MailCheck, Save, Send, Sparkles } from "lucide-react";
+import { Loader2, MailCheck, Save, Send, Sparkles } from "lucide-react";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -54,7 +53,6 @@ const sendEmailFormSchema = z
     recipientEmail: z.string().email("Email tujuan tidak valid"),
     subject: z.string().min(1, "Subject wajib diisi"),
     body: z.string().min(1, "Isi email wajib diisi"),
-    scheduledDate: z.string().optional(),
   })
   .refine(
     (data) => data.templateKey !== "custom" || Boolean(data.customInstruction?.trim()),
@@ -65,17 +63,10 @@ const sendEmailFormSchema = z
   );
 
 type SendEmailFormValues = z.infer<typeof sendEmailFormSchema>;
-type SubmitIntent = "send" | "draft" | "schedule";
+type SubmitIntent = "send" | "draft";
 
 interface SendEmailFormProps {
   applications: JobApplication[];
-}
-
-function getDefaultScheduledDate(): string {
-  const date = new Date();
-  date.setDate(date.getDate() + 3);
-  date.setHours(9, 0, 0, 0);
-  return date.toISOString().slice(0, 16);
 }
 
 function parseGeneratedEmail(fullText: string, fallbackSubject: string) {
@@ -117,15 +108,11 @@ function buildFormData(data: SendEmailFormValues): FormData {
   formData.set("body", data.body);
   formData.set("templateKey", data.templateKey);
 
-  if (data.scheduledDate) {
-    formData.set("scheduledDate", data.scheduledDate);
-  }
-
   return formData;
 }
 
 function handleActionResult(
-  result: ActionState<FollowUpEmail> | ActionState<FollowUpSchedule>,
+  result: ActionState<FollowUpEmail>,
   form: ReturnType<typeof useForm<SendEmailFormValues>>,
 ) {
   if (result.success) {
@@ -137,7 +124,6 @@ function handleActionResult(
       recipientEmail: "",
       subject: "",
       body: "",
-      scheduledDate: getDefaultScheduledDate(),
     });
     return;
   }
@@ -168,7 +154,6 @@ export function SendEmailForm({ applications }: SendEmailFormProps) {
       recipientEmail: "",
       subject: "",
       body: "",
-      scheduledDate: getDefaultScheduledDate(),
     },
   });
 
@@ -239,12 +224,6 @@ export function SendEmailForm({ applications }: SendEmailFormProps) {
 
       if (submitIntent === "draft") {
         const result = await createEmailDraft(initialState, formData);
-        handleActionResult(result, form);
-        return;
-      }
-
-      if (submitIntent === "schedule") {
-        const result = await scheduleApplicationEmail(initialState, formData);
         handleActionResult(result, form);
         return;
       }
@@ -429,24 +408,6 @@ export function SendEmailForm({ applications }: SendEmailFormProps) {
             </CardContent>
           </Card>
 
-          <Card className="border-border/60 shadow-sm">
-            <CardHeader>
-              <CardTitle className="text-base">Jadwal Opsional</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Field data-invalid={!!errors.scheduledDate}>
-                <FieldLabel htmlFor="scheduledDate">Tanggal Kirim</FieldLabel>
-                <Input
-                  id="scheduledDate"
-                  type="datetime-local"
-                  aria-invalid={!!errors.scheduledDate}
-                  {...form.register("scheduledDate")}
-                />
-                <FieldError errors={[errors.scheduledDate]} />
-              </Field>
-            </CardContent>
-          </Card>
-
           <div className="grid gap-2">
             <Button
               type="submit"
@@ -474,20 +435,6 @@ export function SendEmailForm({ applications }: SendEmailFormProps) {
                 <Save className="mr-2 size-4" />
               )}
               Simpan Draft
-            </Button>
-            <Button
-              type="submit"
-              variant="secondary"
-              className="h-11 rounded-xl"
-              disabled={isProcessing}
-              onClick={() => setSubmitIntent("schedule")}
-            >
-              {isPending && submitIntent === "schedule" ? (
-                <Loader2 className="mr-2 size-4 animate-spin" />
-              ) : (
-                <CalendarClock className="mr-2 size-4" />
-              )}
-              Jadwalkan
             </Button>
           </div>
         </div>
