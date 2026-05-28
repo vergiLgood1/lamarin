@@ -38,46 +38,46 @@ const featureCards = [
     icon: Workflow,
     title: "Application tracking",
     description:
-      "Simpan perusahaan, posisi, status, sumber lamaran, work mode, salary, HR contact, dan notes.",
+      "Save company, position, status, application source, work mode, salary, HR contact, and notes.",
   },
   {
     icon: Mail,
     title: "Follow-up email",
     description:
-      "Buat draft follow-up yang terhubung langsung dengan konteks lamaran kerja.",
+      "Create follow-up drafts tied directly to the application context.",
   },
   {
     icon: CalendarDays,
     title: "Calendar schedule",
     description:
-      "Catat interview, deadline, dan follow-up supaya jadwal penting tetap terlihat.",
+      "Track interviews, deadlines, and follow-ups so important dates stay visible.",
   },
   {
     icon: FileText,
     title: "Application documents",
     description:
-      "Lampirkan CV, portfolio, cover letter, dan dokumen lain ke lamaran terkait.",
+      "Attach CVs, portfolios, cover letters, and other documents to the related application.",
   },
 ];
 
 const workflowCards = [
   {
     step: "01",
-    title: "Catat lamaran",
+    title: "Record application",
     description:
-      "Masukkan posisi, perusahaan, sumber lowongan, status, dokumen, dan catatan penting.",
+      "Enter position, company, job source, status, documents, and important notes.",
   },
   {
     step: "02",
-    title: "Pantau status",
+    title: "Monitor status",
     description:
-      "Lihat progress lamaran dari Applied, Reviewed, Interview, Test, hingga Offered atau Rejected.",
+      "View application progress from Applied, Reviewed, Interview, Test, to Offered or Rejected.",
   },
   {
     step: "03",
-    title: "Siapkan follow-up",
+    title: "Prepare follow-up",
     description:
-      "Gunakan konteks lamaran untuk membuat draft email yang profesional dan tetap bisa kamu edit.",
+      "Use application context to create professional email drafts that you can edit.",
   },
 ];
 
@@ -85,35 +85,35 @@ const integrationCards = [
   {
     icon: CalendarDays,
     title: "Google Calendar",
-    description: "Buat dan kelola event untuk follow-up, interview, atau deadline.",
+    description: "Create and manage events for follow-ups, interviews, or deadlines.",
   },
   {
     icon: Bell,
     title: "Telegram Reminder",
-    description: "Kirim reminder H-1 dan H-0 ke channel yang sudah kamu pakai.",
+    description: "Send reminders one day before and on the day to your existing channel.",
   },
   {
     icon: Stars,
     title: "Gemini AI Draft",
-    description: "AI membantu menulis draft email, bukan mengambil keputusan rekrutmen.",
+    description: "AI helps write draft emails, not make recruitment decisions.",
   },
 ];
 
 const faqs = [
   {
-    question: "Apakah Lamarin otomatis melamar pekerjaan?",
+    question: "Does Lamarin apply for jobs automatically?",
     answer:
-      "Tidak. Lamarin membantu mencatat dan mengelola proses lamaran, bukan melakukan apply otomatis.",
+      "No. Lamarin helps record and manage the application process, not submit applications automatically.",
   },
   {
-    question: "Apakah AI menentukan saya akan diterima?",
+    question: "Does the AI decide whether I'll be hired?",
     answer:
-      "Tidak. AI hanya membantu membuat draft email follow-up. Kamu tetap membaca, mengedit, dan memutuskan.",
+      "No. AI only helps draft follow-up emails. You still review, edit, and decide.",
   },
   {
-    question: "Apakah data lamaran bisa diekspor?",
+    question: "Can I export my application data?",
     answer:
-      "Ya, Lamarin dirancang agar pengguna tetap bisa menyimpan akses ke data lamaran mereka sendiri.",
+      "Yes. Lamarin is designed so users can keep access to their own application data.",
   },
 ];
 
@@ -256,23 +256,23 @@ export function MarketingLandingPage() {
             className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-muted-foreground shadow-2xl shadow-black/20 backdrop-blur-xl"
           >
             <Sparkles className="size-4 text-primary" />
-            Workspace lamaran kerja yang lebih rapi
+            A tidier job application workspace
           </div>
 
           <h1
             data-hero-reveal
             className="mt-8 max-w-5xl text-balance text-5xl font-semibold tracking-tight sm:text-6xl lg:text-7xl"
           >
-            Satu tempat untuk melacak lamaran, follow-up, dan jadwal penting.
+            One place to track applications, follow-ups, and important dates.
           </h1>
 
           <p
             data-hero-reveal
             className="mt-6 max-w-2xl text-pretty text-base leading-8 text-muted-foreground sm:text-lg"
           >
-            Lamarin membantu job seeker menjaga proses lamaran tetap terlihat:
-            status, dokumen, email follow-up, calendar schedule, dan reminder
-            dalam satu workspace.
+            Lamarin helps job seekers keep the application process visible:
+            status, documents, follow-up emails, calendar schedule, and reminders
+            in one workspace.
           </p>
 
           <div
@@ -442,7 +442,7 @@ export function MarketingLandingPage() {
             <TimerReset className="mb-3 size-5 text-primary" />
             <p className="text-sm font-medium">Follow-up tomorrow</p>
             <p className="mt-1 text-xs leading-5 text-muted-foreground">
-              Jangan lupa kirim follow-up untuk posisi Frontend Developer.
+              Don&apos;t forget to send a follow-up for the Frontend Developer role.
             </p>
           </div>
 
@@ -453,7 +453,7 @@ export function MarketingLandingPage() {
             <Mail className="mb-3 size-5 text-primary" />
             <p className="text-sm font-medium">Draft ready</p>
             <p className="mt-1 text-xs leading-5 text-muted-foreground">
-              Email tetap bisa kamu review dan edit sebelum dikirim.
+              You can review and edit the email before sending.
             </p>
           </div>
         </div>
@@ -490,8 +490,8 @@ export function MarketingLandingPage() {
               Semua bagian penting dari proses lamaran tetap terhubung.
             </h2>
             <p className="mt-5 text-pretty leading-8 text-muted-foreground">
-              Lamarin bukan sekadar table lamaran. Setiap aplikasi bisa punya
-              status, dokumen, follow-up email, jadwal, reminder, dan notes.
+              Lamarin isn&apos;t just an applications table. Each application can have
+              status, documents, follow-up emails, schedules, reminders, and notes.
             </p>
           </div>
 
@@ -528,7 +528,7 @@ export function MarketingLandingPage() {
               Workflow
             </p>
             <h2 className="mt-4 text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
-              Dari apply sampai follow-up, prosesnya lebih mudah diikuti.
+              From apply to follow-up, the process is easier to follow.
             </h2>
           </div>
 
@@ -561,7 +561,7 @@ export function MarketingLandingPage() {
               Integrations
             </p>
             <h2 className="mt-4 text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
-              Hubungkan dengan tools yang sudah kamu pakai.
+              Connect with the tools you already use.
             </h2>
           </div>
 
@@ -628,8 +628,8 @@ export function MarketingLandingPage() {
             Stop tracking applications from scattered places.
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-pretty leading-8 text-muted-foreground">
-            Mulai simpan lamaran, follow-up, dokumen, dan jadwal penting dalam
-            workspace yang lebih tenang.
+            Start saving applications, follow-ups, documents, and important dates in
+            a calmer workspace.
           </p>
 
           <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
@@ -661,8 +661,8 @@ export function MarketingLandingPage() {
               <span className="text-sm font-semibold tracking-wide">Lamarin</span>
             </Link>
             <p className="mt-4 max-w-sm text-sm leading-7 text-muted-foreground">
-              Job application tracker and follow-up workspace untuk menjaga
-              proses lamaran tetap terlihat dan terorganisir.
+              Job application tracker and follow-up workspace to keep the application
+              process visible and organized.
             </p>
           </div>
 
