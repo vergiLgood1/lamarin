@@ -22,6 +22,7 @@
     "hooks": "@/hooks"
   },
   "registries": {
-    "@skiper-ui": "https://skiper-ui.com/registry/{name}.json"
+    "@skiper-ui": "https://skiper-ui.com/registry/{name}.json",
+    "@react-bits": "https://reactbits.dev/r/{name}.json"
   }
 }
