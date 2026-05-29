@@ -3,8 +3,8 @@ import Link from "next/link";
 
 export function Footer() {
   return (
-    <footer className="border-t border-white/10 px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mx-auto grid max-w-6xl gap-8 md:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr]">
+    <>
+      <div className="grid gap-8 md:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr]">
         <div>
           <Link href="/" className="flex items-center gap-2">
             <span className="flex size-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.06]">
@@ -65,6 +65,6 @@ export function Footer() {
         <p>© {new Date().getFullYear()} Lamarin. All rights reserved.</p>
         <p>Built for organized job search workflows.</p>
       </div>
-    </footer>
+    </>
   );
 }

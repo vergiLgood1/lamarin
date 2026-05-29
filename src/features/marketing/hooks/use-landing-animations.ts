@@ -9,6 +9,21 @@ export function useLandingAnimations() {
     gsap.registerPlugin(ScrollTrigger);
 
     const ctx = gsap.context(() => {
+      ScrollTrigger.matchMedia({
+        "(min-width: 1024px)": () => {
+          gsap.to("[data-marketing-header]", {
+            maxWidth: "72rem",
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: rootRef.current,
+              start: "top top",
+              end: "+=160",
+              scrub: 0.7,
+            },
+          });
+        },
+      });
+
       // Hero reveal animations
       gsap.set("[data-hero-reveal]", {
         y: 28,

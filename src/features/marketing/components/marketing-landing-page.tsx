@@ -21,6 +21,8 @@ export function MarketingLandingPage() {
       ref={rootRef}
       className="dark min-h-screen overflow-hidden bg-background text-foreground"
     >
+      <Header />
+
       <section className="relative isolate min-h-screen px-4 py-5 sm:px-6 lg:px-8">
         <div className="pointer-events-none absolute inset-0 -z-30 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.12),transparent_32%),radial-gradient(circle_at_50%_20%,hsl(var(--primary)/0.22),transparent_36%),linear-gradient(to_bottom,hsl(var(--background)),hsl(var(--background)))]" />
         <div className="pointer-events-none absolute inset-0 -z-20 bg-[linear-gradient(to_right,rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-size-[64px_64px] opacity-20 mask-[radial-gradient(circle_at_top,black,transparent_70%)]" />
@@ -33,18 +35,51 @@ export function MarketingLandingPage() {
           refresh={false}
         />
 
-        <Header />
         <HeroSection />
         <PreviewDashboard />
       </section>
 
-      <TargetAudienceSection />
-      <FeaturesSection />
-      <WorkflowSection />
-      <IntegrationsSection />
-      <FAQSection />
-      <CTASection />
-      <Footer />
+      <section className="px-4 py-24 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl">
+          <TargetAudienceSection />
+        </div>
+      </section>
+
+      <section id="features" className="px-4 py-24 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl">
+          <FeaturesSection />
+        </div>
+      </section>
+
+      <section id="workflow" className="px-4 py-24 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl">
+          <WorkflowSection />
+        </div>
+      </section>
+
+      <section id="integrations" className="px-4 py-24 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl">
+          <IntegrationsSection />
+        </div>
+      </section>
+
+      <section id="faq" className="px-4 py-24 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-4xl">
+          <FAQSection />
+        </div>
+      </section>
+
+      <section className="px-4 py-24 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-5xl">
+          <CTASection />
+        </div>
+      </section>
+
+      <footer className="border-t border-white/10 px-4 py-10 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl">
+          <Footer />
+        </div>
+      </footer>
     </main>
   );
 }
