@@ -164,11 +164,11 @@ export function FeaturesSection() {
           Features
         </AnimatedShinyText>
         <h2 className="mt-4 text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
-          All key parts of the application process remain connected.
+          Track applications, draft follow-ups, and schedule reminders together.
         </h2>
         <p className="mt-5 text-pretty leading-8 text-muted-foreground">
-          Lamarin isn&apos;t just an applications table. Each application can have
-          status, documents, follow-up emails, schedules, reminders, and notes.
+          Lamarin keeps each application connected to its status, documents,
+          AI email draft, scheduled send time, reminders, and notes.
         </p>
       </div>
 

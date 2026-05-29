@@ -57,11 +57,11 @@ export function IntegrationsSection() {
         </AnimatedShinyText>
 
         <h2 className="mt-4 text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
-          Connect with the tools you already use.
+          Connect calendar, email, and reminder channels.
         </h2>
         <p className="mt-5 text-pretty leading-8 text-muted-foreground">
-          Keep Lamarin as the source of truth while connected tools support
-          schedules, reminders, and draft preparation.
+          Keep Lamarin as the source of truth while Google Calendar, scheduled
+          emails, and messaging channels help you follow up on time.
         </p>
       </div>
 

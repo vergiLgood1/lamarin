@@ -23,7 +23,7 @@ const logoItems: LogoItem[] = [
   },
   {
     node: <HeartHandshake className="size-full" />,
-    title: "Follow-up workflow",
+    title: "Scheduled follow-ups",
   },
   {
     node: <Shield className="size-full" />,
@@ -35,15 +35,15 @@ const logoItems: LogoItem[] = [
   },
   {
     node: <Bell className="size-full" />,
-    title: "Reminders",
+    title: "Messaging reminders",
   },
   {
     node: <Mail className="size-full" />,
-    title: "Email drafts",
+    title: "AI email drafts",
   },
   {
     node: <CalendarDays className="size-full" />,
-    title: "Calendar schedule",
+    title: "Google Calendar",
   },
 ];
 
@@ -105,11 +105,11 @@ export function CTASection() {
         </div>
 
         <h2 className="mt-6 text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
-          Stop tracking applications from scattered places.
+          Stop missing follow-ups after you apply.
         </h2>
         <p className="mx-auto mt-5 max-w-2xl text-pretty leading-8 text-muted-foreground">
-          Start saving applications, follow-ups, documents, and important dates in
-          a calmer workspace.
+          Keep applications, AI draft emails, scheduled sends, documents, and
+          reminders in one calmer workspace.
         </p>
 
         <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">

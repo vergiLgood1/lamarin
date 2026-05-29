@@ -76,7 +76,7 @@ export function WorkflowSection() {
           Workflow
         </AnimatedShinyText>
         <h2 className="mt-4 text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
-          From apply to follow-up, the process is easier to follow.
+          From application record to scheduled follow-up, every step stays clear.
         </h2>
       </div>
 
@@ -91,9 +91,9 @@ export function WorkflowSection() {
           {workflowCards.map((item, index) => {
             const isReversed = index % 2 === 1;
             const detail = [
-              "Start with the facts: company, role, source, documents, status, and notes.",
-              "Use the pipeline view to decide what needs review, scheduling, or follow-up.",
-              "Turn saved context into a focused draft, then edit it before sending.",
+              "Start with the facts: company, role, source, status, contact, documents, and notes.",
+              "Use saved context to create a focused follow-up draft before you send anything.",
+              "Send manually, schedule the email, or keep reminders visible in calendar and messaging channels.",
             ][index];
 
             return (

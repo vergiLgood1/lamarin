@@ -14,7 +14,7 @@ export function HeroSection() {
       >
         <AnimatedShinyText className="inline-flex items-center justify-center space-x-2">
           <Sparkles className="size-4 text-primary " />
-          <span>A tidier job application workspace</span>
+          <span>Track applications and follow up on time</span>
         </AnimatedShinyText>
       </div>
 
@@ -22,16 +22,16 @@ export function HeroSection() {
         data-hero-reveal
         className="mt-8 max-w-6xl text-balance text-5xl font-semibold tracking-tight sm:text-6xl lg:text-7xl"
       >
-        One place to track applications, follow-ups, and important dates.
+        Track every job application and follow up at the right time.
       </h1>
 
       <p
         data-hero-reveal
         className="mt-6 max-w-2xl text-pretty text-base leading-8 text-muted-foreground sm:text-lg"
       >
-        Lamarin helps job seekers keep the application process visible:
-        status, documents, follow-up emails, calendar schedule, and reminders
-        in one workspace.
+        Lamarin helps job seekers record applications, generate follow-up
+        drafts, schedule emails, and get reminders through calendar and
+        messaging channels.
       </p>
 
       <div

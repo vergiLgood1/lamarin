@@ -65,25 +65,25 @@ export const featureCards: FeatureCard[] = [
     icon: Workflow,
     title: "Application tracking",
     description:
-      "Save company, position, status, application source, work mode, salary, HR contact, and notes.",
+      "Record every application with company, role, status, source, contact, documents, and notes in one pipeline.",
   },
   {
     icon: CalendarDays,
-    title: "Calendar schedule",
+    title: "Scheduled reminders",
     description:
-      "Track interviews, deadlines, and follow-ups so important dates stay visible.",
+      "Plan interview reminders, follow-up windows, and scheduled email sends with calendar support.",
   },
   {
     icon: Mail,
     title: "Follow-up email",
     description:
-      "Create follow-up drafts tied directly to the application context.",
+      "Generate follow-up drafts from application context, then send manually or schedule them for later.",
   },
   {
     icon: FileText,
     title: "Application documents",
     description:
-      "Attach CVs, portfolios, cover letters, and other documents to the related application.",
+      "Attach CVs, portfolios, cover letters, job notes, and other context to the right application.",
   },
 ];
 
@@ -92,19 +92,19 @@ export const workflowCards: WorkflowCard[] = [
     step: "01",
     title: "Record application",
     description:
-      "Enter position, company, job source, status, documents, and important notes.",
+      "Save the company, role, source, status, documents, recruiter contact, and notes.",
   },
   {
     step: "02",
-    title: "Monitor status",
+    title: "Generate follow-up",
     description:
-      "View application progress from Applied, Reviewed, Interview, Test, to Offered or Rejected.",
+      "Turn application context into a professional draft that stays ready for review.",
   },
   {
     step: "03",
-    title: "Prepare follow-up",
+    title: "Schedule reminders",
     description:
-      "Use application context to create professional email drafts that you can edit.",
+      "Send manually now, schedule email for later, or get reminders through calendar and messaging channels.",
   },
 ];
 
@@ -113,18 +113,18 @@ export const integrationCards: IntegrationCard[] = [
     icon: CalendarDays,
     title: "Google Calendar",
     description:
-      "Create and manage events for follow-ups, interviews, or deadlines.",
+      "Schedule interview reminders, follow-up windows, and email send dates.",
   },
   {
     icon: Bell,
-    title: "Telegram Reminder",
+    title: "Messaging reminders",
     description:
-      "Send reminders one day before and on the day to your existing channel.",
+      "Send reminders through Telegram, WhatsApp, Discord, or other channels.",
   },
   {
     icon: Stars,
-    title: "Gemini AI Draft",
-    description: "AI helps write draft emails, not make recruitment decisions.",
+    title: "AI email draft",
+    description: "Create contextual follow-up drafts while you stay in control.",
   },
 ];
 
@@ -132,17 +132,17 @@ export const faqs: FAQ[] = [
   {
     question: "Does Lamarin apply for jobs automatically?",
     answer:
-      "No. Lamarin helps record and manage the application process, not submit applications automatically.",
+      "No. Lamarin helps record and manage the application process, not submit job applications automatically.",
   },
   {
-    question: "Does the AI decide whether I'll be hired?",
+    question: "Can Lamarin send follow-up emails automatically?",
     answer:
-      "No. AI only helps draft follow-up emails. You still review, edit, and decide.",
+      "You stay in control. Lamarin can help create drafts and schedule reviewed emails, but you decide what gets sent.",
   },
   {
-    question: "Can I export my application data?",
+    question: "Can reminders go to calendar or messaging apps?",
     answer:
-      "Yes. Lamarin is designed so users can keep access to their own application data.",
+      "Yes. The workflow is designed around calendar reminders and messaging channels such as Telegram, WhatsApp, or Discord.",
   },
 ];
 
