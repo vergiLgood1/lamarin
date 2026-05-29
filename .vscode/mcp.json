@@ -2,14 +2,20 @@
   "servers": {
     "shadcn": {
       "command": "npx",
-      "args": ["shadcn@latest", "mcp"]
+      "args": [
+        "shadcn@latest",
+        "mcp"
+      ]
     },
     "better-auth": {
       "url": "https://mcp.better-auth.com/mcp"
     },
     "magicuidesign-mcp": {
       "command": "npx",
-      "args": ["-y", "@magicuidesign/mcp@latest"]
+      "args": [
+        "-y",
+        "@magicuidesign/mcp@latest"
+      ]
     }
   }
 }
