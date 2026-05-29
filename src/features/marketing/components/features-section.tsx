@@ -145,12 +145,12 @@ const featureMeta = [
     ),
   },
   {
-    stat: "Files + notes",
+    stat: "Files",
     visual: (
-      <div className="relative mt-8 overflow-hidden rounded-2xl border border-white/10 bg-background/50 shadow-[0_-20px_80px_-20px_rgba(255,255,255,0.12)_inset]">
+      <>
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,hsl(var(--primary)/0.14),transparent_58%)]" />
         <FilesVisual />
-      </div>
+      </>
     ),
   },
 ];
