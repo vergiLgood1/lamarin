@@ -1,139 +1,17 @@
+"use client";
+
 import { AnimatedList } from "@/components/ui/animated-list";
+import { Marquee } from "@/components/ui/marquee";
 import { TypingAnimation } from "@/components/ui/typing-animation";
 import { cn } from "@/lib/utils";
-import { featureCards } from "../constants/landing-data";
-
-interface ReminderItem {
-  name: string;
-  description: string;
-  icon: string;
-  color: string;
-  time: string;
-}
-
-const reminders: ReminderItem[] = Array.from(
-  { length: 8 },
-  () => [
-    {
-      name: "Interview reminder",
-      description: "Frontend Developer at Acme",
-      time: "Tomorrow",
-      icon: "📅",
-      color: "#1E86FF",
-    },
-    {
-      name: "Send follow-up",
-      description: "2 days after interview",
-      time: "Fri",
-      icon: "✉️",
-      color: "#8B5CF6",
-    },
-    {
-      name: "Take-home deadline",
-      description: "Submit repository link",
-      time: "5 PM",
-      icon: "⏱️",
-      color: "#F59E0B",
-    },
-    {
-      name: "Recruiter check-in",
-      description: "Ask for timeline update",
-      time: "Mon",
-      icon: "👤",
-      color: "#00C9A7",
-    },
-    {
-      name: "Application deadline",
-      description: "Product Designer at Nova Labs",
-      time: "Today",
-      icon: "📝",
-      color: "#EF4444",
-    },
-    {
-      name: "Portfolio review",
-      description: "Update case study before applying",
-      time: "Tonight",
-      icon: "💼",
-      color: "#6366F1",
-    },
-    {
-      name: "Technical interview",
-      description: "Prepare React and TypeScript questions",
-      time: "Wed",
-      icon: "💻",
-      color: "#14B8A6",
-    },
-    {
-      name: "HR call",
-      description: "Discuss salary expectation and availability",
-      time: "10 AM",
-      icon: "☎️",
-      color: "#EC4899",
-    },
-    {
-      name: "Offer review",
-      description: "Compare benefits, salary, and work setup",
-      time: "Next week",
-      icon: "📄",
-      color: "#22C55E",
-    },
-    {
-      name: "Update resume",
-      description: "Tailor resume for backend role",
-      time: "Sat",
-      icon: "📌",
-      color: "#F97316",
-    },
-    {
-      name: "Networking message",
-      description: "Reach out to hiring manager on LinkedIn",
-      time: "6 PM",
-      icon: "🤝",
-      color: "#0EA5E9",
-    },
-    {
-      name: "Assessment result",
-      description: "Check email for coding test feedback",
-      time: "Tomorrow",
-      icon: "📬",
-      color: "#A855F7",
-    },
-    {
-      name: "Final interview prep",
-      description: "Review company values and product roadmap",
-      time: "Thu",
-      icon: "🎯",
-      color: "#EAB308",
-    },
-    {
-      name: "Document upload",
-      description: "Upload CV, certificate, and transcript",
-      time: "3 PM",
-      icon: "📎",
-      color: "#06B6D4",
-    },
-    {
-      name: "Reference check",
-      description: "Confirm contact details with previous mentor",
-      time: "Mon",
-      icon: "✅",
-      color: "#10B981",
-    },
-    {
-      name: "Job board scan",
-      description: "Review new matching roles",
-      time: "Morning",
-      icon: "🔎",
-      color: "#64748B",
-    },
-  ],
-).flat();
-
-const followUpDrafts = [
-  "Hi Sarah, I wanted to follow up on my Frontend Developer application at Acme. I enjoyed learning about the team and would be happy to share more context about my portfolio.",
-  "Thank you for the interview today. The product challenges you described match the kind of frontend work I enjoy, especially improving UX around complex workflows.",
-  "Hi Jordan, checking in on the next steps for the Product Engineer role. I am still excited about the opportunity and available for any follow-up discussion this week.",
-];
+import {
+  applicationStatuses,
+  featureCards,
+  followUpDrafts,
+  reminders,
+  type ReminderItem,
+} from "../constants/landing-data";
+import { AnimatedBeamDemo as FilesVisual } from "./files";
 
 function ReminderNotification({
   name,
@@ -181,20 +59,45 @@ const featureMeta = [
   {
     stat: "6 statuses",
     visual: (
-      <div className="mt-8 grid grid-cols-2 gap-2 sm:grid-cols-3">
-        {["Applied", "Reviewed", "Interview", "Test", "Offered", "Rejected"].map(
-          (status, index) => (
+      <div className="relative mt-8 overflow-hidden rounded-2xl border border-white/10 bg-background/50 py-4">
+        <Marquee className="[--duration:18s] [--gap:0.75rem]" repeat={4}>
+          {applicationStatuses.map((status) => (
             <div
               key={status}
-              className={`rounded-full border px-3 py-2 text-center text-xs ${index === 2
+              className={cn(
+                "rounded-full border px-4 py-2 text-center text-xs font-medium shadow-[0_-12px_40px_-24px_rgba(255,255,255,0.35)_inset]",
+                status === "Interview"
                   ? "border-primary/40 bg-primary/15 text-primary"
-                  : "border-white/10 bg-white/[0.04] text-muted-foreground"
-                }`}
+                  : "border-white/10 bg-white/[0.04] text-muted-foreground",
+              )}
             >
               {status}
             </div>
-          ),
-        )}
+          ))}
+        </Marquee>
+
+        <Marquee
+          className="mt-3 [--duration:22s] [--gap:0.75rem]"
+          repeat={4}
+          reverse
+        >
+          {[...applicationStatuses].reverse().map((status) => (
+            <div
+              key={`reverse-${status}`}
+              className={cn(
+                "rounded-full border px-4 py-2 text-center text-xs font-medium shadow-[0_-12px_40px_-24px_rgba(255,255,255,0.35)_inset]",
+                status === "Offered"
+                  ? "border-primary/40 bg-primary/15 text-primary"
+                  : "border-white/10 bg-white/[0.04] text-muted-foreground",
+              )}
+            >
+              {status}
+            </div>
+          ))}
+        </Marquee>
+
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-background to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-background to-transparent" />
       </div>
     ),
   },
@@ -203,7 +106,7 @@ const featureMeta = [
     visual: (
       <div className="mt-8 grid gap-4">
         <div className="relative flex h-[34rem] flex-col overflow-hidden p-1">
-          <AnimatedList className="gap-2" delay={1000} loop maxItems={9}>
+          <AnimatedList className="gap-2" delay={1000} loop maxItems={12}>
             {reminders.map((item, index) => (
               <ReminderNotification {...item} key={`${item.name}-${index}`} />
             ))}
@@ -244,15 +147,9 @@ const featureMeta = [
   {
     stat: "Files + notes",
     visual: (
-      <div className="mt-8 grid gap-3 sm:grid-cols-3">
-        {["CV.pdf", "Portfolio", "Cover letter"].map((file) => (
-          <div
-            key={file}
-            className="rounded-2xl border border-white/10 bg-background/50 px-4 py-3 text-sm text-muted-foreground"
-          >
-            {file}
-          </div>
-        ))}
+      <div className="relative mt-8 overflow-hidden rounded-2xl border border-white/10 bg-background/50 shadow-[0_-20px_80px_-20px_rgba(255,255,255,0.12)_inset]">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,hsl(var(--primary)/0.14),transparent_58%)]" />
+        <FilesVisual />
       </div>
     ),
   },
