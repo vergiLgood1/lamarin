@@ -60,16 +60,16 @@ export const featureCards: FeatureCard[] = [
       "Save company, position, status, application source, work mode, salary, HR contact, and notes.",
   },
   {
-    icon: Mail,
-    title: "Follow-up email",
-    description:
-      "Create follow-up drafts tied directly to the application context.",
-  },
-  {
     icon: CalendarDays,
     title: "Calendar schedule",
     description:
       "Track interviews, deadlines, and follow-ups so important dates stay visible.",
+  },
+  {
+    icon: Mail,
+    title: "Follow-up email",
+    description:
+      "Create follow-up drafts tied directly to the application context.",
   },
   {
     icon: FileText,

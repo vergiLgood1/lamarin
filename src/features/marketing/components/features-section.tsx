@@ -1,5 +1,5 @@
 import { AnimatedList } from "@/components/ui/animated-list";
-import { Marquee } from "@/components/ui/marquee";
+import { TypingAnimation } from "@/components/ui/typing-animation";
 import { cn } from "@/lib/utils";
 import { featureCards } from "../constants/landing-data";
 
@@ -42,8 +42,98 @@ const reminders: ReminderItem[] = Array.from(
       icon: "👤",
       color: "#00C9A7",
     },
+    {
+      name: "Application deadline",
+      description: "Product Designer at Nova Labs",
+      time: "Today",
+      icon: "📝",
+      color: "#EF4444",
+    },
+    {
+      name: "Portfolio review",
+      description: "Update case study before applying",
+      time: "Tonight",
+      icon: "💼",
+      color: "#6366F1",
+    },
+    {
+      name: "Technical interview",
+      description: "Prepare React and TypeScript questions",
+      time: "Wed",
+      icon: "💻",
+      color: "#14B8A6",
+    },
+    {
+      name: "HR call",
+      description: "Discuss salary expectation and availability",
+      time: "10 AM",
+      icon: "☎️",
+      color: "#EC4899",
+    },
+    {
+      name: "Offer review",
+      description: "Compare benefits, salary, and work setup",
+      time: "Next week",
+      icon: "📄",
+      color: "#22C55E",
+    },
+    {
+      name: "Update resume",
+      description: "Tailor resume for backend role",
+      time: "Sat",
+      icon: "📌",
+      color: "#F97316",
+    },
+    {
+      name: "Networking message",
+      description: "Reach out to hiring manager on LinkedIn",
+      time: "6 PM",
+      icon: "🤝",
+      color: "#0EA5E9",
+    },
+    {
+      name: "Assessment result",
+      description: "Check email for coding test feedback",
+      time: "Tomorrow",
+      icon: "📬",
+      color: "#A855F7",
+    },
+    {
+      name: "Final interview prep",
+      description: "Review company values and product roadmap",
+      time: "Thu",
+      icon: "🎯",
+      color: "#EAB308",
+    },
+    {
+      name: "Document upload",
+      description: "Upload CV, certificate, and transcript",
+      time: "3 PM",
+      icon: "📎",
+      color: "#06B6D4",
+    },
+    {
+      name: "Reference check",
+      description: "Confirm contact details with previous mentor",
+      time: "Mon",
+      icon: "✅",
+      color: "#10B981",
+    },
+    {
+      name: "Job board scan",
+      description: "Review new matching roles",
+      time: "Morning",
+      icon: "🔎",
+      color: "#64748B",
+    },
   ],
 ).flat();
+
+const followUpDrafts = [
+  "Hi Sarah, I wanted to follow up on my Frontend Developer application at Acme. I enjoyed learning about the team and would be happy to share more context about my portfolio.",
+  "Thank you for the interview today. The product challenges you described match the kind of frontend work I enjoy, especially improving UX around complex workflows.",
+  "Hi Jordan, checking in on the next steps for the Product Engineer role. I am still excited about the opportunity and available for any follow-up discussion this week.",
+];
 
 function ReminderNotification({
   name,
@@ -109,64 +199,45 @@ const featureMeta = [
     ),
   },
   {
-    stat: "Drafts",
-    visual: (
-      <div className="relative mt-8 overflow-hidden rounded-2xl border border-white/10 bg-background/50 py-3">
-        <Marquee className="[--duration:22s] [--gap:0.75rem]" pauseOnHover repeat={3}>
-          {[
-            "Follow-up draft",
-            "Recruiter reply",
-            "Interview thank-you",
-            "Availability note",
-            "Next-step check-in",
-          ].map((draft) => (
-            <div
-              key={draft}
-              className="rounded-full border border-white/10 bg-white/[0.05] px-4 py-2 text-xs font-medium text-muted-foreground shadow-[0_-12px_40px_-24px_rgba(255,255,255,0.35)_inset]"
-            >
-              {draft}
-            </div>
-          ))}
-        </Marquee>
-
-        <Marquee
-          className="mt-2 [--duration:26s] [--gap:0.75rem]"
-          pauseOnHover
-          repeat={3}
-          reverse
-        >
-          {[
-            "frontend-acme.md",
-            "thank-you-email.txt",
-            "salary-context.md",
-            "portfolio-links.md",
-            "screening-notes.txt",
-          ].map((file) => (
-            <div
-              key={file}
-              className="rounded-full border border-white/10 bg-white/[0.035] px-4 py-2 text-xs text-muted-foreground"
-            >
-              {file}
-            </div>
-          ))}
-        </Marquee>
-
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-background to-transparent" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-background to-transparent" />
-      </div>
-    ),
-  },
-  {
     stat: "Dates",
     visual: (
       <div className="mt-8 grid gap-4">
-        <div className="relative flex h-48 flex-col overflow-hidden p-1">
-          <AnimatedList className="gap-2" delay={1000} loop maxItems={4}>
+        <div className="relative flex h-[34rem] flex-col overflow-hidden p-1">
+          <AnimatedList className="gap-2" delay={1000} loop maxItems={9}>
             {reminders.map((item, index) => (
               <ReminderNotification {...item} key={`${item.name}-${index}`} />
             ))}
           </AnimatedList>
         </div>
+      </div>
+    ),
+  },
+  {
+    stat: "Drafts",
+    visual: (
+      <div className="relative mt-8 overflow-hidden rounded-2xl border border-white/10 bg-background/50 p-4 shadow-[0_-20px_80px_-20px_rgba(255,255,255,0.12)_inset]">
+        <div className="mb-4 flex items-center justify-between gap-3 border-b border-white/10 pb-3">
+          <div>
+            <p className="text-sm font-medium text-foreground">AI draft generated</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Based on application context
+            </p>
+          </div>
+          <span className="rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs text-primary">
+            Review before send
+          </span>
+        </div>
+
+        <TypingAnimation
+          words={followUpDrafts}
+          loop
+          typeSpeed={24}
+          deleteSpeed={12}
+          pauseDelay={1800}
+          startOnView
+          cursorStyle="line"
+          className="block min-h-36 whitespace-pre-wrap text-sm leading-7 tracking-normal text-muted-foreground"
+        />
       </div>
     ),
   },
