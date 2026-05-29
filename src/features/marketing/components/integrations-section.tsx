@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatedBeam } from "@/components/ui/animated-beam";
+import { AnimatedShinyText } from "@/components/ui/animated-shiny-text";
 import { cn } from "@/lib/utils";
 import { Orbit } from "lucide-react";
 import { forwardRef, useRef, type ReactNode } from "react";
@@ -51,9 +52,9 @@ export function IntegrationsSection() {
   return (
     <>
       <div data-reveal className="mx-auto max-w-3xl text-center">
-        <p className="text-sm font-medium uppercase tracking-[0.28em] text-primary">
+        <AnimatedShinyText className="text-sm font-medium uppercase tracking-[0.28em] text-primary">
           Integrations
-        </p>
+        </AnimatedShinyText>
 
         <h2 className="mt-4 text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
           Connect with the tools you already use.

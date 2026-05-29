@@ -1,3 +1,4 @@
+import { AnimatedShinyText } from "@/components/ui/animated-shiny-text";
 import { BriefcaseBusiness, GraduationCap, Laptop } from "lucide-react";
 
 const audienceCards = [
@@ -30,9 +31,9 @@ export function TargetAudienceSection() {
       {/* <div className="pointer-events-none absolute left-1/2 top-0 -z-10 h-64 w-[80%] -translate-x-1/2 rounded-full bg-primary/10 blur-3xl" /> */}
 
       <div data-reveal className="mx-auto max-w-3xl text-center">
-        <p className="text-sm font-medium uppercase tracking-[0.28em] text-primary">
+        <AnimatedShinyText className="text-sm font-medium uppercase tracking-[0.28em] text-primary">
           Built for real job search workflows
-        </p>
+        </AnimatedShinyText>
         <h2 className="mt-4 text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
           Built for different job search rhythms.
         </h2>

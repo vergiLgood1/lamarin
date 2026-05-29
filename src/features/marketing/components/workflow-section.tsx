@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { AnimatedShinyText } from "@/components/ui/animated-shiny-text";
 import { workflowCards } from "../constants/landing-data";
 
 export function WorkflowSection() {
@@ -71,9 +72,9 @@ export function WorkflowSection() {
   return (
     <>
       <div data-reveal className="mx-auto max-w-3xl text-center">
-        <p className="text-sm font-medium uppercase tracking-[0.28em] text-primary">
+        <AnimatedShinyText className="text-sm font-medium uppercase tracking-[0.28em] text-primary">
           Workflow
-        </p>
+        </AnimatedShinyText>
         <h2 className="mt-4 text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
           From apply to follow-up, the process is easier to follow.
         </h2>

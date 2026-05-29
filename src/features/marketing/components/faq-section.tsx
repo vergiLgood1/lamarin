@@ -1,12 +1,13 @@
+import { AnimatedShinyText } from "@/components/ui/animated-shiny-text";
 import { faqs } from "../constants/landing-data";
 
 export function FAQSection() {
   return (
     <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
       <div data-reveal className="lg:sticky lg:top-32">
-        <p className="text-sm font-medium uppercase tracking-[0.28em] text-primary">
+        <AnimatedShinyText className="text-sm font-medium uppercase tracking-[0.28em] text-primary">
           FAQ
-        </p>
+        </AnimatedShinyText>
         <h2 className="mt-4 text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
           Honest answers, no overpromising.
         </h2>

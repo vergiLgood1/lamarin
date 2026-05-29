@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatedList } from "@/components/ui/animated-list";
+import { AnimatedShinyText } from "@/components/ui/animated-shiny-text";
 import { Marquee } from "@/components/ui/marquee";
 import { TypingAnimation } from "@/components/ui/typing-animation";
 import { cn } from "@/lib/utils";
@@ -105,7 +106,7 @@ const featureMeta = [
     stat: "Dates",
     visual: (
       <div className="mt-8 grid gap-4">
-        <div className="relative flex h-[34rem] flex-col overflow-hidden p-1">
+        <div className="relative flex h-[40rem] flex-col overflow-hidden p-1">
           <AnimatedList className="gap-2" delay={1000} loop maxItems={12}>
             {reminders.map((item, index) => (
               <ReminderNotification {...item} key={`${item.name}-${index}`} />
@@ -159,9 +160,9 @@ export function FeaturesSection() {
   return (
     <>
       <div data-reveal className="mx-auto max-w-3xl text-center">
-        <p className="text-sm font-medium uppercase tracking-[0.28em] text-primary">
+        <AnimatedShinyText className="text-sm font-medium uppercase tracking-[0.28em] text-primary">
           Features
-        </p>
+        </AnimatedShinyText>
         <h2 className="mt-4 text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
           All key parts of the application process remain connected.
         </h2>
