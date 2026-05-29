@@ -64,13 +64,13 @@ export function MarketingLandingPage() {
       </section>
 
       <section id="faq" className="px-4 py-24 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-4xl">
+        <div className="mx-auto max-w-6xl">
           <FAQSection />
         </div>
       </section>
 
       <section className="px-4 py-24 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto max-w-6xl">
           <CTASection />
         </div>
       </section>
