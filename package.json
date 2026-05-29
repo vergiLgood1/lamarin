@@ -37,6 +37,7 @@
     "gsap": "^3.15.0",
     "kbar": "^0.1.0-beta.48",
     "lucide-react": "^1.14.0",
+    "motion": "^12.40.0",
     "next": "16.2.4",
     "next-themes": "^0.4.6",
     "postgres": "^3.4.9",
