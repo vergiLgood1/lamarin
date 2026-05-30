@@ -365,3 +365,404 @@ CRON_SECRET=your-cron-secret
 | 8 | Export CSV/Excel | Medium |
 | 9 | AI email follow-up (Vercel AI SDK + Resend) | Medium |
 | 10 | Auto-schedule follow-up (cron) | Low |
+
+---
+
+## Audit Terbaru Berdasarkan Marketing Page
+
+Tanggal audit: 2026-05-29
+
+Marketing page saat ini memposisikan Lamarin sebagai workspace untuk:
+
+- Pencatatan lamaran kerja.
+- AI generated follow-up email draft.
+- Manual email send.
+- Scheduled email send.
+- Reminder melalui Google Calendar.
+- Reminder melalui messaging channel seperti Telegram, WhatsApp, Discord, dan channel lain.
+- Dokumen/files/notes yang terhubung ke lamaran.
+- Subscription untuk membatasi dan memonetisasi fitur premium.
+
+### Ringkasan Status Implementasi
+
+| Marketing Feature | Status | Bukti Implementasi | Gap Utama |
+|---|---:|---|---|
+| Authentication | Implemented | `src/app/(auth)`, `src/lib/auth-server.ts`, better-auth tables di `src/db/schema.ts` | Perlu audit UX email verification dan reset password jika akan dipakai production. |
+| Application tracking | Implemented | `src/features/applications/actions`, `application-form`, `application-table`, `application-detail-view`, `job_applications` table | Perlu polish UX pipeline/quick status jika ingin lebih dekat dengan visual marketing. |
+| Filter/search/sort/pagination | Implemented | `getApplications(filters)` mendukung search, status, date, location, work mode, source, sort, pagination | Perlu cek UI filter lengkap sudah expose semua filter. |
+| Documents/files/notes | Implemented/Partial | `application_documents`, UploadThing libs, `file-upload.tsx`, documents saved in create/update application | Perlu document preview, delete individual file, quota/storage limit, dan stronger file type policy. |
+| AI follow-up draft | Implemented/Partial | `/api/ai/generate`, `src/lib/ai.ts`, `followUpEmails`, follow-up/email compose UI | Perlu usage quota, prompt hardening, template quality review, dan explicit review gate sebelum scheduled send. |
+| Manual email send | Implemented | Resend in `src/lib/email.ts`, `sendFollowUpEmail`, `sendApplicationEmail` | Perlu sender/domain settings, reply-to per user, rate limit, send confirmation UX. |
+| Scheduled email send | Implemented/Partial | `follow_up_schedules`, `/api/cron/follow-up`, `scheduleApplicationEmail`, `createScheduledFollowUp` | Perlu cancel/reschedule UI audit, retry strategy, idempotency guard, timezone handling, and review-before-send enforcement. |
+| Google Calendar reminders | Implemented/Partial | `calendar_connections`, `calendar_events`, Google OAuth connect/callback, `upsertGoogleCalendarEvent` | Token encryption/refresh handling needs hardening. Need event update/delete consistency and timezone preference use everywhere. |
+| Telegram reminders | Implemented/Partial | `telegram_connections`, `telegram_reminder_logs`, `/api/cron/telegram-reminders`, settings Telegram page | Currently Telegram only. Need generalized reminder engine for multi-channel. |
+| WhatsApp reminders | Missing | No WhatsApp provider/actions/schema found | Need provider decision: WhatsApp Business Cloud API, Twilio, or local provider. |
+| Discord reminders | Missing | No Discord webhook/actions/schema found | Add webhook storage, validation, test send, delivery adapter. |
+| Dashboard statistics | Implemented | `src/features/dashboard` actions/components, overview routes | Need ensure stats align with latest features: scheduled sends, draft status, reminders. |
+| Export data | Implemented/Partial | `src/features/export/actions`, settings export card | Need confirm export includes documents metadata, email logs, schedules, calendar/reminder logs. |
+| Logging | Implemented | `src/lib/logger.ts`, logs in actions and cron | Need audit log table for user-visible automation history. |
+| Subscription/billing | Missing | No Stripe/Polar/Lemon billing implementation found | Needs schema, provider, webhooks, plan guards, usage tracking, upgrade UI. |
+
+### Catatan Audit Terhadap Planning Lama
+
+Planning lama masih relevan, tetapi sebagian besar fitur core sudah berjalan dan struktur repo sudah berubah dari rencana awal:
+
+- Server actions tidak lagi berada di `src/actions/*`, tetapi sudah dipindah lebih modular ke `src/features/*/actions`.
+- Application tracking sudah memiliki dokumen upload melalui `application_documents`.
+- Follow-up email sudah memiliki jalur manual, draft, scheduled, cron send, dan Google Calendar event creation.
+- Telegram sudah ada sebagai channel reminder pertama.
+- Subscription belum ada sama sekali dan perlu menjadi phase baru.
+- Nama produk di dokumen masih `Applyorbit`, sedangkan marketing/app sekarang menggunakan `Lamarin`. Perlu rename bertahap di copy internal, Telegram messages, env docs, dan README agar konsisten.
+
+---
+
+## Feature Gap Detail
+
+### 1. Application Tracking
+
+Status: Implemented.
+
+Sudah ada:
+
+- CRUD lamaran kerja.
+- Status enum.
+- Company, position, source, date, location, work mode, job type, salary, HR contact, meeting link, notes.
+- Documents attached during create/update.
+- List, detail, edit, and new application pages.
+- Filtering, sorting, search, pagination at query layer.
+
+Next improvements:
+
+- Add quick status update from table/detail.
+- Add pipeline/kanban view to match marketing language.
+- Add application timeline: created, status changed, email drafted, email sent, reminder scheduled.
+- Add `jobUrl` field if `jobSource` is currently overloaded.
+- Add explicit `recruiterName` and `recruiterEmail` if HR contact becomes too generic.
+
+### 2. Documents, Files, And Notes
+
+Status: Implemented/Partial.
+
+Sudah ada:
+
+- `application_documents` table.
+- UploadThing client/server libs.
+- Documents saved to application.
+- Document type inference from filename.
+- Notes field on application.
+
+Next improvements:
+
+- Individual file delete without replacing all documents.
+- File preview/download UI on detail page.
+- Document type selector instead of filename-only inference.
+- Storage quota per subscription plan.
+- Virus/type/size validation policy.
+- Include file metadata in AI draft context where useful.
+
+### 3. AI Follow-Up Draft
+
+Status: Implemented/Partial.
+
+Sudah ada:
+
+- Gemini via Vercel AI SDK.
+- `/api/ai/generate` streaming endpoint.
+- Email templates via `src/features/email/lib/templates.ts`.
+- `follow_up_emails` table with template key, status, mode.
+- Compose and editor components.
+
+Next improvements:
+
+- AI usage quota by plan.
+- Prompt safety and quality tests.
+- Draft language selector.
+- Tone selector: professional, warm, concise, assertive.
+- Regenerate/improve selected draft section.
+- Store generation metadata: model, prompt version, token estimate, template key.
+- Clear review gate before any scheduled send.
+
+### 4. Manual Email Send
+
+Status: Implemented.
+
+Sudah ada:
+
+- Resend integration.
+- Send immediately through follow-up and email actions.
+- Sent/failed status update.
+- Email log in `follow_up_emails`.
+
+Next improvements:
+
+- Sender identity settings.
+- User reply-to configuration.
+- Domain verification strategy.
+- Rate limits to avoid abuse.
+- Confirmation modal before sending.
+- Better failure messages from provider.
+
+### 5. Scheduled Email Send
+
+Status: Implemented/Partial.
+
+Sudah ada:
+
+- `follow_up_schedules` table.
+- Scheduled email status.
+- Cron route `/api/cron/follow-up`.
+- Scheduled email creates Google Calendar event when connected.
+- Schedule cancel action exists.
+
+Next improvements:
+
+- Idempotency guard to prevent duplicate sends if cron retries.
+- Retry policy with attempt count and last error.
+- Timezone should use user/calendar preference, not hardcoded `Asia/Jakarta` everywhere.
+- Cancel/reschedule UX audit.
+- Scheduled send queue monitoring/admin visibility.
+- Require `reviewedAt` or explicit confirmation before schedule can be active.
+
+### 6. Google Calendar
+
+Status: Implemented/Partial.
+
+Sudah ada:
+
+- Google OAuth connect/callback routes.
+- `calendar_connections` and `calendar_events` tables.
+- Calendar preferences update.
+- Event create/update/delete helper.
+- Calendar sync cron route exists.
+
+Next improvements:
+
+- Encrypt access/refresh tokens at rest.
+- Robust token refresh handling.
+- Support calendar selection in every scheduling flow.
+- Event update/delete consistency when schedule changes.
+- Display linked calendar event on application/follow-up detail.
+- Add reconnect flow when token invalid.
+
+### 7. Messaging Reminders
+
+Status: Telegram implemented/partial, Discord and WhatsApp missing.
+
+Sudah ada:
+
+- Telegram connection settings.
+- Chat ID validation.
+- Test notification.
+- Telegram reminder cron for active follow-up schedules.
+- Reminder logs to prevent duplicate Telegram notifications.
+
+Next improvements:
+
+- Generalized `reminders` table independent from `follow_up_schedules`.
+- Generalized `reminder_deliveries` table for all channels.
+- Channel adapters: Telegram, Discord, WhatsApp, email, app notification.
+- User notification preferences: enabled channels, quiet hours, timezone.
+- Discord webhook integration.
+- WhatsApp provider integration.
+- Retry and failed delivery logging.
+
+### 8. Dashboard And Analytics
+
+Status: Implemented/Partial.
+
+Sudah ada:
+
+- Dashboard overview routes and components.
+- Stats, charts, upcoming schedule, activity, sources, status metrics.
+
+Next improvements:
+
+- Add email/draft metrics: draft count, scheduled count, sent count, failed count.
+- Add reminder metrics: upcoming reminders, sent reminders, failed deliveries.
+- Add conversion/funnel metrics from Applied to Interview/Offer.
+- Ensure chart queries handle multi-user data isolation.
+
+### 9. Export Data
+
+Status: Implemented/Partial.
+
+Sudah ada:
+
+- Export actions and settings export card.
+
+Next improvements:
+
+- Export should include applications, documents metadata, follow-up emails, schedules, calendar events, and reminder logs.
+- Add plan gating if export becomes premium.
+- Add JSON export for account portability.
+
+---
+
+## Subscription Planning
+
+Subscription belum diimplementasikan. Ini perlu menjadi planning utama berikutnya karena banyak fitur marketing berpotensi berbiaya: AI, email sending, scheduled jobs, file storage, Google Calendar, dan WhatsApp.
+
+### Billing Provider Recommendation
+
+Rekomendasi: Stripe.
+
+Alasan:
+
+- Mature subscription support.
+- Customer portal.
+- Webhook ecosystem kuat.
+- Usage/quantity billing bisa ditambahkan nanti.
+
+Alternatif:
+
+- Polar: lebih developer-friendly dan sederhana.
+- Lemon Squeezy: lebih mudah untuk merchant of record, tapi fleksibilitas usage billing perlu dicek.
+
+### Proposed Plans
+
+| Feature | Free | Pro | Premium |
+|---|---:|---:|---:|
+| Applications | 20 | Unlimited | Unlimited |
+| AI drafts | 5/month | 200/month | Higher/fair use |
+| Manual email send | 5/month | 200/month | Higher/fair use |
+| Scheduled email send | Not included or 3/month | Included | Higher quota |
+| Google Calendar | Not included | Included | Included |
+| Telegram reminders | Limited | Included | Included |
+| Discord reminders | Not included | Included | Included |
+| WhatsApp reminders | Not included | Not included or limited | Included |
+| File uploads | Limited storage | Higher storage | Highest storage |
+| Export | CSV basic | CSV/Excel/JSON | CSV/Excel/JSON |
+
+### Required Schema
+
+Add tables:
+
+- `subscriptions`
+  - `id`
+  - `userId`
+  - `provider`
+  - `providerCustomerId`
+  - `providerSubscriptionId`
+  - `plan`
+  - `status`
+  - `currentPeriodStart`
+  - `currentPeriodEnd`
+  - `cancelAtPeriodEnd`
+  - `createdAt`
+  - `updatedAt`
+
+- `usage_events`
+  - `id`
+  - `userId`
+  - `eventType`
+  - `quantity`
+  - `metadata`
+  - `createdAt`
+
+- Optional `usage_counters`
+  - `id`
+  - `userId`
+  - `period`
+  - `applicationsCount`
+  - `aiDraftsCount`
+  - `manualEmailsCount`
+  - `scheduledEmailsCount`
+  - `remindersSentCount`
+  - `storageBytesUsed`
+  - `updatedAt`
+
+### Plan Guards
+
+Create centralized helpers:
+
+- `getUserPlan(userId)`
+- `assertFeatureAccess(userId, featureKey)`
+- `assertUsageLimit(userId, usageKey)`
+- `recordUsage(userId, usageKey, quantity, metadata)`
+
+Guard these actions:
+
+- Create application.
+- Generate AI draft.
+- Send email.
+- Schedule email.
+- Upload files.
+- Connect Google Calendar.
+- Connect Telegram/Discord/WhatsApp.
+- Export data.
+
+### Billing Routes And UI
+
+Add routes/pages:
+
+- `/dashboard/billing`
+- `/api/billing/checkout`
+- `/api/billing/portal`
+- `/api/billing/webhook`
+
+Add UI:
+
+- Current plan card.
+- Usage meters.
+- Upgrade CTA.
+- Manage billing button.
+- Feature gate prompts.
+
+### Subscription Acceptance Criteria
+
+- User can start checkout.
+- Webhook updates subscription status.
+- User can open customer portal.
+- Free users hit clear limits with upgrade prompts.
+- Pro users unlock scheduled send, Google Calendar, and messaging reminders.
+- Usage is recorded for AI drafts, email sends, schedules, reminders, and storage.
+
+---
+
+## Revised Implementation Phases
+
+| Phase | Task | Priority | Status |
+|---|---|---:|---:|
+| 1 | Core auth, DB, dashboard shell | High | Done/Partial |
+| 2 | Application CRUD, filters, detail, documents | High | Done/Partial |
+| 3 | AI draft generation and templates | High | Done/Partial |
+| 4 | Manual email send | High | Done/Partial |
+| 5 | Scheduled email send cron | High | Done/Partial |
+| 6 | Google Calendar integration | High | Done/Partial |
+| 7 | Telegram reminders | Medium | Done/Partial |
+| 8 | General reminder engine | High | Missing |
+| 9 | Discord reminder channel | Medium | Missing |
+| 10 | WhatsApp reminder channel | Medium | Missing |
+| 11 | Subscription/billing | High | Missing |
+| 12 | Usage limits and feature gates | High | Missing |
+| 13 | Security hardening: token encryption, rate limits, idempotency | High | Missing/Partial |
+| 14 | QA/E2E for full marketing promise | High | Missing |
+
+---
+
+## Recommended Next Tasks
+
+Urutan paling pragmatis setelah audit:
+
+1. Rename remaining product copy from `Applyorbit` to `Lamarin` where user-facing.
+2. Add idempotency and retry fields for scheduled email cron.
+3. Add explicit review gate for scheduled emails.
+4. Generalize reminder system beyond Telegram/follow-up schedules.
+5. Add Discord webhook reminder integration.
+6. Add subscription schema and billing provider integration.
+7. Add plan guards and usage counters.
+8. Harden Google token storage and timezone usage.
+9. Add QA/E2E for application -> draft -> schedule -> calendar -> reminder flow.
+
+### Immediate Engineering Checklist
+
+- [ ] Audit all user-facing `Applyorbit` strings and rename to `Lamarin`.
+- [ ] Add `reviewedAt` or `reviewConfirmedAt` to `follow_up_emails` before scheduled send.
+- [ ] Add `attemptCount`, `lastAttemptAt`, `lastError`, and `lockedAt` to scheduled email processing.
+- [ ] Create universal `reminders` and `reminder_deliveries` tables.
+- [ ] Move Telegram reminder cron to universal reminder engine.
+- [ ] Add Discord webhook connection and test notification.
+- [ ] Select billing provider and add subscription schema.
+- [ ] Add feature gates for AI draft, scheduled email, calendar, messaging reminders, and file uploads.
+- [ ] Add usage tracking for AI, email, scheduled sends, reminders, and storage.
+- [ ] Add E2E smoke test for the marketing-critical flow.
