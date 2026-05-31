@@ -47,11 +47,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           isActive: pathname === "/dashboard/follow-ups/overview",
         },
         {
-          title: "Kirim Email",
-          url: "/dashboard/send-email",
-          isActive: pathname.startsWith("/dashboard/send-email"),
-        },
-        {
           title: "Compose Email",
           url: "/dashboard/follow-ups/compose",
           isActive: pathname.startsWith("/dashboard/follow-ups/compose"),

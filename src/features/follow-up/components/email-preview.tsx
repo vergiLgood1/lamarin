@@ -9,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { DataTable } from "@/components/ui/data-table";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,6 +17,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   deleteFollowUpEmail,
   sendFollowUpEmail,
@@ -44,8 +52,7 @@ import { toast } from "sonner";
 
 type EmailLayout = "grid" | "list";
 
-const EMAILS_PER_PAGE = 6;
-
+const EMAILS_PER_PAGE = 10;
 interface EmailPreviewProps {
   emails: {
     id: string;
@@ -112,6 +119,14 @@ export function EmailPreview({ emails }: EmailPreviewProps) {
 
   function goToPage(page: number) {
     setCurrentPage(Math.min(Math.max(page, 1), totalPages));
+  }
+
+  function handlePreviousPage() {
+    goToPage(activePage - 1);
+  }
+
+  function handleNextPage() {
+    goToPage(activePage + 1);
   }
 
   function handleSend(emailId: string) {
@@ -188,53 +203,178 @@ export function EmailPreview({ emails }: EmailPreviewProps) {
             <Button
               type="button"
               size="icon"
-              variant={layout === "grid" ? "secondary" : "ghost"}
+              variant={layout === "list" ? "secondary" : "ghost"}
               className="size-8 rounded-xl"
-              aria-label="Tampilkan sebagai kolom"
-              aria-pressed={layout === "grid"}
-              onClick={() => setLayout("grid")}
+              aria-label="Tampilkan sebagai table"
+              aria-pressed={layout === "list"}
+              onClick={() => setLayout("list")}
             >
-              <LayoutGrid className="size-4" />
+              <List className="size-4" />
             </Button>
 
             <Button
               type="button"
               size="icon"
-              variant={layout === "list" ? "secondary" : "ghost"}
+              variant={layout === "grid" ? "secondary" : "ghost"}
               className="size-8 rounded-xl"
-              aria-label="Tampilkan sebagai baris"
-              aria-pressed={layout === "list"}
-              onClick={() => setLayout("list")}
+              aria-label="Tampilkan sebagai card"
+              aria-pressed={layout === "grid"}
+              onClick={() => setLayout("grid")}
             >
-              <List className="size-4" />
+              <LayoutGrid className="size-4" />
             </Button>
           </div>
         </div>
       </CardHeader>
 
       <CardContent>
-        <div
-          className={cn(
-            "grid gap-4",
-            layout === "grid"
-              ? "sm:grid-cols-2 xl:grid-cols-3"
-              : "grid-cols-1",
-          )}
-        >
-          {visibleEmails.map((email) => {
-            const createdAtDisplay = DATE_FORMATTER.format(
-              new Date(email.createdAt),
-            );
+        {layout === "list" ? (
+          <DataTable
+            contentClassName="p-0"
+            className="border-0 shadow-none"
+            pagination={{
+              page: activePage,
+              totalPages,
+              totalItems: emails.length,
+              startItem: pageStart + 1,
+              endItem: pageEnd,
+              itemLabel: "emails",
+              onPreviousPage: handlePreviousPage,
+              onNextPage: handleNextPage,
+            }}
+          >
+            <TableHeader className="sticky top-0 z-10 bg-card">
+              <TableRow>
+                <TableHead>Status</TableHead>
+                <TableHead>Subject</TableHead>
+                <TableHead>Lamaran</TableHead>
+                <TableHead>Recipient</TableHead>
+                <TableHead>Dibuat</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {visibleEmails.map((email) => {
+                const createdAtDisplay = DATE_FORMATTER.format(
+                  new Date(email.createdAt),
+                );
+                const status = STATUS_CONFIG[email.status] || STATUS_CONFIG.draft;
+                const StatusIcon = status.icon;
 
-            const sentAtDisplay = email.sentAt
-              ? DATE_FORMATTER.format(new Date(email.sentAt))
-              : null;
+                return (
+                  <TableRow key={email.id}>
+                    <TableCell>
+                      <Badge
+                        variant="outline"
+                        className={cn(
+                            "gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium",
+                            status.className,
+                          )}
+                      >
+                        <StatusIcon className="size-3.5" />
+                        {status.label}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="max-w-[280px] whitespace-normal">
+                      <Link
+                        href={`/dashboard/follow-ups/compose/${email.id}`}
+                        className="line-clamp-2 font-medium hover:text-primary"
+                      >
+                        {email.subject}
+                      </Link>
+                    </TableCell>
+                    <TableCell className="max-w-[220px] whitespace-normal text-muted-foreground">
+                      <span className="line-clamp-2">
+                        {email.companyName || "-"}
+                        {email.position ? ` - ${email.position}` : ""}
+                      </span>
+                    </TableCell>
+                    <TableCell className="max-w-[220px] truncate text-muted-foreground">
+                      {email.recipientEmail}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {createdAtDisplay}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="size-8 rounded-xl"
+                          render={
+                            <Link href={`/dashboard/follow-ups/compose/${email.id}`} />
+                          }
+                        >
+                          <Mail className="size-4" />
+                          <span className="sr-only">Lihat email</span>
+                        </Button>
 
-            const status = STATUS_CONFIG[email.status] || STATUS_CONFIG.draft;
+                        <DropdownMenu>
+                          <DropdownMenuTrigger
+                            render={
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className="size-8 rounded-xl"
+                              >
+                                <EllipsisVertical className="size-4" />
+                              </Button>
+                            }
+                          />
+                          <DropdownMenuContent align="end" className="w-44 rounded-xl">
+                            <DropdownMenuItem
+                              render={
+                                <Link
+                                  href={`/dashboard/follow-ups/compose/${email.id}?mode=edit`}
+                                  className="flex w-full items-center"
+                                >
+                                  <Pencil className="mr-2 size-4" />
+                                  Edit
+                                </Link>
+                              }
+                            />
 
-            const StatusIcon = status.icon;
+                            {email.status === "draft" ? (
+                              <DropdownMenuItem onClick={() => handleSend(email.id)}>
+                                <Send className="mr-2 size-4" />
+                                Kirim Email
+                              </DropdownMenuItem>
+                            ) : null}
 
-            return (
+                            <DropdownMenuSeparator />
+
+                            <DropdownMenuItem
+                              className="text-destructive focus:text-destructive"
+                              onClick={() => handleDelete(email.id)}
+                            >
+                              <Trash2 className="mr-2 size-4" />
+                              Hapus
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </DataTable>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {visibleEmails.map((email) => {
+                const createdAtDisplay = DATE_FORMATTER.format(
+                  new Date(email.createdAt),
+                );
+
+              const sentAtDisplay = email.sentAt
+                ? DATE_FORMATTER.format(new Date(email.sentAt))
+                : null;
+
+              const status = STATUS_CONFIG[email.status] || STATUS_CONFIG.draft;
+
+              const StatusIcon = status.icon;
+
+              return (
               <Link
                 key={email.id}
                 href={`/dashboard/follow-ups/compose/${email.id}`}
@@ -242,7 +382,6 @@ export function EmailPreview({ emails }: EmailPreviewProps) {
                   "group relative overflow-hidden rounded-2xl border bg-card p-5 transition-all duration-200",
                   "hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
-                  layout === "list" && "sm:p-6",
                 )}
               >
                 <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
@@ -325,11 +464,7 @@ export function EmailPreview({ emails }: EmailPreviewProps) {
                 </div>
 
                 <div
-                  className={cn(
-                    "mt-5 space-y-3",
-                    layout === "list" &&
-                      "sm:grid sm:grid-cols-[minmax(0,1fr)_minmax(18rem,0.8fr)] sm:gap-6 sm:space-y-0",
-                  )}
+                    className="mt-5 space-y-3"
                 >
                   <div className="space-y-2">
                     <h3 className="line-clamp-2 text-base font-semibold leading-snug transition-colors group-hover:text-primary">
@@ -355,7 +490,6 @@ export function EmailPreview({ emails }: EmailPreviewProps) {
                   <p
                     className={cn(
                       "line-clamp-3 text-sm leading-relaxed text-muted-foreground",
-                      layout === "list" && "sm:line-clamp-2",
                     )}
                   >
                     {email.body}
@@ -397,11 +531,12 @@ export function EmailPreview({ emails }: EmailPreviewProps) {
                   ) : null}
                 </div>
               </Link>
-            );
-          })}
-        </div>
+              );
+            })}
+            </div>
+        )}
 
-        {totalPages > 1 ? (
+        {layout === "grid" && totalPages > 1 ? (
           <div className="mt-6 flex flex-col gap-3 border-t pt-4 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-muted-foreground">
               Menampilkan {pageStart + 1}-{pageEnd} dari {emails.length} email
