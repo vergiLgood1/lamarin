@@ -1,13 +1,13 @@
 "use client";
 
-import { DataTable } from "@/components/ui/data-table";
 import {
+  DataTable,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/components/ui/data-table";
 import { Button } from "@/components/ui/button";
 import { EmailStatusBadge } from "@/features/follow-up/components/email-status-badge";
 import { DashboardEmptyState } from "@/features/dashboard/components/dashboard-empty-state";

@@ -20,7 +20,7 @@ interface PageProps {
 export default async function ApplicationsPage({ searchParams }: PageProps) {
   const params = await searchParams;
 
-  const { data: applications, pagination } = await getApplications({
+  const { data: applications } = await getApplications({
     search: params.search,
     status: params.status as ApplicationStatus | undefined,
     page: params.page ? parseInt(params.page) : 1,
@@ -50,32 +50,6 @@ export default async function ApplicationsPage({ searchParams }: PageProps) {
       </Suspense>
 
       <ApplicationTable applications={applications} />
-
-      {pagination.totalPages > 1 && (
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-muted-foreground">
-            Menampilkan {applications.length} dari {pagination.total} data
-          </p>
-          <div className="flex w-full gap-2 sm:w-auto">
-            {pagination.page > 1 && (
-              <Link
-                href={`/dashboard/applications?page=${pagination.page - 1}${params.search ? `&search=${params.search}` : ""}${params.status ? `&status=${params.status}` : ""}`}
-                className={cn(buttonVariants({ variant: "outline", size: "sm" }), "flex-1 sm:flex-none")}
-              >
-                Sebelumnya
-              </Link>
-            )}
-            {pagination.page < pagination.totalPages && (
-              <Link
-                href={`/dashboard/applications?page=${pagination.page + 1}${params.search ? `&search=${params.search}` : ""}${params.status ? `&status=${params.status}` : ""}`}
-                className={cn(buttonVariants({ variant: "outline", size: "sm" }), "flex-1 sm:flex-none")}
-              >
-                Selanjutnya
-              </Link>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
