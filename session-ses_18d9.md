@@ -4324,7 +4324,7 @@ Saya juga akan cek package dan config untuk melihat komponen registry apa yang s
 <type>file</type>
 <content>
 1: {
-2:   "name": "applyorbit",
+2:   "name": "lamarin",
 3:   "version": "0.1.0",
 4:   "private": true,
 5:   "scripts": {

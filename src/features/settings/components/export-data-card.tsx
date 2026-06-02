@@ -46,7 +46,7 @@ export function ExportDataCard() {
 
       link.href = url;
 
-      link.download = `applyorbit-export-${
+      link.download = `lamarin-export-${
         new Date().toISOString().split("T")[0]
       }.csv`;
 
@@ -88,7 +88,7 @@ export function ExportDataCard() {
 
       link.href = url;
 
-      link.download = `applyorbit-export-${
+      link.download = `lamarin-export-${
         new Date().toISOString().split("T")[0]
       }.xlsx`;
 

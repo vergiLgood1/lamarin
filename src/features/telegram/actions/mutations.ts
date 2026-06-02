@@ -40,7 +40,10 @@ export async function connectTelegram(formData: FormData) {
       .values({ userId: session.user.id, chatId, username: username || null, isActive: true });
   }
 
-  await sendTelegramMessage(chatId, "Applyorbit: Telegram berhasil terhubung.").catch((error) => {
+  await sendTelegramMessage(
+    chatId,
+    "lamarin: Telegram berhasil terhubung.",
+  ).catch((error) => {
     logger.error("Failed to send Telegram connect message", {
       userId: session.user.id,
       chatId,
@@ -80,7 +83,7 @@ export async function testTelegramConnection() {
   try {
     await sendTelegramMessage(
       connection.chatId,
-      "Applyorbit: test notifikasi berhasil."
+      "lamarin: test notifikasi berhasil.",
     );
     return { success: true, message: "Test notifikasi terkirim" };
   } catch (error) {

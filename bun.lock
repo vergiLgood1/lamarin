@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "applyorbit",
+      "name": "lamarin",
       "dependencies": {
         "@ai-sdk/google": "^3.0.67",
         "@ai-sdk/openai": "^3.0.60",

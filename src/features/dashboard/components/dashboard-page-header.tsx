@@ -6,7 +6,7 @@ export function DashboardPageHeader() {
       <CardContent>
         <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
         <p className="text-sm text-muted-foreground">
-          Ringkasan progres lamaran, follow-up, dan insight Applyorbit.
+          Ringkasan progres lamaran, follow-up, dan insight lamarin.
         </p>
       </CardContent>
     </Card>

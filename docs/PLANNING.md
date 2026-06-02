@@ -1,8 +1,8 @@
-# Applyorbit - Job Application Tracker Dashboard
+# lamarin - Job Application Tracker Dashboard
 
 ## Overview
 
-Applyorbit adalah dashboard untuk tracking lamaran kerja. Multi-user platform yang memungkinkan setiap user melacak progress lamaran kerja mereka, dengan fitur AI-powered email follow-up otomatis.
+lamarin adalah dashboard untuk tracking lamaran kerja. Multi-user platform yang memungkinkan setiap user melacak progress lamaran kerja mereka, dengan fitur AI-powered email follow-up otomatis.
 
 ---
 
@@ -331,7 +331,7 @@ export async function createApplication(formData: FormData) {
 
 ```env
 # Database
-DATABASE_URL=postgresql://user:password@localhost:5432/applyorbit
+DATABASE_URL=postgresql://user:password@localhost:5432/lamarin
 
 # Auth
 BETTER_AUTH_SECRET=your-secret-key
@@ -412,7 +412,7 @@ Planning lama masih relevan, tetapi sebagian besar fitur core sudah berjalan dan
 - Follow-up email sudah memiliki jalur manual, draft, scheduled, cron send, dan Google Calendar event creation.
 - Telegram sudah ada sebagai channel reminder pertama.
 - Subscription belum ada sama sekali dan perlu menjadi phase baru.
-- Nama produk di dokumen masih `Applyorbit`, sedangkan marketing/app sekarang menggunakan `Lamarin`. Perlu rename bertahap di copy internal, Telegram messages, env docs, dan README agar konsisten.
+- Nama produk di dokumen masih `lamarin`, sedangkan marketing/app sekarang menggunakan `Lamarin`. Perlu rename bertahap di copy internal, Telegram messages, env docs, dan README agar konsisten.
 
 ---
 
@@ -744,7 +744,7 @@ Add UI:
 
 Urutan paling pragmatis setelah audit:
 
-1. Rename remaining product copy from `Applyorbit` to `Lamarin` where user-facing.
+1. Rename remaining product copy from `lamarin` to `Lamarin` where user-facing.
 2. Add idempotency and retry fields for scheduled email cron.
 3. Add explicit review gate for scheduled emails.
 4. Generalize reminder system beyond Telegram/follow-up schedules.
@@ -756,7 +756,7 @@ Urutan paling pragmatis setelah audit:
 
 ### Immediate Engineering Checklist
 
-- [ ] Audit all user-facing `Applyorbit` strings and rename to `Lamarin`.
+- [ ] Audit all user-facing `lamarin` strings and rename to `Lamarin`.
 - [ ] Add `reviewedAt` or `reviewConfirmedAt` to `follow_up_emails` before scheduled send.
 - [ ] Add `attemptCount`, `lastAttemptAt`, `lastError`, and `lockedAt` to scheduled email processing.
 - [ ] Create universal `reminders` and `reminder_deliveries` tables.

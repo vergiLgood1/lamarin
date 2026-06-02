@@ -2,13 +2,13 @@ import Providers from "@/components/layout/providers";
 import { fontVariables } from "@/components/themes/font.config";
 import ThemeProvider from "@/components/themes/theme-provider";
 import { DEFAULT_THEME, THEMES } from "@/components/themes/theme.config";
+import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import type { Metadata, Viewport } from "next";
 import { cookies } from "next/headers";
 import Script from "next/script";
 import "../styles/globals.css";
-import { Toaster } from "@/components/ui/sonner";
 
 const META_THEME_COLORS = {
   light: "#ffffff",
@@ -20,7 +20,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Applyorbit - Job Application Tracker",
+  title: "lamarin - Job Application Tracker",
   description:
     "Track and manage your job applications with AI-powered follow-up emails",
 };

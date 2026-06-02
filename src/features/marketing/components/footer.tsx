@@ -1,4 +1,4 @@
-import { Orbit } from "lucide-react";
+import { LamarinLogo } from "@/components/lamarin-logo";
 import Link from "next/link";
 
 export function Footer() {
@@ -7,9 +7,7 @@ export function Footer() {
       <div className="grid gap-8 md:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr]">
         <div>
           <Link href="/" className="flex items-center gap-2">
-            <span className="flex size-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.06]">
-              <Orbit className="size-4" />
-            </span>
+            <LamarinLogo className="size-9 text-foreground" />
             <span className="text-sm font-semibold tracking-wide">Lamarin</span>
           </Link>
           <p className="mt-4 max-w-sm text-sm leading-7 text-muted-foreground">
@@ -30,6 +28,9 @@ export function Footer() {
             <a href="#integrations" className="block hover:text-foreground">
               Integrations
             </a>
+            <Link href="/brand" className="block hover:text-foreground">
+              Brand Guidelines
+            </Link>
           </div>
         </div>
 

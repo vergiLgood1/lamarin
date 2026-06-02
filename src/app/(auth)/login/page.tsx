@@ -57,7 +57,7 @@ export default function LoginPage() {
   return (
     <Card>
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl font-bold">Applyorbit</CardTitle>
+        <CardTitle className="text-2xl font-bold">lamarin</CardTitle>
         <CardDescription>Masuk ke akun Anda</CardDescription>
       </CardHeader>
       <CardContent>

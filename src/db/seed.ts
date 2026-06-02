@@ -22,7 +22,7 @@ type NewCalendarEvent = InferInsertModel<typeof calendarEvents>;
 type NewFollowUpSchedule = InferInsertModel<typeof followUpSchedules>;
 type SeedJobApplication = NewJobApplication & { id: string };
 
-const SEED_USER_ID = "seed-user-applyorbit";
+const SEED_USER_ID = "seed-user-lamarin";
 const SEED_USER_EMAIL = "diyo.seed@example.com";
 const SEED_USER_PASSWORD = "password123";
 const APPLICATION_COUNT = 100;
@@ -240,7 +240,7 @@ async function seedUser(): Promise<void> {
 
 async function seedAccount(): Promise<void> {
   await db.insert(account).values({
-    id: "seed-account-applyorbit",
+    id: "seed-account-lamarin",
     accountId: SEED_USER_ID,
     providerId: "credential",
     userId: SEED_USER_ID,

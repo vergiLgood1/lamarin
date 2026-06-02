@@ -64,7 +64,7 @@ async function runTelegramReminders(req: NextRequest) {
     try {
       await sendTelegramMessage(
         schedule.chatId,
-        `Reminder Applyorbit: follow-up ${schedule.companyName} - ${schedule.position} pada ${new Date(schedule.scheduledDate).toLocaleString("id-ID")}`
+        `Reminder lamarin: follow-up ${schedule.companyName} - ${schedule.position} pada ${new Date(schedule.scheduledDate).toLocaleString("id-ID")}`,
       );
 
       await db.insert(telegramReminderLogs).values({
