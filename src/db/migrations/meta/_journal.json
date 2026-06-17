@@ -50,6 +50,13 @@
       "when": 1777983305899,
       "tag": "0006_telegram_reminder_logs",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1781685333580,
+      "tag": "0007_tidy_sugar_man",
+      "breakpoints": true
     }
   ]
 }
