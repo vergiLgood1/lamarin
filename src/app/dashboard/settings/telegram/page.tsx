@@ -34,7 +34,7 @@ export default async function TelegramSettingsPage() {
       <SettingsHeader
         eyebrow="Telegram Integration"
         title="Telegram & Hermes Agent"
-        description="Hubungkan Telegram sebagai jembatan identitas untuk mengakses data Lamarin Anda melalui Hermes Agent."
+        description="Hubungkan Telegram sebagai jembatan identitas untuk mengakses data Lamarin Anda melalui Hermes Agent. Install skill: npx skills add vergiLgood1/lamarin --skill lamarin"
         icon={Sparkles}
       >
         <Link
@@ -124,11 +124,11 @@ export default async function TelegramSettingsPage() {
                   },
                   {
                     step: 2,
-                    title: "Start Bot Telegram",
+                    title: "Dapatkan Chat ID",
                     description:
-                      "Cari bot Telegram Lamarin dan kirim /start untuk mendapatkan Chat ID Anda.",
-                    href: null,
-                    linkLabel: null,
+                      "Chat dengan @userinfobot di Telegram, bot akan mengirimkan Chat ID Anda.",
+                    href: "https://t.me/userinfobot",
+                    linkLabel: "Buka @userinfobot",
                   },
                   {
                     step: 3,
@@ -140,11 +140,11 @@ export default async function TelegramSettingsPage() {
                   },
                   {
                     step: 4,
-                    title: "Pasang Skill Lamarin",
+                    title: "Install Skill Lamarin",
                     description:
-                      "Download SKILL.md dari repo Lamarin dan tempatkan di folder skills Hermes Agent.",
-                    href: "https://github.com/vergiLgood1/lamarin/blob/main/skills/lamarin/SKILL.md",
-                    linkLabel: "Lihat SKILL.md",
+                      "Jalankan npx skills add vergiLgood1/lamarin --skill lamarin untuk memasang skill ke Hermes Agent.",
+                    href: "https://www.npmjs.com/package/skills",
+                    linkLabel: "Apa itu npx skills?",
                   },
                   {
                     step: 5,

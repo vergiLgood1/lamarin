@@ -116,8 +116,7 @@ export function TelegramIntegrationCard(props: TelegramIntegrationCardProps) {
               />
 
               <p className="text-xs text-muted-foreground">
-                Chat ID digunakan Hermes Agent untuk mengidentifikasi akun
-                Lamarin Anda.
+                Chat dengan @userinfobot di Telegram untuk mendapatkan Chat ID Anda.
               </p>
             </div>
 
