@@ -4,7 +4,6 @@ import { db } from "@/db";
 import { telegramConnections } from "@/db/schema";
 import { getSession } from "@/lib/auth-server";
 import { logger } from "@/lib/logger";
-import { sendTelegramMessage, validateTelegramChatId } from "@/lib/telegram";
 import { eq } from "drizzle-orm";
 import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
@@ -20,14 +19,6 @@ export async function connectTelegram(formData: FormData) {
   const chatId = String(formData.get("chatId") || "").trim();
   const username = String(formData.get("username") || "").trim();
   if (!chatId) return { success: false, message: "Chat ID wajib diisi" };
-
-  const isValidChat = await validateTelegramChatId(chatId).catch(() => false);
-  if (!isValidChat) {
-    return {
-      success: false,
-      message: "Chat ID tidak valid. Pastikan sudah start chat dengan bot.",
-    };
-  }
 
   const hermesToken = generateHermesToken();
 
@@ -59,15 +50,9 @@ export async function connectTelegram(formData: FormData) {
       });
   }
 
-  await sendTelegramMessage(
+  logger.info("Telegram connected", {
+    userId: session.user.id,
     chatId,
-    `lamarin: Telegram berhasil terhubung. Token Hermes Anda: ${existing?.hermesToken || hermesToken}`,
-  ).catch((error) => {
-    logger.error("Failed to send Telegram connect message", {
-      userId: session.user.id,
-      chatId,
-      error: error instanceof Error ? error.message : "Unknown error",
-    });
   });
   revalidatePath("/dashboard/settings");
   return { success: true, message: "Telegram terhubung", hermesToken: existing?.hermesToken || hermesToken };
@@ -84,33 +69,4 @@ export async function disconnectTelegram() {
 
   revalidatePath("/dashboard/settings");
   return { success: true, message: "Telegram disconnected" };
-}
-
-export async function testTelegramConnection() {
-  const session = await getSession();
-  if (!session) return { success: false, message: "Unauthorized" };
-
-  const [connection] = await db
-    .select()
-    .from(telegramConnections)
-    .where(eq(telegramConnections.userId, session.user.id));
-
-  if (!connection || !connection.isActive) {
-    return { success: false, message: "Telegram belum terhubung" };
-  }
-
-  try {
-    await sendTelegramMessage(
-      connection.chatId,
-      "lamarin: test notifikasi berhasil.",
-    );
-    return { success: true, message: "Test notifikasi terkirim" };
-  } catch (error) {
-    logger.error("Failed to send Telegram test message", {
-      userId: session.user.id,
-      chatId: connection.chatId,
-      error: error instanceof Error ? error.message : "Unknown error",
-    });
-    return { success: false, message: "Gagal mengirim test notifikasi" };
-  }
 }

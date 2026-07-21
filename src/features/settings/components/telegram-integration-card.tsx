@@ -15,7 +15,6 @@ import { Label } from "@/components/ui/label";
 import {
   connectTelegram,
   disconnectTelegram,
-  testTelegramConnection,
 } from "@/features/telegram/actions/mutations";
 
 import { cn } from "@/lib/utils";
@@ -24,7 +23,6 @@ import {
   Bot,
   CheckCircle2,
   Loader2,
-  SendHorizonal,
   Unplug,
   XCircle,
 } from "lucide-react";
@@ -155,30 +153,6 @@ export function TelegramIntegrationCard(props: TelegramIntegrationCardProps) {
 
         {props.isConnected && (
           <div className="flex flex-col gap-3 border-t pt-5 sm:flex-row">
-            <Button
-              variant="outline"
-              className="h-11 rounded-xl"
-              disabled={isPending}
-              onClick={() => {
-                startTransition(async () => {
-                  const result = await testTelegramConnection();
-
-                  if (result.success) {
-                    toast.success(result.message);
-                  } else {
-                    toast.error(result.message);
-                  }
-                });
-              }}
-            >
-              {isPending ? (
-                <Loader2 className="mr-2 size-4 animate-spin" />
-              ) : (
-                <SendHorizonal className="mr-2 size-4" />
-              )}
-              Test Notifikasi
-            </Button>
-
             <Button
               variant="destructive"
               className="h-11 rounded-xl"
