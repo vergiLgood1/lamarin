@@ -1,10 +1,7 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  // experimental: {
-  //   cpus: 1
-  // }
   images: {
     remotePatterns: [
       {
@@ -12,6 +9,9 @@ const nextConfig: NextConfig = {
         hostname: "*.ufs.sh",
       },
     ],
+  },
+  turbopack: {
+    root: path.resolve(__dirname),
   },
 };
 
