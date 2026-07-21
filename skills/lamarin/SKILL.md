@@ -16,7 +16,7 @@ required_environment_variables:
     required_for: "API requests to Lamarin"
   - name: LAMARIN_API_KEY
     prompt: "Enter your Lamarin API key or personal Hermes token"
-    help: "Use the global API key (from admin) or your personal token (from Lamarin Settings > Telegram)"
+    help: "Use the global API key (from admin) or your personal token (from Lamarin Settings > Telegram & Hermes Agent)"
     required_for: "Authenticate API requests"
 ---
 
@@ -57,29 +57,28 @@ When using the global API key, also include `x-chat-id: <Telegram chat ID>`.
 | DELETE | `/api/applications/{id}` | Delete application |
 | PATCH | `/api/applications/{id}/status` | Update status only |
 | GET | `/api/applications/{id}/documents` | Get application documents |
-| GET | `/api/follow-ups?status=active` | List follow-up schedules |
 | GET | `/api/stats` | Dashboard statistics |
 
 ## Common Tasks
 
-### 1. List recent applications
+### 1. List recent applications (personal token — no chat-id needed)
 
 ```bash
-curl -s -H "x-api-key: $LAMARIN_API_KEY" -H "x-chat-id: $CHAT_ID" \
+curl -s -H "x-api-key: $LAMARIN_API_KEY" \
   "$LAMARIN_API_URL/api/applications?limit=5"
 ```
 
 ### 2. Check dashboard stats
 
 ```bash
-curl -s -H "x-api-key: $LAMARIN_API_KEY" -H "x-chat-id: $CHAT_ID" \
+curl -s -H "x-api-key: $LAMARIN_API_KEY" \
   "$LAMARIN_API_URL/api/stats"
 ```
 
 ### 3. Add a new application
 
 ```bash
-curl -s -X POST -H "x-api-key: $LAMARIN_API_KEY" -H "x-chat-id: $CHAT_ID" \
+curl -s -X POST -H "x-api-key: $LAMARIN_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"companyName":"Tech Corp","position":"Software Engineer","applicationDate":"2026-07-21","workMode":"remote","jobType":"fulltime","status":"applied"}' \
   "$LAMARIN_API_URL/api/applications"
@@ -88,23 +87,16 @@ curl -s -X POST -H "x-api-key: $LAMARIN_API_KEY" -H "x-chat-id: $CHAT_ID" \
 ### 4. Update application status
 
 ```bash
-curl -s -X PATCH -H "x-api-key: $LAMARIN_API_KEY" -H "x-chat-id: $CHAT_ID" \
+curl -s -X PATCH -H "x-api-key: $LAMARIN_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"status":"interview"}' \
   "$LAMARIN_API_URL/api/applications/{id}/status"
 ```
 
-### 5. Check upcoming follow-ups
-
-```bash
-curl -s -H "x-api-key: $LAMARIN_API_KEY" -H "x-chat-id: $CHAT_ID" \
-  "$LAMARIN_API_URL/api/follow-ups?status=active&limit=5"
-```
-
 ## Procedure
 
-1. When a user asks about their job applications on Lamarin, first identify their chat ID from the conversation context.
-2. Set `CHAT_ID` to the Telegram chat ID of the requesting user.
+1. When a user asks about their job applications on Lamarin, call the API directly using the configured `LAMARIN_API_KEY` (personal token).
+2. No `CHAT_ID` or `x-chat-id` header needed when using a personal token.
 3. Use `web_search` or `execute_command` with `curl` to call the Lamarin API.
 4. Parse the JSON response and present the information clearly to the user, using Indonesian language when the user prefers it.
 5. For write operations (create, update, delete), always confirm with the user before executing.
