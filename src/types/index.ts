@@ -1,7 +1,5 @@
 import type {
   applicationDocuments,
-  followUpEmails,
-  followUpSchedules,
   jobApplications,
   user,
 } from "@/db/schema";
@@ -16,8 +14,6 @@ type TablerIconName = keyof typeof TablerIcons;
 
 export type User = InferSelectModel<typeof user>;
 export type JobApplication = InferSelectModel<typeof jobApplications>;
-export type FollowUpEmail = InferSelectModel<typeof followUpEmails>;
-export type FollowUpSchedule = InferSelectModel<typeof followUpSchedules>;
 export type ApplicationDocument = InferSelectModel<typeof applicationDocuments>;
 
 export type ApplicationStatus =
@@ -29,9 +25,6 @@ export type ApplicationStatus =
   | "accepted"
   | "rejected"
   | "withdrawn";
-
-export type EmailStatus = "draft" | "scheduled" | "sent" | "failed";
-export type EmailMode = "manual" | "automatic";
 
 // ============================================
 // Action State Types (for useActionState)

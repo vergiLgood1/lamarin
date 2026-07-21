@@ -1,4 +1,3 @@
-import { getCalendarConnection } from "@/features/calendar/actions/queries";
 import { ExportDataCard } from "@/features/settings/components/export-data-card";
 import { ProfileCard } from "@/features/settings/components/profile-card";
 import { getTelegramConnection } from "@/features/telegram/actions/queries";
@@ -6,33 +5,23 @@ import { getSession } from "@/lib/auth-server";
 
 import { Card, CardContent } from "@/components/ui/card";
 
-import { Bot, Calendar, ShieldCheck, Sparkles } from "lucide-react";
+import { Bot, ShieldCheck, Sparkles } from "lucide-react";
 
 import IntegrationCard from "@/features/settings/components/integration-card";
 import { SettingsHeader } from "@/features/settings/components/settings-header";
 import Link from "next/link";
 
 export default async function SettingsPage() {
-  const [session, calendarConnection, telegramConnection] = await Promise.all([
+  const [session, telegramConnection] = await Promise.all([
     getSession(),
-    getCalendarConnection().catch(() => null),
     getTelegramConnection().catch(() => null),
   ]);
 
   const integrations = [
     {
-      title: "Google Calendar",
+      title: "Telegram",
       description:
-        "Sinkronisasi follow-up interview dan reminder langsung ke Google Calendar.",
-      href: "/dashboard/settings/calendar",
-      icon: Calendar,
-      connected: Boolean(calendarConnection?.isActive),
-      badge: calendarConnection?.isActive ? "Terhubung" : "Belum terhubung",
-    },
-    {
-      title: "Telegram Bot",
-      description:
-        "Terima reminder follow-up otomatis H-1 dan H-0 melalui Telegram.",
+        "Hubungkan Telegram untuk mengakses Lamarin melalui bot dan menerima notifikasi.",
       href: "/dashboard/settings/telegram",
       icon: Bot,
       connected: Boolean(telegramConnection?.isActive),
@@ -47,7 +36,7 @@ export default async function SettingsPage() {
       <SettingsHeader
         eyebrow="Pengaturan Akun"
         title="Kelola Pengaturan"
-        description="Atur profil akun, integrasi aplikasi, dan preferensi notifikasi untuk mempermudah proses follow-up lamaran kerja Anda."
+        description="Atur profil akun dan koneksi Telegram untuk mengakses Lamarin dari mana saja."
         icon={Sparkles}
       >
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:min-w-72">
@@ -95,8 +84,7 @@ export default async function SettingsPage() {
               <h2 className="text-xl font-semibold">Integrasi</h2>
 
               <p className="text-sm text-muted-foreground">
-                Hubungkan aplikasi eksternal untuk otomatisasi workflow
-                follow-up.
+                Hubungkan Telegram untuk mengakses Lamarin dari Hermes Agent.
               </p>
             </div>
 
