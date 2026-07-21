@@ -15,7 +15,8 @@
     "db:seed": "bun --bun src/db/seed.ts",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "db:reset": "bun --bun drizzle-kit reset"
+    "db:reset": "bun --bun drizzle-kit reset",
+    "db:deploy": "bun scripts/deploy-db.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.60",
