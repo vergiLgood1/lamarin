@@ -36,6 +36,7 @@ interface TelegramIntegrationCardProps {
   isConnected: boolean;
   chatId: string;
   username: string;
+  hermesToken?: string;
 }
 
 export function TelegramIntegrationCard(props: TelegramIntegrationCardProps) {
@@ -197,6 +198,39 @@ export function TelegramIntegrationCard(props: TelegramIntegrationCardProps) {
               <Unplug className="mr-2 size-4" />
               Disconnect
             </Button>
+          </div>
+        )}
+
+        {props.isConnected && props.hermesToken && (
+          <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5">
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="size-4 text-primary" />
+                <p className="text-sm font-medium">Token Hermes Agent</p>
+              </div>
+
+              <p className="text-xs text-muted-foreground">
+                Gunakan token ini untuk mengakses data Lamarin dari Hermes
+                Agent. Cukup set sebagai API key — tidak perlu Chat ID.
+              </p>
+
+              <div className="flex items-center gap-2 rounded-xl border bg-background px-3 py-2.5">
+                <code className="flex-1 select-all text-xs font-mono break-all">
+                  {props.hermesToken}
+                </code>
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(props.hermesToken || "")
+                      .then(() => toast.success("Token disalin"))
+                      .catch(() => toast.error("Gagal menyalin"));
+                  }}
+                  className="shrink-0 text-xs font-medium text-primary hover:underline"
+                >
+                  Salin
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </CardContent>

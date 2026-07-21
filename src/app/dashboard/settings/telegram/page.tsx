@@ -54,6 +54,7 @@ export default async function TelegramSettingsPage() {
           isConnected={isConnected}
           chatId={telegramConnection?.chatId || ""}
           username={telegramConnection?.username || ""}
+          hermesToken={telegramConnection?.hermesToken || ""}
         />
 
         <div className="space-y-6">
@@ -134,7 +135,7 @@ export default async function TelegramSettingsPage() {
                     step: 3,
                     title: "Masukkan Chat ID",
                     description:
-                      "Salin Chat ID dari bot Telegram ke form di samping, lalu klik Connect.",
+                      "Salin Chat ID dari @userinfobot ke form di samping, lalu klik Connect. Token Hermes akan dibuat otomatis.",
                     href: null,
                     linkLabel: null,
                   },
@@ -148,11 +149,11 @@ export default async function TelegramSettingsPage() {
                   },
                   {
                     step: 5,
-                    title: "Set Environment Variables",
+                    title: "Masukkan Token ke Hermes",
                     description:
-                      "Set LAMARIN_API_URL dan LAMARIN_API_KEY di lingkungan Hermes Agent.",
-                    href: `${HERMES_DOCS_URL}/user-guide/configuration`,
-                    linkLabel: "Panduan konfigurasi",
+                      "Gunakan token Hermes (tampil setelah connect) sebagai x-api-key. Salin token dari form di samping.",
+                    href: null,
+                    linkLabel: null,
                   },
                   {
                     step: 6,

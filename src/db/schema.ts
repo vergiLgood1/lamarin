@@ -144,6 +144,7 @@ export const telegramConnections = pgTable("telegram_connections", {
     .references(() => user.id, { onDelete: "cascade" }),
   chatId: varchar("chat_id", { length: 255 }).notNull(),
   username: varchar("username", { length: 255 }),
+  hermesToken: varchar("hermes_token", { length: 255 }).unique(),
   isActive: boolean("is_active").notNull().default(true),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),

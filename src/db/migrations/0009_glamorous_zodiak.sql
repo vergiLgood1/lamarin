@@ -1,0 +1,2 @@
+ALTER TABLE "telegram_connections" ADD COLUMN "hermes_token" varchar(255);--> statement-breakpoint
+ALTER TABLE "telegram_connections" ADD CONSTRAINT "telegram_connections_hermes_token_unique" UNIQUE("hermes_token");

@@ -10,7 +10,14 @@ export async function getTelegramConnection() {
   if (!session) throw new Error("Unauthorized");
 
   const [connection] = await db
-    .select()
+    .select({
+      id: telegramConnections.id,
+      userId: telegramConnections.userId,
+      chatId: telegramConnections.chatId,
+      username: telegramConnections.username,
+      isActive: telegramConnections.isActive,
+      hermesToken: telegramConnections.hermesToken,
+    })
     .from(telegramConnections)
     .where(eq(telegramConnections.userId, session.user.id));
 

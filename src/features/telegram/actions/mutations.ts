@@ -6,7 +6,12 @@ import { getSession } from "@/lib/auth-server";
 import { logger } from "@/lib/logger";
 import { sendTelegramMessage, validateTelegramChatId } from "@/lib/telegram";
 import { eq } from "drizzle-orm";
+import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
+
+function generateHermesToken(): string {
+  return `hm_${randomUUID().replace(/-/g, "").slice(0, 24)}`;
+}
 
 export async function connectTelegram(formData: FormData) {
   const session = await getSession();
@@ -24,6 +29,8 @@ export async function connectTelegram(formData: FormData) {
     };
   }
 
+  const hermesToken = generateHermesToken();
+
   const [existing] = await db
     .select()
     .from(telegramConnections)
@@ -32,17 +39,29 @@ export async function connectTelegram(formData: FormData) {
   if (existing) {
     await db
       .update(telegramConnections)
-      .set({ chatId, username: username || null, isActive: true, updatedAt: new Date() })
+      .set({
+        chatId,
+        username: username || null,
+        isActive: true,
+        hermesToken: existing.hermesToken || hermesToken,
+        updatedAt: new Date(),
+      })
       .where(eq(telegramConnections.id, existing.id));
   } else {
     await db
       .insert(telegramConnections)
-      .values({ userId: session.user.id, chatId, username: username || null, isActive: true });
+      .values({
+        userId: session.user.id,
+        chatId,
+        username: username || null,
+        isActive: true,
+        hermesToken,
+      });
   }
 
   await sendTelegramMessage(
     chatId,
-    "lamarin: Telegram berhasil terhubung.",
+    `lamarin: Telegram berhasil terhubung. Token Hermes Anda: ${existing?.hermesToken || hermesToken}`,
   ).catch((error) => {
     logger.error("Failed to send Telegram connect message", {
       userId: session.user.id,
@@ -51,7 +70,7 @@ export async function connectTelegram(formData: FormData) {
     });
   });
   revalidatePath("/dashboard/settings");
-  return { success: true, message: "Telegram terhubung" };
+  return { success: true, message: "Telegram terhubung", hermesToken: existing?.hermesToken || hermesToken };
 }
 
 export async function disconnectTelegram() {
