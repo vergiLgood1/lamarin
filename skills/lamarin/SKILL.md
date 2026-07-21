@@ -15,8 +15,8 @@ required_environment_variables:
     help: "Your Lamarin deployment URL — localhost:3000 for development"
     required_for: "API requests to Lamarin"
   - name: LAMARIN_API_KEY
-    prompt: "Enter your Lamarin external API key"
-    help: "Set this in your Lamarin .env as EXTERNAL_API_KEY"
+    prompt: "Enter your Lamarin API key or personal Hermes token"
+    help: "Use the global API key (from admin) or your personal token (from Lamarin Settings > Telegram)"
     required_for: "Authenticate API requests"
 ---
 
@@ -26,14 +26,24 @@ Manage your job applications on Lamarin through natural conversation. This skill
 
 ## Quick Reference
 
-### API Pattern
+### Authentication
+
+The API supports two authentication modes:
+
+**1. Personal Token (recommended for individual users)**
+Set `LAMARIN_API_KEY` to your personal Hermes token (visible in Lamarin Settings > Telegram after connecting). No `x-chat-id` header needed — the token identifies you directly.
+
+**2. Global API Key (for server-to-server / multi-user)**
+Set `LAMARIN_API_KEY` to the shared `EXTERNAL_API_KEY` (from your Lamarin admin). Requires `x-chat-id` header to identify the user.
+
+### Headers
 
 All requests use:
 - **URL:** `$LAMARIN_API_URL/api/{endpoint}`
-- **Headers:** `x-api-key: $LAMARIN_API_KEY`, `x-chat-id: <user_chat_id>`, `Content-Type: application/json`
+- **Headers:** `x-api-key: $LAMARIN_API_KEY`, `Content-Type: application/json`
 - **Method:** GET / POST / PATCH / DELETE as specified
 
-The `x-chat-id` is the Telegram chat ID of the user making the request. When responding to a Telegram message, use the chat ID from that message.
+When using the global API key, also include `x-chat-id: <Telegram chat ID>`.
 
 ### Endpoints
 
@@ -109,8 +119,9 @@ Job types: `fulltime`, `parttime`, `internship`, `freelance`, `contract`, `tempo
 
 ## Pitfalls
 
-- Always include `x-chat-id` header — this identifies the Lamarin user.
-- The user must have Telegram connected in their Lamarin settings for the chat ID to be recognized.
+- When using the **global API key**, always include the `x-chat-id` header to identify the Lamarin user.
+- When using a **personal token**, no `x-chat-id` needed — the token itself identifies you.
+- The user must have Telegram connected in their Lamarin settings for the chat ID to be recognized (global key mode only).
 - Use the correct API key — mismatched keys return 401.
 - Create requests must include at minimum: `companyName`, `position`, `applicationDate`, `workMode`, `jobType`, `status`.
 - The API returns paginated results — default is 10 items per page.
