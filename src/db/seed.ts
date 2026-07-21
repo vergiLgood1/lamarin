@@ -5,21 +5,13 @@ import { db } from "./index";
 import {
   account,
   applicationDocuments,
-  calendarConnections,
-  calendarEvents,
-  followUpEmails,
-  followUpSchedules,
   jobApplications,
   telegramConnections,
-  telegramReminderLogs,
   user,
 } from "./schema";
 
 type NewJobApplication = InferInsertModel<typeof jobApplications>;
-type NewFollowUpEmail = InferInsertModel<typeof followUpEmails>;
 type NewApplicationDocument = InferInsertModel<typeof applicationDocuments>;
-type NewCalendarEvent = InferInsertModel<typeof calendarEvents>;
-type NewFollowUpSchedule = InferInsertModel<typeof followUpSchedules>;
 type SeedJobApplication = NewJobApplication & { id: string };
 
 const SEED_USER_ID = "seed-user-lamarin";
@@ -180,14 +172,6 @@ function buildApplicationDates(): string[] {
   );
 }
 
-function emailCreatedAt(index: number): Date {
-  const plan = monthPlan[Math.min(Math.floor(index / 5), monthPlan.length - 1)];
-
-  return new Date(
-    Date.UTC(plan.year, plan.month, 6 + (index % 5) * 4, 2, 0, 0),
-  );
-}
-
 function buildApplications(): SeedJobApplication[] {
   const applicationDates = buildApplicationDates();
   const jobTypeSequence = buildJobTypes();
@@ -271,79 +255,14 @@ async function seedDocuments(
   await db.insert(applicationDocuments).values(documents);
 }
 
-async function seedFollowUps(
-  applications: readonly SeedJobApplication[],
-): Promise<void> {
-  const emails = applications.slice(0, 30).map((application, index) => ({
-    id: seedUuid(101 + index),
-    applicationId: application.id,
-    userId: SEED_USER_ID,
-    subject: `Follow up for ${application.position} application`,
-    body: `Hello, I wanted to follow up on my ${application.position} application at ${application.companyName}.`,
-    recipientEmail: application.hrContact ?? `talent${index + 1}@example.com`,
-    sentAt: index % 4 === 0 ? emailCreatedAt(index) : null,
-    status: (
-      ["sent", "scheduled", "draft", "scheduled", "sent", "failed"] as const
-    )[index % 6],
-    mode: index % 2 === 0 ? "automatic" : "manual",
-    createdAt: emailCreatedAt(index),
-  })) satisfies NewFollowUpEmail[];
-
-  await db.insert(followUpEmails).values(emails);
-  const schedules = emails.slice(0, 15).map((email, index) => ({
-      id: seedUuid(151 + index),
-      applicationId: email.applicationId,
-      userId: SEED_USER_ID,
-      emailId: email.id,
-      scheduledDate: new Date(
-        `2026-06-${String(index + 5).padStart(2, "0")}T03:00:00.000Z`,
-      ),
-      isActive: index % 4 !== 0,
-    })) satisfies NewFollowUpSchedule[];
-
-  await db.insert(followUpSchedules).values(schedules);
-}
-
 async function seedIntegrations(
   applications: readonly SeedJobApplication[],
 ): Promise<void> {
-  await db.insert(calendarConnections).values({
-    userId: SEED_USER_ID,
-    provider: "google",
-    accessToken: "seed-google-access-token",
-    refreshToken: "seed-google-refresh-token",
-    tokenExpiresAt: new Date("2026-06-01T00:00:00.000Z"),
-  });
-
-  const events = applications.slice(0, 12).map((application, index) => ({
-      userId: SEED_USER_ID,
-      applicationId: application.id,
-      provider: "google",
-      eventType: index % 2 === 0 ? "interview" : "follow_up",
-      externalEventId: `seed-google-event-${index + 1}`,
-      title: `${index % 2 === 0 ? "Interview" : "Follow up"}: ${application.position} at ${application.companyName}`,
-      scheduledAt: new Date(
-        `2026-06-${String(index + 10).padStart(2, "0")}T04:00:00.000Z`,
-      ),
-      externalUpdatedAt: new Date("2026-05-18T07:00:00.000Z"),
-    })) satisfies NewCalendarEvent[];
-
-  await db.insert(calendarEvents).values(events);
-
   await db.insert(telegramConnections).values({
     userId: SEED_USER_ID,
     chatId: "1234567890",
     username: "diyo_seed",
   });
-
-  await db.insert(telegramReminderLogs).values(
-    Array.from({ length: 10 }, (_, index) => ({
-      scheduleId: seedUuid(151 + index),
-      userId: SEED_USER_ID,
-      reminderType: index % 2 === 0 ? "one_day_before" : "same_day",
-      reminderDate: dateString(2026, 5, 4 + index),
-    })),
-  );
 }
 
 async function main(): Promise<void> {
@@ -354,7 +273,6 @@ async function main(): Promise<void> {
   await seedAccount();
   await seedApplications(applications);
   await seedDocuments(applications);
-  await seedFollowUps(applications);
   await seedIntegrations(applications);
 }
 

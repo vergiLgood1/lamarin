@@ -6,6 +6,17 @@ import { applicationSchema } from "@/lib/validations";
 import { and, count, desc, eq, ilike, sql } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
+const VALID_STATUSES = [
+  "applied",
+  "reviewed",
+  "interview",
+  "test",
+  "offered",
+  "accepted",
+  "rejected",
+  "withdrawn",
+] as const;
+
 // GET /api/applications — list user's applications
 export async function GET(request: NextRequest) {
   const auth = await authenticateRequest(request);
@@ -26,8 +37,8 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  if (status) {
-    conditions.push(eq(jobApplications.status, status));
+  if (status && VALID_STATUSES.includes(status as typeof VALID_STATUSES[number])) {
+    conditions.push(eq(jobApplications.status, status as typeof VALID_STATUSES[number]));
   }
 
   const [data, totalResult] = await Promise.all([
