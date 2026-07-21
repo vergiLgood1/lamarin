@@ -10,16 +10,19 @@ import { cn } from "@/lib/utils";
 
 import {
   ArrowLeft,
-  BellRing,
+  BookOpen,
   Bot,
   CheckCircle2,
+  ExternalLink,
   MessageCircleMore,
-  ShieldCheck,
+  Search,
   Sparkles,
   XCircle,
 } from "lucide-react";
 
 import Link from "next/link";
+
+const HERMES_DOCS_URL = "https://hermes-agent.nousresearch.com/docs";
 
 export default async function TelegramSettingsPage() {
   const telegramConnection = await getTelegramConnection().catch(() => null);
@@ -30,8 +33,8 @@ export default async function TelegramSettingsPage() {
     <div className="mx-auto space-y-8">
       <SettingsHeader
         eyebrow="Telegram Integration"
-        title="Telegram Bot"
-        description="Hubungkan akun Telegram untuk menerima reminder follow-up interview otomatis secara real-time."
+        title="Telegram & Hermes Agent"
+        description="Hubungkan Telegram sebagai jembatan identitas untuk mengakses data Lamarin Anda melalui Hermes Agent."
         icon={Sparkles}
       >
         <Link
@@ -91,68 +94,165 @@ export default async function TelegramSettingsPage() {
 
                   <p className="text-sm leading-relaxed text-muted-foreground">
                     {isConnected
-                      ? "Bot Telegram berhasil terhubung dan siap mengirim reminder follow-up."
-                      : "Hubungkan bot Telegram untuk mendapatkan reminder follow-up otomatis."}
+                      ? "Telegram terhubung. Hermes Agent dapat mengakses data Lamarin Anda melalui chat ID ini."
+                      : "Hubungkan Telegram untuk memungkinkan Hermes Agent mengakses data Lamaran Anda."}
                   </p>
                 </div>
               </div>
             </CardContent>
           </Card>
-
+          {/* Step-by-step guide */}
           <Card className="rounded-3xl border-border/60">
             <CardContent className="space-y-5 p-6">
               <div className="space-y-1">
-                <h2 className="font-semibold">Fitur Telegram Bot</h2>
-
+                <h2 className="font-semibold">Cara Menggunakan</h2>
                 <p className="text-sm text-muted-foreground">
-                  Integrasi otomatis untuk workflow follow-up Anda.
+                  Hubungkan Lamarin dengan Hermes Agent untuk mengelola lamaran
+                  via Telegram.
                 </p>
               </div>
 
-              <div className="space-y-4">
+              <ol className="space-y-4">
                 {[
                   {
-                    icon: BellRing,
-                    title: "Reminder Otomatis",
-                    description: "Notifikasi H-1 dan H-0 follow-up interview.",
+                    step: 1,
+                    title: "Install Hermes Agent",
+                    description:
+                      "Install Hermes Agent di server atau VPS Anda.",
+                    href: `${HERMES_DOCS_URL}/getting-started/installation`,
+                    linkLabel: "Lihat panduan install",
+                  },
+                  {
+                    step: 2,
+                    title: "Start Bot Telegram",
+                    description:
+                      "Cari bot Telegram Lamarin dan kirim /start untuk mendapatkan Chat ID Anda.",
+                    href: null,
+                    linkLabel: null,
+                  },
+                  {
+                    step: 3,
+                    title: "Masukkan Chat ID",
+                    description:
+                      "Salin Chat ID dari bot Telegram ke form di samping, lalu klik Connect.",
+                    href: null,
+                    linkLabel: null,
+                  },
+                  {
+                    step: 4,
+                    title: "Pasang Skill Lamarin",
+                    description:
+                      "Download SKILL.md dari repo Lamarin dan tempatkan di folder skills Hermes Agent.",
+                    href: "https://github.com/vergiLgood1/lamarin/blob/main/skills/lamarin/SKILL.md",
+                    linkLabel: "Lihat SKILL.md",
+                  },
+                  {
+                    step: 5,
+                    title: "Set Environment Variables",
+                    description:
+                      "Set LAMARIN_API_URL dan LAMARIN_API_KEY di lingkungan Hermes Agent.",
+                    href: `${HERMES_DOCS_URL}/user-guide/configuration`,
+                    linkLabel: "Panduan konfigurasi",
+                  },
+                  {
+                    step: 6,
+                    title: "Mulai Chat dengan Hermes",
+                    description:
+                      "Sekarang kamu bisa chat dengan Hermes Agent via Telegram untuk mengelola lamaran, cek status, dan lainnya.",
+                    href: null,
+                    linkLabel: null,
+                  },
+                ].map((item) => (
+                  <li
+                    key={item.step}
+                    className="flex items-start gap-3 rounded-2xl border border-border/60 p-4"
+                  >
+                    <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
+                      {item.step}
+                    </span>
+                    <div className="space-y-1">
+                      <h3 className="text-sm font-medium">{item.title}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {item.description}
+                      </p>
+                      {item.href && (
+                        <Link
+                          href={item.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+                        >
+                          {item.linkLabel}
+                          <ExternalLink className="size-3" />
+                        </Link>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </CardContent>
+          </Card>
+          {/* Reference links */}
+          <Card className="rounded-3xl border-border/60">
+            <CardContent className="space-y-5 p-6">
+              <div className="space-y-1">
+                <h2 className="font-semibold">Referensi</h2>
+                <p className="text-sm text-muted-foreground">
+                  Dokumentasi lengkap Hermes Agent dan Lamarin API.
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                {[
+                  {
+                    icon: BookOpen,
+                    title: "Dokumentasi Hermes Agent",
+                    href: HERMES_DOCS_URL,
+                    description: "Panduan lengkap install, konfigurasi, dan penggunaan.",
+                  },
+                  {
+                    icon: Search,
+                    title: "Skills System",
+                    href: `${HERMES_DOCS_URL}/developer-guide/creating-skills`,
+                    description: "Cara membuat dan memasang skills untuk Hermes Agent.",
                   },
                   {
                     icon: MessageCircleMore,
-                    title: "Realtime Notification",
-                    description:
-                      "Pesan langsung masuk ke Telegram pribadi Anda.",
+                    title: "Messaging Gateway",
+                    href: `${HERMES_DOCS_URL}/user-guide/messaging`,
+                    description: "Konfigurasi Telegram dan platform messaging lainnya.",
                   },
                   {
-                    icon: ShieldCheck,
-                    title: "Private & Secure",
+                    icon: ExternalLink,
+                    title: "Lamarin API Reference",
+                    href: "https://github.com/vergiLgood1/lamarin",
                     description:
-                      "Data reminder hanya dikirim ke chat yang terhubung.",
+                      "Daftar endpoint API untuk akses data lamaran.",
                   },
-                  {
-                    icon: Bot,
-                    title: "Bot Automation",
-                    description: "Mengurangi risiko lupa follow-up recruiter.",
-                  },
-                ].map((feature) => {
-                  const Icon = feature.icon;
+                ].map((link) => {
+                  const Icon = link.icon;
 
                   return (
-                    <div
-                      key={feature.title}
-                      className="flex items-start gap-4 rounded-2xl border border-border/60 p-4"
+                    <Link
+                      key={link.title}
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-start gap-4 rounded-2xl border border-border/60 p-4 transition-colors hover:bg-muted/40"
                     >
                       <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
                         <Icon className="size-5" />
                       </div>
 
-                      <div className="space-y-1">
-                        <h3 className="text-sm font-medium">{feature.title}</h3>
-
+                      <div className="space-y-0.5">
+                        <h3 className="text-sm font-medium">{link.title}</h3>
                         <p className="text-sm text-muted-foreground">
-                          {feature.description}
+                          {link.description}
                         </p>
                       </div>
-                    </div>
+
+                      <ExternalLink className="ml-auto mt-1 size-4 shrink-0 text-muted-foreground" />
+                    </Link>
                   );
                 })}
               </div>

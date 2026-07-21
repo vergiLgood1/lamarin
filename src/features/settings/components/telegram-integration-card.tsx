@@ -58,11 +58,11 @@ export function TelegramIntegrationCard(props: TelegramIntegrationCardProps) {
             </div>
 
             <div className="space-y-1">
-              <CardTitle className="text-xl">Telegram Reminder</CardTitle>
+              <CardTitle className="text-xl">Koneksi Telegram</CardTitle>
 
               <CardDescription className="max-w-lg leading-relaxed">
-                Hubungkan Telegram untuk menerima reminder follow-up interview
-                otomatis secara real-time.
+                Hubungkan Telegram sebagai identitas untuk mengakses data
+                Lamarin Anda melalui Hermes Agent.
               </CardDescription>
             </div>
           </div>
@@ -116,7 +116,8 @@ export function TelegramIntegrationCard(props: TelegramIntegrationCardProps) {
               />
 
               <p className="text-xs text-muted-foreground">
-                Gunakan ID chat Telegram pribadi Anda.
+                Chat ID digunakan Hermes Agent untuk mengidentifikasi akun
+                Lamarin Anda.
               </p>
             </div>
 
